@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.partnershipidentificationfrontend.assets
+package uk.gov.hmrc.partnershipidentificationfrontend.views.helpers
 
-import java.util.UUID
+import play.api.data.Form
+import play.api.i18n.Messages
 
-object TestConstants {
-
-  val testJourneyId: String = UUID.randomUUID().toString
-  val testSautr: String = "1234567890"
-  val testPostcode: String = "AA1 1AA"
-  val testContinueUrl: String = "/test"
-  val testCredentialId: String = UUID.randomUUID().toString
-  val GGProviderId: String = UUID.randomUUID().toString
-  val testGroupId: String = UUID.randomUUID().toString
-  val testInternalId: String = UUID.randomUUID().toString
-
+object TitleHelper {
+  def title(titleMessage: String, form: Form[_])(implicit messages: Messages): String =
+    if (form.hasErrors) messages("error.title-prefix") + titleMessage
+    else titleMessage
 }

@@ -25,6 +25,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Writes}
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.test.Helpers._
+import uk.gov.hmrc.partnershipidentificationfrontend.repositories.JourneyConfigRepository
 
 trait ComponentSpecHelper extends AnyWordSpec with Matchers
   with CustomMatchers
@@ -47,6 +48,8 @@ trait ComponentSpecHelper extends AnyWordSpec with Matchers
     "microservice.services.base.port" -> mockPort,
     "microservice.services.self.host" -> mockHost,
     "microservice.services.self.port" -> mockPort,
+    "microservice.services.partnership-identification.host" -> mockHost,
+    "microservice.services.partnership-identification.port" -> mockPort
   )
 
   override lazy val app: Application = new GuiceApplicationBuilder()
@@ -103,5 +106,7 @@ trait ComponentSpecHelper extends AnyWordSpec with Matchers
   val baseUrl: String = "/identify-your-partnership"
 
   private def buildClient(path: String): WSRequest = ws.url(s"http://localhost:$port$path").withFollowRedirects(false)
+
+  lazy val journeyConfigRepository: JourneyConfigRepository = app.injector.instanceOf[JourneyConfigRepository]
 
 }

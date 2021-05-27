@@ -1,0 +1,2 @@
+GET        /create-journey                                                                  uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateJourneyController.show
+POST       /create-journey                                                                  uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateJourneyController.submit

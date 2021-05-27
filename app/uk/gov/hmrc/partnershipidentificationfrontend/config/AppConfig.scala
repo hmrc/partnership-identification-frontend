@@ -16,14 +16,34 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.config
 
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
-class AppConfig @Inject()
-  (
-    config: Configuration
-  ) {
+class AppConfig @Inject()(config: Configuration,
+                          servicesConfig: ServicesConfig) {
+
+  lazy val selfBaseUrl: String = servicesConfig.baseUrl("self")
+  lazy val selfUrl: String = servicesConfig.getString("microservice.services.self.url")
+
   val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
+
+  lazy val timeToLiveSeconds: Long = servicesConfig.getString("mongodb.timeToLiveSeconds").toLong
+
+  private lazy val backendUrl: String = servicesConfig.baseUrl("partnership-identification")
+
+  def createJourneyUrl: String = s"$backendUrl/partnership-identification/journey"
+
+  def partnershipInformationUrl(journeyId: String): String = s"$backendUrl/partnership-identification/journey/$journeyId"
+
+  lazy val cookies: String = servicesConfig.getString("urls.footer.cookies")
+  lazy val privacy: String = servicesConfig.getString("urls.footer.privacy")
+  lazy val termsConditions: String = servicesConfig.getString("urls.footer.termsConditions")
+  lazy val govukHelp: String = servicesConfig.getString("urls.footer.govukHelp")
+  lazy val companiesHouse: String = servicesConfig.getString("companies-house.url")
+
+  lazy val defaultServiceName: String = servicesConfig.getString("defaultServiceName")
 
 }
