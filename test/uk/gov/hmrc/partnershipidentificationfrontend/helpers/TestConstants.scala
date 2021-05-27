@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.partnershipidentificationfrontend.assets
+package uk.gov.hmrc.partnershipidentificationfrontend.helpers
 
 import java.util.UUID
 
 object TestConstants {
 
+  val testContinueUrl = "/test"
   val testJourneyId: String = UUID.randomUUID().toString
-  val testSautr: String = "1234567890"
-  val testPostcode: String = "AA1 1AA"
-  val testContinueUrl: String = "/test"
-  val testCredentialId: String = UUID.randomUUID().toString
-  val GGProviderId: String = UUID.randomUUID().toString
-  val testGroupId: String = UUID.randomUUID().toString
-  val testInternalId: String = UUID.randomUUID().toString
-
 }

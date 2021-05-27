@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.partnershipidentificationfrontend.assets
+package uk.gov.hmrc.partnershipidentificationfrontend.forms.utils
 
-import java.util.UUID
+import play.api.data.validation.{Invalid, Valid, ValidationResult}
 
-object TestConstants {
+object ValidationHelper {
 
-  val testJourneyId: String = UUID.randomUUID().toString
-  val testSautr: String = "1234567890"
-  val testPostcode: String = "AA1 1AA"
-  val testContinueUrl: String = "/test"
-  val testCredentialId: String = UUID.randomUUID().toString
-  val GGProviderId: String = UUID.randomUUID().toString
-  val testGroupId: String = UUID.randomUUID().toString
-  val testInternalId: String = UUID.randomUUID().toString
+  def validate(constraint: Boolean, errMsg: String): ValidationResult = {
+    if (constraint)
+      Invalid(errMsg)
+    else Valid
+  }
+
+  def validateNot(constraint: Boolean, errMsg: String): ValidationResult = {
+    validate(!constraint, errMsg)
+  }
 
 }
+

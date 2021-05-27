@@ -16,18 +16,46 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.config
 
-import javax.inject.{Inject, Singleton}
-
 import play.api.i18n.MessagesApi
-import play.api.mvc.Request
+import play.api.mvc.Results.NotFound
+import play.api.mvc.{Request, RequestHeader, Result}
+import play.api.{Configuration, Environment, Logging}
 import play.twirl.api.Html
-import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
+import uk.gov.hmrc.auth.core.AuthorisationException
+import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.ErrorTemplate
+import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
+import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
 @Singleton
-class ErrorHandler @Inject()(errorTemplate: ErrorTemplate, val messagesApi: MessagesApi)
-    extends FrontendErrorHandler {
+class ErrorHandler @Inject()(errorTemplate: ErrorTemplate,
+                             val messagesApi: MessagesApi,
+                             val config: Configuration,
+                             val env: Environment
+                            )(implicit appConfig: AppConfig) extends FrontendErrorHandler with AuthRedirects with Logging {
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
     errorTemplate(pageTitle, heading, message)
+
+  override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
+    exception match {
+      case _: AuthorisationException => Future.successful(resolveError(request, exception))
+      case _ => super.onServerError(request, exception)
+    }
+  }
+
+  override def resolveError(rh: RequestHeader, ex: Throwable): Result = {
+    ex match {
+      case _: AuthorisationException =>
+        logger.debug("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
+        toGGLogin(rh.path)
+      case _: NotFoundException =>
+        NotFound(notFoundTemplate(Request(rh, "")))
+      case _ =>
+        super.resolveError(rh, ex)
+    }
+  }
 }

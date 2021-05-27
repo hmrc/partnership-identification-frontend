@@ -1,0 +1,2 @@
++ nocsrf
+POST       /journey                                         uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.JourneyController.createJourney
