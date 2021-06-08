@@ -14,16 +14,29 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.partnershipidentificationfrontend.helpers
+package uk.gov.hmrc.partnershipidentificationfrontend.forms.utils
 
-import java.util.UUID
+import play.api.data.Forms.{optional, text}
+import play.api.data.Mapping
 
-object TestConstants {
+object MappingUtil {
 
-  val testContinueUrl = "/test"
-  val testJourneyId: String = UUID.randomUUID().toString
-  val testSignOutUrl = "/signOutUrl"
+  val optText: Mapping[Option[String]] = optional(text)
 
-  val testSautr: String = "1234567890"
+  implicit class OTextUtil(mapping: Mapping[Option[String]]) {
+    def toText: Mapping[String] =
+      mapping.transform(
+        x => x.getOrElse(""),
+        x => Some(x)
+      )
+
+    def toBoolean: Mapping[Boolean] = mapping.transform(
+      {
+        case Some("true") => true
+        case _ => false
+      },
+      x => Some(x.toString)
+    )
+  }
 
 }

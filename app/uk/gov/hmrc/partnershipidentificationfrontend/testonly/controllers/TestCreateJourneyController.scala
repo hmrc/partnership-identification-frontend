@@ -19,14 +19,14 @@ package uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.connectors.TestCreateJourneyConnector
-import uk.gov.hmrc.partnershipidentificationfrontend.testonly.forms.TestCreateJourneyForm.form
+import uk.gov.hmrc.partnershipidentificationfrontend.testonly.forms.TestCreateJourneyForm.{deskProServiceId, form, signOutUrl}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.routes
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.views.html.test_create_journey
-
 import javax.inject.{Inject, Singleton}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -37,15 +37,22 @@ class TestCreateJourneyController @Inject()(messagesControllerComponents: Messag
                                            )(implicit ec: ExecutionContext,
                                              appConfig: AppConfig) extends FrontendController(messagesControllerComponents) with AuthorisedFunctions {
 
+  private val defaultPageConfig = PageConfig(
+    optServiceName = None,
+    deskProServiceId = "vrs",
+    signOutUrl = appConfig.vatRegFeedbackUrl
+  )
+
   private val defaultJourneyConfig = JourneyConfig(
-    continueUrl = s"${appConfig.selfUrl}/identify-your-partnership/test-only/retrieve-journey"
+    continueUrl = s"${appConfig.selfUrl}/identify-your-partnership/test-only/retrieve-journey",
+    pageConfig = defaultPageConfig
   )
 
   val show: Action[AnyContent] = Action.async {
     implicit request =>
       authorised() {
         Future.successful(
-          Ok(view(routes.TestCreateJourneyController.submit(), form.fill(defaultJourneyConfig)))
+          Ok(view(defaultPageConfig, form.fill(defaultJourneyConfig), routes.TestCreateJourneyController.submit()))
         )
       }
   }
@@ -56,7 +63,7 @@ class TestCreateJourneyController @Inject()(messagesControllerComponents: Messag
         form.bindFromRequest().fold(
           formWithErrors =>
             Future.successful(
-              BadRequest(view(routes.TestCreateJourneyController.submit(), formWithErrors))
+              BadRequest(view(defaultPageConfig, formWithErrors, routes.TestCreateJourneyController.submit()))
             ),
           journeyConfig =>
             testCreateJourneyConnector.createJourney(journeyConfig)

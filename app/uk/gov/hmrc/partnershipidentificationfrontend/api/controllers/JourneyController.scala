@@ -41,7 +41,7 @@ class JourneyController @Inject()(controllerComponents: ControllerComponents,
         journeyService.createJourney(req.body).map(
           journeyId =>
             Created(Json.obj(
-              "journeyStartUrl" -> s"${appConfig.selfUrl}${controllerRoutes.HelloWorldController.helloWorld().url}"
+              "journeyStartUrl" -> s"${appConfig.selfUrl}${controllerRoutes.CaptureSautrController.show(journeyId).url}"
             ))
         )
       }

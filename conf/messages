@@ -7,4 +7,23 @@ footer.links.cookies.text                                   = Cookies
 footer.links.privacy_policy.text                            = Privacy policy
 footer.links.terms_and_conditions.text                      = Terms and conditions
 
+feedback.before                                             = This is a new service - your
+feedback.link                                               = feedback
+feedback.after                                              = (opens in new tab) will help us to improve it.
+
 app.common.back                                             = Back
+## Base
+base.save_and_continue                                      = Save and continue
+error.summary.title                                         = There is a problem
+error.title-prefix                                          = 'Error: '
+
+## SA-UTR Page
+sa-utr.title                                                = What is your Unique Taxpayer Reference?
+sa-utr.heading                                              = What is your Unique Taxpayer Reference?
+sa-utr.line_1                                               = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about Self Assessment. It may be called ‘reference’, ‘UTR’ or ‘official use’. You can <a href="https://www.gov.uk/find-lost-utr-number">find a lost UTR number.</a>
+sa-utr.line_2                                               = I do not have a Unique Taxpayer Reference
+sa-utr.details.line_1                                       = Your UTR helps us identify your partnership.
+sa-utr.details.line_2                                       = I cannot find my UTR
+sa-utr.details.line_3                                       = My partnership does not have a UTR
+sa-utr.error                                                = Enter a Unique Taxpayer Reference in the correct format
+getpagehelp.linkText                                        = Is this page not working properly?

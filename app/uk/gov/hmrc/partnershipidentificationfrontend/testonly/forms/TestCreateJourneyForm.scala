@@ -20,15 +20,18 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.data.validation.Constraint
 import uk.gov.hmrc.partnershipidentificationfrontend.forms.utils.ValidationHelper.validate
-import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
+import uk.gov.hmrc.partnershipidentificationfrontend.forms.utils.MappingUtil.optText
+
 
 object TestCreateJourneyForm {
 
-  val continueUrl = "continueUrl"
+  var continueUrl = "continueUrl"
   val serviceName = "serviceName"
   val deskProServiceId = "deskProServiceId"
   val alphanumericRegex = "^[A-Z0-9]*$"
-  val signOutUrl = "signOutUrl"
+  var signOutUrl = "signOutUrl"
+  var enableSautrCheck = "enableSautrCheck"
 
   def continueUrlEmpty: Constraint[String] = Constraint("continue_url.not_entered")(
     continueUrl => validate(
@@ -37,10 +40,32 @@ object TestCreateJourneyForm {
     )
   )
 
+  def deskProServiceIdEmpty: Constraint[String] = Constraint("desk_pro_service_id.not_entered")(
+    serviceId => validate(
+      constraint = serviceId.isEmpty,
+      errMsg = "DeskPro Service Identifier is not entered"
+    )
+  )
+
+  def signOutUrlEmpty: Constraint[String] = Constraint("sign_out_url.not_entered")(
+    signOutUrl => validate(
+      constraint = signOutUrl.isEmpty,
+      errMsg = "Sign Out Url is not entered"
+    )
+  )
+
   val form: Form[JourneyConfig] = {
     Form(mapping(
-      continueUrl -> text.verifying(continueUrlEmpty)
-    )(JourneyConfig.apply)(JourneyConfig.unapply))
+      continueUrl -> text.verifying(continueUrlEmpty),
+      serviceName -> optText,
+      deskProServiceId -> text.verifying(deskProServiceIdEmpty),
+      signOutUrl -> text.verifying(signOutUrlEmpty)
+    )((continueUrl, serviceName, deskProServiceId, signOutUrl) =>
+      JourneyConfig.apply(continueUrl, PageConfig(serviceName, deskProServiceId, signOutUrl))
+    )(journeyConfig =>
+      Some(journeyConfig.continueUrl, journeyConfig.pageConfig.optServiceName,
+        journeyConfig.pageConfig.deskProServiceId, journeyConfig.pageConfig.signOutUrl)
+    ))
   }
 
 }

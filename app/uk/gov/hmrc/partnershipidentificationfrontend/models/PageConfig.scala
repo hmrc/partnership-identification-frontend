@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.partnershipidentificationfrontend.helpers
+package uk.gov.hmrc.partnershipidentificationfrontend.models
 
-import java.util.UUID
+import play.api.libs.json.{Json, OFormat}
 
-object TestConstants {
+case class PageConfig(optServiceName: Option[String], deskProServiceId: String, signOutUrl: String)
 
-  val testContinueUrl = "/test"
-  val testJourneyId: String = UUID.randomUUID().toString
-  val testSignOutUrl = "/signOutUrl"
-
-  val testSautr: String = "1234567890"
-
+object PageConfig {
+  implicit val format: OFormat[PageConfig] = Json.format[PageConfig]
 }

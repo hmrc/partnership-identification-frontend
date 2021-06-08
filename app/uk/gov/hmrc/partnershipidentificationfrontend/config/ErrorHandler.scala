@@ -23,7 +23,7 @@ import play.api.{Configuration, Environment, Logging}
 import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.AuthorisationException
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.partnershipidentificationfrontend.views.html.ErrorTemplate
+import uk.gov.hmrc.partnershipidentificationfrontend.views.html.templates.error_template
 import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
@@ -31,14 +31,18 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class ErrorHandler @Inject()(errorTemplate: ErrorTemplate,
-                             val messagesApi: MessagesApi,
+class ErrorHandler @Inject()(val messagesApi: MessagesApi,
+                             view: error_template,
                              val config: Configuration,
                              val env: Environment
-                            )(implicit appConfig: AppConfig) extends FrontendErrorHandler with AuthRedirects with Logging {
+                            )(implicit val appConfig: AppConfig) extends FrontendErrorHandler with AuthRedirects with Logging {
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
-    errorTemplate(pageTitle, heading, message)
+  override def standardErrorTemplate(pageTitle: String,
+                                     heading: String,
+                                     message: String
+                                    )(implicit request: Request[_]): Html =
+    view(pageTitle, heading, message)
+
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
     exception match {

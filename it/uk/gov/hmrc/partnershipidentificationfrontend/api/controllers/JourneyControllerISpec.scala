@@ -18,16 +18,16 @@ package uk.gov.hmrc.partnershipidentificationfrontend.api.controllers
 
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.{testInternalId, testJourneyId}
-import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuthStub, JourneyStub}
+import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.{testDeskProServiceId, testInternalId, testJourneyId, testSignOutUrl}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
+import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuthStub, JourneyStub, PartnershipIdentificationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.controllers.{routes => appRoutes}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
-class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with AuthStub {
+class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with AuthStub with PartnershipIdentificationStub {
 
   "POST /api/journey" should {
     "return a created journey" in {
@@ -35,12 +35,17 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
       stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
 
       val testJourneyConfig = JourneyConfig(
-        continueUrl = "/testContinueUrl"
+        continueUrl = "/testContinueUrl",
+        pageConfig = PageConfig(
+          optServiceName = None,
+          deskProServiceId = testDeskProServiceId,
+          signOutUrl = testSignOutUrl
+        )
       )
 
       lazy val result = post("/partnership-identification/api/journey", Json.toJson(testJourneyConfig))
 
-      (result.json \ "journeyStartUrl").as[String] must include(appRoutes.HelloWorldController.helloWorld().url)
+      (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
 
       await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testJourneyConfig)
     }
@@ -50,7 +55,12 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
       stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
 
       val testJourneyConfig = JourneyConfig(
-        continueUrl = "/testContinueUrl"
+        continueUrl = "/testContinueUrl",
+        pageConfig = PageConfig(
+          optServiceName = None,
+          deskProServiceId = testDeskProServiceId,
+          signOutUrl = testSignOutUrl
+        )
       )
 
       lazy val result = post("/partnership-identification/api/journey", Json.toJson(testJourneyConfig))

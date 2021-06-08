@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.partnershipidentificationfrontend.helpers
+package uk.gov.hmrc.partnershipidentificationfrontend.forms
 
-import java.util.UUID
+import play.api.data.Form
+import play.api.data.Forms._
 
-object TestConstants {
+import scala.util.matching.Regex
 
-  val testContinueUrl = "/test"
-  val testJourneyId: String = UUID.randomUUID().toString
-  val testSignOutUrl = "/signOutUrl"
+object CaptureSautrForm {
+  val sautrErrorKey: String = "sa-utr.error"
+  val sautrRegex: Regex = "[0-9]{10}".r
 
-  val testSautr: String = "1234567890"
+  val form: Form[String] =
+    Form(
+      "sa-utr" -> text.verifying(sautrErrorKey, _.matches(sautrRegex.regex))
+    )
 
 }
