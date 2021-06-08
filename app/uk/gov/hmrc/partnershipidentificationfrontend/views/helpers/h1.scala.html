@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package uk.gov.hmrc.partnershipidentificationfrontend.helpers
+@this()
 
-import java.util.UUID
+@(headingMsg: String, subheadingMsg: Option[String] = None, classes: String = "govuk-heading-xl")(implicit messages: Messages)
 
-object TestConstants {
-
-  val testContinueUrl = "/test"
-  val testJourneyId: String = UUID.randomUUID().toString
-  val testSignOutUrl = "/signOutUrl"
-
-  val testSautr: String = "1234567890"
-
+@if(subheadingMsg.isDefined){
+<header class="hmrc-page-heading">
+ <h1 id="heading" class="@classes">@messages(headingMsg)</h1>
+    <span id="subheading" class="govuk-caption-xl hmrc-caption-xl">@subheadingMsg</span>
+</header>
+} else {
+<h1 id="heading" class="@classes">@messages(headingMsg)</h1>
 }

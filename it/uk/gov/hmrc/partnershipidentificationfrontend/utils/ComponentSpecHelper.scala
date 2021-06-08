@@ -25,7 +25,12 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Writes}
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.test.Helpers._
+import reactivemongo.api.commands.WriteResult
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
 import uk.gov.hmrc.partnershipidentificationfrontend.repositories.JourneyConfigRepository
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 trait ComponentSpecHelper extends AnyWordSpec with Matchers
   with CustomMatchers
@@ -70,6 +75,7 @@ trait ComponentSpecHelper extends AnyWordSpec with Matchers
 
   override def beforeEach(): Unit = {
     resetWiremock()
+    await(journeyConfigRepository.drop)
     super.beforeEach()
   }
 
@@ -109,4 +115,12 @@ trait ComponentSpecHelper extends AnyWordSpec with Matchers
 
   lazy val journeyConfigRepository: JourneyConfigRepository = app.injector.instanceOf[JourneyConfigRepository]
 
+  def insertJourneyConfig(journeyId: String,
+                          continueUrl: String,
+                          optServiceName: Option[String],
+                          deskProServiceId: String,
+                          signOutUrl: String): Future[WriteResult] =
+    journeyConfigRepository.insertJourneyConfig(
+      journeyId, JourneyConfig(continueUrl, PageConfig(optServiceName, deskProServiceId, signOutUrl))
+    )
 }

@@ -15,53 +15,80 @@
 *@
 
 @import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
-@import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
-@import uk.gov.hmrc.partnershipidentificationfrontend.views.helpers.TitleHelper.title
-@import uk.gov.hmrc.partnershipidentificationfrontend.views.html.helpers.{errorSummary, inputText}
-@import uk.gov.hmrc.partnershipidentificationfrontend.views.html.templates._
+@import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
+@import uk.gov.hmrc.partnershipidentificationfrontend.views.html.helpers.inputText
+@import uk.gov.hmrc.partnershipidentificationfrontend.views.html.templates.govuk_template
 
 @this(layout: govuk_template,
     govukFieldset: GovukFieldset,
     govukButton: GovukButton,
-    formWithCSRF: FormWithCSRF,
     inputText: inputText,
-    errorSummary: errorSummary
+    formWithCSRF: FormWithCSRF
 )
 
-@(formAction: Call, form: Form[JourneyConfig])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(pageConfig: PageConfig, form: Form[JourneyConfig], formAction: Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@layout(title(messages("Enter the journey config"), form)) {
-    @errorSummary(form.errors)
+@layout(pageConfig, "Enter Partnership Identification Journey Config") {
 
-    @govukFieldset(Fieldset(
-        legend = Some(Legend(
-            content = Text("Enter the journey config"),
-            classes = "govuk-fieldset__legend--xl",
-            isPageHeading = true
-        )),
-        html = html
-    ))
+@govukFieldset(Fieldset(
+legend = Some(Legend(
+content = Text("Enter Partnership Identification Journey Config"),
+classes = "govuk-fieldset__legend--xl",
+isPageHeading = true
+)),
+html = html
+))
 
 }
 
 @html = {
-    @formWithCSRF(action = formAction) {
+@formWithCSRF(action = formAction) {
 
-        @inputText(
-            form = form,
-            id = "continueUrl",
-            name = "continueUrl",
-            label = "Continue URL",
-            isPageHeading = false,
-            hasFieldTitle = true,
-            classes = "govuk-input--width-10"
-        )
+@inputText(
+form = form,
+id = "continueUrl",
+name = "continueUrl",
+label = "Continue URL",
+isPageHeading = false,
+hasFieldTitle = true,
+classes = "govuk-input--width-10"
+)
 
-        @govukButton(Button(
-            attributes = Map("id" -> "save-and-continue"),
-            classes = "govuk-!-margin-right-1",
-            content = Text(Messages("Submit"))
-        ))
+@inputText(
+form = form,
+id = "serviceName",
+name = "serviceName",
+label = "Service Name",
+isPageHeading = false,
+hasFieldTitle = true,
+classes = "govuk-input--width-20"
+)
 
-    }
+@inputText(
+form = form,
+id = "deskProServiceId",
+name = "deskProServiceId",
+label = "DeskPro Service Identifier",
+isPageHeading = false,
+hasFieldTitle = true,
+classes = "govuk-input--width-20"
+)
+
+@inputText(
+form = form,
+id = "signOutUrl",
+name = "signOutUrl",
+label = "Sign Out Url",
+isPageHeading = false,
+hasFieldTitle = true,
+classes = "govuk-input--width-20"
+)
+
+@govukButton(Button(
+attributes = Map("id" -> "save-and-continue"),
+classes = "govuk-!-margin-right-1",
+content = Text(Messages("Submit"))
+))
+
+}
 }
