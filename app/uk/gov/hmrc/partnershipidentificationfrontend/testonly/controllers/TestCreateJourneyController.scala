@@ -21,12 +21,11 @@ import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.connectors.TestCreateJourneyConnector
-import uk.gov.hmrc.partnershipidentificationfrontend.testonly.forms.TestCreateJourneyForm.{deskProServiceId, form, signOutUrl}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.routes
+import uk.gov.hmrc.partnershipidentificationfrontend.testonly.forms.TestCreateJourneyForm.form
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.views.html.test_create_journey
-import javax.inject.{Inject, Singleton}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
