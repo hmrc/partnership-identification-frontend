@@ -1,2 +1,9 @@
+GET        /feature-switches                                                                uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.frontend.controllers.FeatureSwitchFrontendController.show
+POST       /feature-switches                                                                uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.frontend.controllers.FeatureSwitchFrontendController.submit
+
+GET        /api/feature-switches                                                            uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.api.controllers.FeatureSwitchApiController.getFeatureSwitches()
++ nocsrf
+POST       /api/feature-switches                                                            uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.api.controllers.FeatureSwitchApiController.updateFeatureSwitches()
+
 GET        /create-journey                                                                  uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateJourneyController.show
 POST       /create-journey                                                                  uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateJourneyController.submit

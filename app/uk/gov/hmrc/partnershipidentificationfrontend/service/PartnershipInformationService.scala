@@ -22,7 +22,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.PartnershipIdentificationConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.RemovePartnershipDetailsHttpParser.SuccessfullyRemoved
-import uk.gov.hmrc.partnershipidentificationfrontend.service.IncorporatedEntityInformationService.SautrKey
+import uk.gov.hmrc.partnershipidentificationfrontend.service.PartnerhsipInformationService.SautrKey
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -46,6 +46,6 @@ class PartnershipInformationService @Inject()(connector: PartnershipIdentificati
 }
 
 
-object IncorporatedEntityInformationService {
+object PartnerhsipInformationService {
   val SautrKey: String = "sautr"
 }
