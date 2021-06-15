@@ -39,6 +39,7 @@ object MessageLookup {
   object BetaBanner {
     val title = "This is a new service - your feedback (opens in new tab) will help us to improve it."
   }
+
   object CaptureSautr {
     val title = "What is your Unique Taxpayer Reference?"
     val heading = "What is your Unique Taxpayer Reference?"
@@ -51,6 +52,17 @@ object MessageLookup {
     object Error {
       val invalidSautrEntered = "Enter a Unique Taxpayer Reference in the correct format"
     }
+  }
 
+  object CapturePostCode {
+    val title = "What is the postcode where the partnership is registered for Self Assessment?"
+    val heading = "What is the postcode where the partnership is registered for Self Assessment?"
+    val hint = "For example, AB1 2YZ"
+
+    object Error {
+      val noPostCodeEntered = "Enter the postcode where the partnership is registered for Self Assessment"
+      val invalidPostCodeEntered = "Enter a valid postcode"
+      val invalidCharactersEntered = "Enter a postcode using only letters and numbers"
+    }
   }
 }

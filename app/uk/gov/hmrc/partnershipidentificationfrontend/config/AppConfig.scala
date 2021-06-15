@@ -30,11 +30,12 @@ class AppConfig @Inject()(config: Configuration,
 
   val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
 
+  lazy val timeToLiveSeconds: Long = servicesConfig.getString("mongodb.timeToLiveSeconds").toLong
+
   private lazy val backendUrl: String = servicesConfig.baseUrl("partnership-identification")
+  private lazy val contactHost: String = servicesConfig.getString("contact-frontend.host")
 
   def createJourneyUrl: String = s"$backendUrl/partnership-identification/journey"
-
-  lazy val timeToLiveSeconds: Long = servicesConfig.getString("mongodb.timeToLiveSeconds").toLong
 
   def partnershipInformationUrl(journeyId: String): String = s"$backendUrl/partnership-identification/journey/$journeyId"
 
@@ -46,12 +47,7 @@ class AppConfig @Inject()(config: Configuration,
 
   lazy val defaultServiceName: String = servicesConfig.getString("defaultServiceName")
 
-  private lazy val feedbackUrl: String = servicesConfig.getString("feedback.host")
-
-  lazy val vatRegExitSurveyOrigin = "vat-registration"
-
-  lazy val vatRegFeedbackUrl = s"$feedbackUrl/feedback/$vatRegExitSurveyOrigin"
-  private lazy val contactHost: String = servicesConfig.getString("contact-frontend.host")
+  def betaFeedbackUrl(serviceIdentifier: String): String = s"$contactHost/contact/beta-feedback?service=$serviceIdentifier"
 
   def reportAProblemPartialUrl(serviceIdentifier: String): String =
     s"$contactHost/contact/problem_reports_ajax?service=$serviceIdentifier"
@@ -59,10 +55,11 @@ class AppConfig @Inject()(config: Configuration,
   def reportAProblemNonJSUrl(serviceIdentifier: String): String =
     s"$contactHost/contact/problem_reports_nonjs?service=$serviceIdentifier"
 
+  private lazy val feedbackUrl: String = servicesConfig.getString("feedback.host")
+  lazy val vatRegExitSurveyOrigin = "vat-registration"
+  lazy val vatRegFeedbackUrl = s"$feedbackUrl/feedback/$vatRegExitSurveyOrigin"
+
   lazy val timeout: Int = servicesConfig.getInt("timeout.timeout")
   lazy val countdown: Int = servicesConfig.getInt("timeout.countdown")
-
-  def betaFeedbackUrl(serviceIdentifier: String): String =
-    s"$contactHost/contact/beta-feedback?service=$serviceIdentifier"
 
 }
