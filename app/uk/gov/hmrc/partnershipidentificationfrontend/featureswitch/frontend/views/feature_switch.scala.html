@@ -18,12 +18,10 @@
 @import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.models.FeatureSwitchSetting
 @import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.frontend.models.FeatureSwitchProvider
 @import uk.gov.hmrc.partnershipidentificationfrontend.models.PageConfig
-@import uk.gov.hmrc.partnershipidentificationfrontend.views.html.helpers.h1
 @import uk.gov.hmrc.partnershipidentificationfrontend.views.html.templates.govuk_template
 
 
 @this(layout: govuk_template,
-        h1: h1,
         govukFieldset: GovukFieldset,
         govukCheckboxes: GovukCheckboxes,
         govukButton: GovukButton,
@@ -34,7 +32,7 @@
 
 @layout(pageConfig, title = "Choose which features to enable.") {
 
-    @h1("Choose which features to enable.")
+    <h1 class="govuk-heading-l">Choose which features to enable.</h1>
 
     @formWithCSRF(action = formAction) {
         @for(featureSwitches <- featureSwitchList) {

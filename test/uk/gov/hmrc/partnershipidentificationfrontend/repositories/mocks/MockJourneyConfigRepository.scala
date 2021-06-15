@@ -21,12 +21,11 @@ import org.mockito.Mockito.{reset, verify, when}
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
-import reactivemongo.api.ReadPreference
 import reactivemongo.api.commands.WriteResult
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.repositories.JourneyConfigRepository
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 trait MockJourneyConfigRepository extends MockitoSugar with BeforeAndAfterEach {
   self: Suite =>
