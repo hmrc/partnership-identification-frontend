@@ -1,4 +1,5 @@
-import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
+import uk.gov.hmrc.DefaultBuildSettings
+import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, integrationTestSettings}
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "partnership-identification-frontend"
@@ -27,8 +28,17 @@ lazy val microservice = Project(appName, file("."))
   )
   .settings(publishingSettings: _*)
   .configs(IntegrationTest)
-  .settings(integrationTestSettings(): _*)
+  .settings(DefaultBuildSettings.integrationTestSettings())
   .settings(resolvers += Resolver.jcenterRepo)
+  .disablePlugins(JUnitXmlReportPlugin)
 
+Keys.fork in Test := true
+javaOptions in Test += "-Dlogger.resource=logback-test.xml"
+parallelExecution in Test := true
+addTestReportOption(Test, "test-reports")
+
+Keys.fork in IntegrationTest := true
+unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest) (base => Seq(base / "it")).value
 javaOptions in IntegrationTest += "-Dlogger.resource=logback-test.xml"
-
+addTestReportOption(IntegrationTest, "int-test-reports")
+parallelExecution in IntegrationTest := false

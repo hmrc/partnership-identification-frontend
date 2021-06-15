@@ -16,14 +16,12 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.service
 
-import play.api.libs.json.JsString
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.{GatewayTimeoutException, HeaderCarrier}
-import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.mocks.MockPartnershipInformationConnector
+import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.UnitSpec
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class PartnershipInformationServiceSpec extends UnitSpec with MockPartnershipInformationConnector {
@@ -37,21 +35,21 @@ class PartnershipInformationServiceSpec extends UnitSpec with MockPartnershipInf
   "retrieveSautr" should {
     "return Some(sautr)" when {
       "the sautr exists in the database for a given journey id" in {
-        mockRetrievePartnershipInformation[JsString](
+        mockRetrievePartnershipInformation[String](
           testJourneyId,
           dataKey
-        )(Future.successful(Some(JsString(testSautr))))
+        )(Future.successful(Some(testSautr)))
 
         val result = await(TestService.retrieveSautr(testJourneyId))
 
         result mustBe Some(testSautr)
-        verifyRetrievePartnershipInformation[JsString](testJourneyId, dataKey)
+        verifyRetrievePartnershipInformation[String](testJourneyId, dataKey)
       }
     }
 
     "return None" when {
       "the sautr does not exist in the database for a given journey id" in {
-        mockRetrievePartnershipInformation[JsString](
+        mockRetrievePartnershipInformation[String](
           testJourneyId,
           dataKey
         )(Future.successful(None))
@@ -59,13 +57,13 @@ class PartnershipInformationServiceSpec extends UnitSpec with MockPartnershipInf
         val result = await(TestService.retrieveSautr(testJourneyId))
 
         result mustBe None
-        verifyRetrievePartnershipInformation[JsString](testJourneyId, dataKey)
+        verifyRetrievePartnershipInformation[String](testJourneyId, dataKey)
       }
     }
 
     "surface an exception" when {
       "the call to the database times out" in {
-        mockRetrievePartnershipInformation[JsString](
+        mockRetrievePartnershipInformation[String](
           journeyId = testJourneyId,
           dataKey = "sautr"
         )(Future.failed(new GatewayTimeoutException("GET of '/testUrl' timed out with message 'testError'")))
@@ -73,7 +71,7 @@ class PartnershipInformationServiceSpec extends UnitSpec with MockPartnershipInf
         intercept[GatewayTimeoutException](
           await(TestService.retrieveSautr(testJourneyId))
         )
-        verifyRetrievePartnershipInformation[JsString](testJourneyId, dataKey)
+        verifyRetrievePartnershipInformation[String](testJourneyId, dataKey)
       }
     }
   }

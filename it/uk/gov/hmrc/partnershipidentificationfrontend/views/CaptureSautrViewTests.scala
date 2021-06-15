@@ -16,33 +16,23 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.views
 
-import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.libs.ws.WSResponse
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import reactivemongo.api.commands.WriteResult
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.MessageLookup.{Base, BetaBanner, Header, CaptureSautr => messages}
-import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.testSignOutUrl
+import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.{testDefaultServiceName, testSignOutUrl}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ViewSpecHelper.ElementExtensions
-
-import scala.concurrent.Future
 
 
 trait CaptureSautrViewTests {
   this: ComponentSpecHelper =>
 
-  def testCaptureSautrView(result: => WSResponse,
-                          authStub: => StubMapping,
-                          insertJourneyConfig: => Future[WriteResult]): Unit = {
 
-    lazy val doc: Document = {
-      await(insertJourneyConfig)
-      authStub
-      Jsoup.parse(result.body)
-    }
+  def testCaptureSautrView(result: => WSResponse, serviceName: String = testDefaultServiceName, hasErrors: Boolean = false): Unit = {
+
+    lazy val doc = Jsoup.parse(result.body)
 
     lazy val config = app.injector.instanceOf[AppConfig]
 
@@ -62,8 +52,15 @@ trait CaptureSautrViewTests {
       doc.getBannerLink mustBe config.betaFeedbackUrl("vrs")
     }
 
+    "correctly display the service name" in {
+      doc.getServiceName.text mustBe serviceName
+    }
+
     "have the correct title" in {
-      doc.title mustBe messages.title
+      if (hasErrors)
+        doc.title mustBe Base.Error.error + messages.title
+      else
+        doc.title mustBe messages.title
     }
 
     "have the correct heading" in {
@@ -87,7 +84,10 @@ trait CaptureSautrViewTests {
 
   }
 
-  def testCaptureSautrErrorMessages(result: => WSResponse): Unit = {
+  def testCaptureSautrViewWithErrorMessages(result: => WSResponse): Unit = {
+
+    testCaptureSautrView(result, hasErrors = true)
+
     lazy val doc: Document = Jsoup.parse(result.body)
 
     "correctly display the error summary" in {
@@ -99,20 +99,5 @@ trait CaptureSautrViewTests {
       doc.getFieldErrorMessage.text mustBe Base.Error.error + messages.Error.invalidSautrEntered
     }
   }
-  def testServiceName(serviceName: String,
-                      result: => WSResponse,
-                      authStub: => StubMapping,
-                      insertJourneyConfig: => Future[WriteResult]): Unit = {
 
-    lazy val doc: Document = {
-      await(insertJourneyConfig)
-      authStub
-      Jsoup.parse(result.body)
-    }
-
-    "correctly display the service name" in {
-      doc.getServiceName.text mustBe serviceName
-    }
-
-  }
 }

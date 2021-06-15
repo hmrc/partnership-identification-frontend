@@ -19,15 +19,13 @@ package uk.gov.hmrc.partnershipidentificationfrontend.forms
 import play.api.data.Form
 import play.api.data.Forms._
 
-import scala.util.matching.Regex
-
 object CaptureSautrForm {
-  val sautrErrorKey: String = "sa-utr.error"
-  val sautrRegex: Regex = "[0-9]{10}".r
+  val SautrErrorKey: String = "capture-sa-utr.error"
+  val SautrKey: String = "sa-utr"
 
   val form: Form[String] =
     Form(
-      "sa-utr" -> text.verifying(sautrErrorKey, _.matches(sautrRegex.regex))
+      SautrKey -> text.verifying(SautrErrorKey, sautr => sautr.forall(_.isDigit) && sautr.length == 10)
     )
 
 }
