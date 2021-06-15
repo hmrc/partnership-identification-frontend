@@ -16,13 +16,13 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
+import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PageConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuthStub, PartnershipIdentificationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.views.CaptureSautrViewTests
-
-import scala.concurrent.ExecutionContext.Implicits.global
 
 
 class CaptureSautrControllerISpec extends ComponentSpecHelper
@@ -30,144 +30,103 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
   with PartnershipIdentificationStub
   with AuthStub {
 
-  override def afterEach(): Unit = {
-    super.afterEach()
-    journeyConfigRepository.drop
-  }
-
   "GET /sa-utr" should {
-    "return OK" in {
-      await(insertJourneyConfig(
-        journeyId = testJourneyId,
-        continueUrl = testContinueUrl,
-        optServiceName = None,
-        deskProServiceId = testDeskProServiceId,
-        signOutUrl = testSignOutUrl
-      ))
+    lazy val result = {
+      await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
       stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-      lazy val result = get(s"$baseUrl/$testJourneyId/sa-utr")
+      get(s"$baseUrl/$testJourneyId/sa-utr")
+    }
 
+    "return OK" in {
       result.status mustBe OK
     }
 
     "return a view" when {
       "there is no serviceName passed in the journeyConfig" should {
-        lazy val insertConfig = insertJourneyConfig(
-          journeyId = testJourneyId,
-          continueUrl = testContinueUrl,
-          optServiceName = None,
-          deskProServiceId = testDeskProServiceId,
-          signOutUrl = testSignOutUrl
-        )
-        lazy val authStub = stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-        lazy val result = get(s"$baseUrl/$testJourneyId/sa-utr")
-
-        testCaptureSautrView(result, authStub, insertConfig)
-        testServiceName(testDefaultServiceName, result, authStub, insertConfig)
+        testCaptureSautrView(result)
       }
 
       "there is a serviceName passed in the journeyConfig" should {
-        lazy val insertConfig = insertJourneyConfig(
-          journeyId = testJourneyId,
-          continueUrl = testContinueUrl,
-          optServiceName = Some(testCallingServiceName),
-          deskProServiceId = testDeskProServiceId,
-          signOutUrl = testSignOutUrl
-        )
-        lazy val authStub = stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-        lazy val result = get(s"$baseUrl/$testJourneyId/sa-utr")
+        lazy val result = {
+          val config = testJourneyConfig.copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl))
+          await(insertJourneyConfig(testJourneyId, testInternalId, config))
+          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+          get(s"$baseUrl/$testJourneyId/sa-utr")
+        }
 
-        testCaptureSautrView(result, authStub, insertConfig)
-        testServiceName(testCallingServiceName, result, authStub, insertConfig)
+        testCaptureSautrView(result, testCallingServiceName)
       }
     }
 
     "redirect to sign in page" when {
-      "the user is UNAUTHORISED" in {
-        await(insertJourneyConfig(
-          journeyId = testJourneyId,
-          continueUrl = testContinueUrl,
-          optServiceName = None,
-          deskProServiceId = testDeskProServiceId,
-          signOutUrl = testSignOutUrl
-        ))
-        stubAuthFailure()
-        lazy val result = get(s"$baseUrl/$testJourneyId/sa-utr")
+      "the user is not logged in" in {
+        lazy val result = {
+          stubAuthFailure()
+          get(s"$baseUrl/$testJourneyId/sa-utr")
+        }
 
-        result.status mustBe SEE_OTHER
+        result must have {
+          httpStatus(SEE_OTHER)
+          redirectUri(s"/bas-gateway/sign-in?continue_url=%2Fidentify-your-partnership%2F$testJourneyId%2Fsa-utr&origin=partnership-identification-frontend")
+        }
+      }
+    }
+
+    "throw an InternalServerException" when {
+      "an internal id cannot be retrieved from auth" in {
+        lazy val result = {
+          stubAuth(OK, successfulAuthResponse(None))
+          get(s"$baseUrl/$testJourneyId/sa-utr")
+        }
+
+        result.status mustBe INTERNAL_SERVER_ERROR
       }
     }
   }
 
   "POST /sa-utr" when {
     "a valid sautr is submitted" should {
-      "store sautr" in {
-        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-        stubStoreSautr(testJourneyId, testSautr)(status = OK)
+      "store the sautr and redirect to Capture PostCode page" in {
+        lazy val result: WSResponse = {
+          await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+          stubStoreSautr(testJourneyId, testSautr)(OK)
+          post(s"$baseUrl/$testJourneyId/sa-utr")("sa-utr" -> testSautr)
+        }
 
-        val result = post(s"$baseUrl/$testJourneyId/sa-utr")("sa-utr" -> testSautr)
-
-        result.status mustBe NOT_IMPLEMENTED
+        result must have {
+          httpStatus(SEE_OTHER)
+          redirectUri(routes.CapturePostCodeController.show(testJourneyId).url)
+        }
       }
     }
 
     "no sautr is submitted" should {
-      "return a bad request" in {
-        lazy val result = {
-          await(insertJourneyConfig(
-            journeyId = testJourneyId,
-            continueUrl = testContinueUrl,
-            optServiceName = None,
-            deskProServiceId = testDeskProServiceId,
-            signOutUrl = testSignOutUrl
-          ))
-          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-          post(s"$baseUrl/$testJourneyId/sa-utr")("sa-utr" -> "")
-        }
-        result.status mustBe BAD_REQUEST
-      }
-      lazy val result = {
-        await(insertJourneyConfig(
-          journeyId = testJourneyId,
-          continueUrl = testContinueUrl,
-          optServiceName = None,
-          deskProServiceId = testDeskProServiceId,
-          signOutUrl = testSignOutUrl
-        ))
+      lazy val result: WSResponse = {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         post(s"$baseUrl/$testJourneyId/sa-utr")("sa-utr" -> "")
       }
-      testCaptureSautrErrorMessages(result)
+
+      "return a bad request" in {
+        result.status mustBe BAD_REQUEST
+      }
+
+      testCaptureSautrViewWithErrorMessages(result)
     }
 
     "an invalid sautr is submitted" should {
-      "return a bad request" in {
-        lazy val result = {
-          await(insertJourneyConfig(
-            journeyId = testJourneyId,
-            continueUrl = testContinueUrl,
-            optServiceName = None,
-            deskProServiceId = testDeskProServiceId,
-            signOutUrl = testSignOutUrl
-          ))
-          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-          post(s"$baseUrl/$testJourneyId/sa-utr")("sa-utr" -> "123456789")
-        }
-
-        result.status mustBe BAD_REQUEST
-      }
-      lazy val result = {
-        await(insertJourneyConfig(
-          journeyId = testJourneyId,
-          continueUrl = testContinueUrl,
-          optServiceName = None,
-          deskProServiceId = testDeskProServiceId,
-          signOutUrl = testSignOutUrl
-        ))
+      lazy val result: WSResponse = {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         post(s"$baseUrl/$testJourneyId/sa-utr")("sa-utr" -> "123456789")
       }
-      testCaptureSautrErrorMessages(result)
+
+      "return a bad request" in {
+        result.status mustBe BAD_REQUEST
+      }
+
+      testCaptureSautrViewWithErrorMessages(result)
     }
   }
 

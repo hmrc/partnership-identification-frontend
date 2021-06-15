@@ -18,7 +18,9 @@ package uk.gov.hmrc.partnershipidentificationfrontend.api.controllers
 
 import play.api.libs.json.Json
 import play.api.mvc.{Action, ControllerComponents}
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
+import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.controllers.{routes => controllerRoutes}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
@@ -37,13 +39,16 @@ class JourneyController @Inject()(controllerComponents: ControllerComponents,
 
   def createJourney(): Action[JourneyConfig] = Action.async(parse.json[JourneyConfig]) {
     implicit req =>
-      authorised() {
-        journeyService.createJourney(req.body).map(
-          journeyId =>
-            Created(Json.obj(
-              "journeyStartUrl" -> s"${appConfig.selfUrl}${controllerRoutes.CaptureSautrController.show(journeyId).url}"
-            ))
-        )
+      authorised().retrieve(internalId) {
+        case Some(authInternalId) =>
+          journeyService.createJourney(req.body, authInternalId).map {
+            journeyId =>
+              Created(Json.obj(
+                "journeyStartUrl" -> s"${appConfig.selfUrl}${controllerRoutes.CaptureSautrController.show(journeyId).url}"
+              ))
+          }
+        case _ =>
+          throw new InternalServerException("Internal ID could not be retrieved from Auth")
       }
   }
 

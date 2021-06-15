@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.service
 
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.JourneyConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.repositories.JourneyConfigRepository
@@ -28,18 +28,18 @@ class JourneyService @Inject()(journeyConnector: JourneyConnector,
                                journeyConfigRepository: JourneyConfigRepository
                               )(implicit ec: ExecutionContext) {
 
-  def createJourney(journeyConfig: JourneyConfig)(implicit headerCarrier: HeaderCarrier): Future[String] =
+  def createJourney(journeyConfig: JourneyConfig, authInternalId: String)(implicit headerCarrier: HeaderCarrier): Future[String] =
     for {
       journeyId <- journeyConnector.createJourney()
-      _ <- journeyConfigRepository.insertJourneyConfig(journeyId, journeyConfig)
+      _ <- journeyConfigRepository.insertJourneyConfig(journeyId, authInternalId, journeyConfig)
     } yield journeyId
 
-  def getJourneyConfig(journeyId: String): Future[JourneyConfig] =
-    journeyConfigRepository.findById(journeyId).map {
+  def getJourneyConfig(journeyId: String, authInternalId: String): Future[JourneyConfig] =
+    journeyConfigRepository.findJourneyConfig(journeyId, authInternalId).map {
       case Some(journeyConfig) =>
         journeyConfig
       case None =>
-        throw new InternalServerException(s"Journey config was not found for journey ID $journeyId")
+        throw new NotFoundException(s"Journey config was not found for journey ID $journeyId")
     }
 }
 

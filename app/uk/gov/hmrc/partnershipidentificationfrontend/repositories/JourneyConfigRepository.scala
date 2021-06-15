@@ -16,9 +16,6 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.repositories
 
-import java.time.Instant
-
-import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{Format, Json}
 import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.api.commands.WriteResult
@@ -28,8 +25,7 @@ import reactivemongo.play.json.JsObjectDocumentWriter
 import uk.gov.hmrc.mongo.ReactiveRepository
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
-import uk.gov.hmrc.mongo.ReactiveRepository
-
+import uk.gov.hmrc.partnershipidentificationfrontend.repositories.JourneyConfigRepository._
 
 import java.time.Instant
 import javax.inject.{Inject, Singleton}
@@ -45,17 +41,30 @@ class JourneyConfigRepository @Inject()(reactiveMongoComponent: ReactiveMongoCom
   idFormat = implicitly[Format[String]]
 ) {
 
-  def insertJourneyConfig(journeyId: String, journeyConfig: JourneyConfig): Future[WriteResult] = {
+  def insertJourneyConfig(journeyId: String, authInternalId: String, journeyConfig: JourneyConfig): Future[WriteResult] = {
     val document = Json.obj(
-      "_id" -> journeyId,
-      "creationTimestamp" -> Json.obj("$date" -> Instant.now.toEpochMilli)
+      JourneyIdKey -> journeyId,
+      AuthInternalIdKey -> authInternalId,
+      CreationTimestampKey -> Json.obj("$date" -> Instant.now.toEpochMilli)
     ) ++ Json.toJsObject(journeyConfig)
 
     collection.insert(true).one(document)
   }
 
+  def findJourneyConfig(journeyId: String, authInternalId: String): Future[Option[JourneyConfig]] =
+    collection.find(
+      Json.obj(
+        JourneyIdKey -> journeyId,
+        AuthInternalIdKey -> authInternalId
+      ),
+      Some(Json.obj(
+        JourneyIdKey -> 0,
+        AuthInternalIdKey -> 0
+      ))
+    ).one[JourneyConfig]
+
   private lazy val ttlIndex = Index(
-    Seq(("creationTimestamp", IndexType.Ascending)),
+    Seq((CreationTimestampKey, IndexType.Ascending)),
     name = Some("PartnershipInformationExpires"),
     options = BSONDocument("expireAfterSeconds" -> appConfig.timeToLiveSeconds)
   )
@@ -74,4 +83,10 @@ class JourneyConfigRepository @Inject()(reactiveMongoComponent: ReactiveMongoCom
       r
     }
 
+}
+
+object JourneyConfigRepository {
+  val JourneyIdKey = "_id"
+  val AuthInternalIdKey = "authInternalId"
+  val CreationTimestampKey = "creationTimestamp"
 }
