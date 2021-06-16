@@ -39,6 +39,8 @@ class AppConfig @Inject()(config: Configuration,
 
   def partnershipInformationUrl(journeyId: String): String = s"$backendUrl/partnership-identification/journey/$journeyId"
 
+  def validatePartnershipInformationUrl: String = s"$backendUrl/partnership-identification/validate-partnership-information"
+
   lazy val cookies: String = servicesConfig.getString("urls.footer.cookies")
   lazy val privacy: String = servicesConfig.getString("urls.footer.privacy")
   lazy val termsConditions: String = servicesConfig.getString("urls.footer.termsConditions")
