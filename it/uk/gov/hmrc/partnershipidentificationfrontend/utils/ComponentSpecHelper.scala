@@ -26,7 +26,7 @@ import play.api.libs.json.{JsValue, Writes}
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.test.Helpers._
 import reactivemongo.api.commands.WriteResult
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.repositories.JourneyConfigRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -116,11 +116,7 @@ trait ComponentSpecHelper extends AnyWordSpec with Matchers
   lazy val journeyConfigRepository: JourneyConfigRepository = app.injector.instanceOf[JourneyConfigRepository]
 
   def insertJourneyConfig(journeyId: String,
-                          continueUrl: String,
-                          optServiceName: Option[String],
-                          deskProServiceId: String,
-                          signOutUrl: String): Future[WriteResult] =
-    journeyConfigRepository.insertJourneyConfig(
-      journeyId, JourneyConfig(continueUrl, PageConfig(optServiceName, deskProServiceId, signOutUrl))
-    )
+                          authInternalId: String,
+                          journeyConfig: JourneyConfig): Future[WriteResult] =
+    journeyConfigRepository.insertJourneyConfig(journeyId, authInternalId, journeyConfig)
 }

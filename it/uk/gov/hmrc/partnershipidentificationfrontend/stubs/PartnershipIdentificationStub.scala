@@ -30,6 +30,13 @@ trait PartnershipIdentificationStub extends WiremockMethods {
       status = status
     )
 
+  def stubStorePostCode(journeyId: String, postCode: String)(status: Int): StubMapping =
+    when(method = PUT,
+      uri = s"/partnership-identification/journey/$journeyId/postcode", body = JsString(postCode)
+    ).thenReturn(
+      status = status
+    )
+
   def stubRetrieveSautr(journeyId: String)(status: Int, body: String = ""): StubMapping = {
     when(method = GET,
       uri = s"/partnership-identification/journey/$journeyId/sautr"

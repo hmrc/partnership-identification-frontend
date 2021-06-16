@@ -16,36 +16,37 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.service
 
-import javax.inject.{Inject, Singleton}
-import play.api.libs.json.JsString
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.PartnershipIdentificationConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.RemovePartnershipDetailsHttpParser.SuccessfullyRemoved
-import uk.gov.hmrc.partnershipidentificationfrontend.service.PartnerhsipInformationService.SautrKey
+import uk.gov.hmrc.partnershipidentificationfrontend.service.PartnershipInformationService._
 
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
 @Singleton
-class PartnershipInformationService @Inject()(connector: PartnershipIdentificationConnector
-                                                    )(implicit ec: ExecutionContext) {
+class PartnershipInformationService @Inject()(connector: PartnershipIdentificationConnector) {
 
   def storeSautr(journeyId: String,
                  sautr: String
                 )(implicit hc: HeaderCarrier): Future[SuccessfullyStored.type] =
     connector.storeData[String](journeyId, SautrKey, sautr)
 
+  def storePostCode(journeyId: String,
+                    postCode: String
+                   )(implicit hc: HeaderCarrier): Future[SuccessfullyStored.type] =
+    connector.storeData[String](journeyId, PostCodeKey, postCode)
+
   def retrieveSautr(journeyId: String)(implicit hc: HeaderCarrier): Future[Option[String]] =
-    connector.retrievePartnershipInformation[JsString](journeyId, SautrKey).map {
-      case Some(jsString) => Some(jsString.value)
-      case None => None
-    }
+    connector.retrievePartnershipInformation[String](journeyId, SautrKey)
 
   def removeSautr(journeyId: String)(implicit hc: HeaderCarrier): Future[SuccessfullyRemoved.type] =
     connector.removePartnershipInformation(journeyId, SautrKey)
 }
 
 
-object PartnerhsipInformationService {
+object PartnershipInformationService {
   val SautrKey: String = "sautr"
+  val PostCodeKey: String = "postcode"
 }

@@ -19,20 +19,19 @@ package uk.gov.hmrc.partnershipidentificationfrontend.views
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.libs.ws.WSResponse
-import uk.gov.hmrc.partnershipidentificationfrontend.assets.MessageLookup.{Base, BetaBanner, Header, CaptureSautr => messages}
+import uk.gov.hmrc.partnershipidentificationfrontend.assets.MessageLookup.{Base, BetaBanner, Header, CapturePostCode => messages}
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.{testDefaultServiceName, testSignOutUrl}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ViewSpecHelper.ElementExtensions
 
 
-trait CaptureSautrViewTests {
+trait CapturePostCodeViewTests {
   this: ComponentSpecHelper =>
 
+  def testCapturePostCodeView(result: => WSResponse, serviceName: String = testDefaultServiceName, hasErrors: Boolean = false): Unit = {
 
-  def testCaptureSautrView(result: => WSResponse, serviceName: String = testDefaultServiceName, hasErrors: Boolean = false): Unit = {
-
-    lazy val doc = Jsoup.parse(result.body)
+    lazy val doc: Document = Jsoup.parse(result.body)
 
     lazy val config = app.injector.instanceOf[AppConfig]
 
@@ -67,15 +66,8 @@ trait CaptureSautrViewTests {
       doc.getH1Elements.text mustBe messages.heading
     }
 
-    "have the correct first line" in {
-      doc.getParagraphs.get(1).text mustBe messages.line_1
-    }
-
-    "have a correct details element" in {
-      doc.getSpan("details-summary-text").text mustBe messages.line_2
-      doc.getParagraphs.get(2).text mustBe messages.details_line_1
-      doc.getParagraphs.get(3).text mustBe messages.details_line_2
-      doc.getParagraphs.get(4).text mustBe messages.details_line_3
+    "have the correct hint text" in {
+      doc.getHintText mustBe messages.hint
     }
 
     "have a save and continue button" in {
@@ -84,19 +76,35 @@ trait CaptureSautrViewTests {
 
   }
 
-  def testCaptureSautrViewWithErrorMessages(result: => WSResponse): Unit = {
+  def testCapturePostCodeViewWithNoPostCodeErrorMessages(result: => WSResponse): Unit = {
 
-    testCaptureSautrView(result, hasErrors = true)
+    testCapturePostCodeView(result, hasErrors = true)
 
     lazy val doc: Document = Jsoup.parse(result.body)
 
     "correctly display the error summary" in {
       doc.getErrorSummaryTitle.text mustBe Base.Error.title
-      doc.getErrorSummaryBody.text mustBe messages.Error.invalidSautrEntered
+      doc.getErrorSummaryBody.text mustBe messages.Error.noPostCodeEntered
     }
 
     "correctly display the field errors" in {
-      doc.getFieldErrorMessage.text mustBe Base.Error.error + messages.Error.invalidSautrEntered
+      doc.getFieldErrorMessage.text mustBe Base.Error.error + messages.Error.noPostCodeEntered
+    }
+  }
+
+  def testCapturePostCodeViewWithInvalidPostCodeErrorMessages(result: => WSResponse): Unit = {
+
+    testCapturePostCodeView(result, hasErrors = true)
+
+    lazy val doc: Document = Jsoup.parse(result.body)
+
+    "correctly display the error summary" in {
+      doc.getErrorSummaryTitle.text mustBe Base.Error.title
+      doc.getErrorSummaryBody.text mustBe messages.Error.invalidPostCodeEntered
+    }
+
+    "correctly display the field errors" in {
+      doc.getFieldErrorMessage.text mustBe Base.Error.error + messages.Error.invalidPostCodeEntered
     }
   }
 

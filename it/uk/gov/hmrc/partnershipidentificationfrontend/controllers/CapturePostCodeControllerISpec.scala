@@ -22,19 +22,19 @@ import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PageConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuthStub, PartnershipIdentificationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
-import uk.gov.hmrc.partnershipidentificationfrontend.views.CaptureSautrViewTests
+import uk.gov.hmrc.partnershipidentificationfrontend.views.CapturePostCodeViewTests
 
 
-class CaptureSautrControllerISpec extends ComponentSpecHelper
-  with CaptureSautrViewTests
+class CapturePostCodeControllerISpec extends ComponentSpecHelper
+  with CapturePostCodeViewTests
   with PartnershipIdentificationStub
   with AuthStub {
 
-  "GET /sa-utr" should {
+  "GET /self-assessment-postcode" should {
     lazy val result = {
       await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
       stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-      get(s"$baseUrl/$testJourneyId/sa-utr")
+      get(s"$baseUrl/$testJourneyId/self-assessment-postcode")
     }
 
     "return OK" in {
@@ -43,7 +43,7 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
 
     "return a view" when {
       "there is no serviceName passed in the journeyConfig" should {
-        testCaptureSautrView(result)
+        testCapturePostCodeView(result)
       }
 
       "there is a serviceName passed in the journeyConfig" should {
@@ -51,10 +51,10 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
           val config = testJourneyConfig.copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl))
           await(insertJourneyConfig(testJourneyId, testInternalId, config))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-          get(s"$baseUrl/$testJourneyId/sa-utr")
+          get(s"$baseUrl/$testJourneyId/self-assessment-postcode")
         }
 
-        testCaptureSautrView(result, testCallingServiceName)
+        testCapturePostCodeView(result, testCallingServiceName)
       }
     }
 
@@ -62,12 +62,12 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
       "the user is not logged in" in {
         lazy val result = {
           stubAuthFailure()
-          get(s"$baseUrl/$testJourneyId/sa-utr")
+          get(s"$baseUrl/$testJourneyId/self-assessment-postcode")
         }
 
         result must have {
           httpStatus(SEE_OTHER)
-          redirectUri(s"/bas-gateway/sign-in?continue_url=%2Fidentify-your-partnership%2F$testJourneyId%2Fsa-utr&origin=partnership-identification-frontend")
+          redirectUri(s"/bas-gateway/sign-in?continue_url=%2Fidentify-your-partnership%2F$testJourneyId%2Fself-assessment-postcode&origin=partnership-identification-frontend")
         }
       }
     }
@@ -76,7 +76,7 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
       "an internal id cannot be retrieved from auth" in {
         lazy val result = {
           stubAuth(OK, successfulAuthResponse(None))
-          get(s"$baseUrl/$testJourneyId/sa-utr")
+          get(s"$baseUrl/$testJourneyId/self-assessment-postcode")
         }
 
         result.status mustBe INTERNAL_SERVER_ERROR
@@ -84,49 +84,49 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
     }
   }
 
-  "POST /sa-utr" when {
-    "a valid sautr is submitted" should {
-      "store the sautr and redirect to Capture PostCode page" in {
+  "POST /self-assessment-postcode" when {
+    "a valid postcode is submitted" should {
+      "store the postcode and return NOT_IMPLEMENTED" in { // TODO update test name to "store postcode and redirect to CYA page"
         lazy val result: WSResponse = {
           await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-          stubStoreSautr(testJourneyId, testSautr)(OK)
-          post(s"$baseUrl/$testJourneyId/sa-utr")("sa-utr" -> testSautr)
+          stubStorePostCode(testJourneyId, testPostCode)(OK)
+          post(s"$baseUrl/$testJourneyId/self-assessment-postcode")("postcode" -> testPostCode)
         }
 
         result must have {
-          httpStatus(SEE_OTHER)
-          redirectUri(routes.CapturePostCodeController.show(testJourneyId).url)
+          httpStatus(NOT_IMPLEMENTED) // TODO change to SEE_OTHER when CYA page is developed
+          //redirectUri(routes.CheckYourAnswersController.show(testJourneyId).url) // TODO uncomment when CYA page is developed
         }
       }
     }
 
-    "no sautr is submitted" should {
+    "no postcode is submitted" should {
       lazy val result: WSResponse = {
         await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-        post(s"$baseUrl/$testJourneyId/sa-utr")("sa-utr" -> "")
+        post(s"$baseUrl/$testJourneyId/self-assessment-postcode")("postcode" -> "")
       }
 
       "return a bad request" in {
         result.status mustBe BAD_REQUEST
       }
 
-      testCaptureSautrViewWithErrorMessages(result)
+      testCapturePostCodeViewWithNoPostCodeErrorMessages(result)
     }
 
-    "an invalid sautr is submitted" should {
+    "an invalid postcode is submitted" should {
       lazy val result: WSResponse = {
         await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-        post(s"$baseUrl/$testJourneyId/sa-utr")("sa-utr" -> "123456789")
+        post(s"$baseUrl/$testJourneyId/self-assessment-postcode")("postcode" -> "AAA1 1AA")
       }
 
       "return a bad request" in {
         result.status mustBe BAD_REQUEST
       }
 
-      testCaptureSautrViewWithErrorMessages(result)
+      testCapturePostCodeViewWithInvalidPostCodeErrorMessages(result)
     }
   }
 

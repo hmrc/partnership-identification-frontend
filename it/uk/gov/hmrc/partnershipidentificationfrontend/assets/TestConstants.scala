@@ -16,13 +16,15 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.assets
 
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
+
 import java.util.UUID
 
 object TestConstants {
 
   val testJourneyId: String = UUID.randomUUID().toString
   val testSautr: String = "1234567890"
-  val testPostcode: String = "AA1 1AA"
+  val testPostCode: String = "AA11AA"
   val testContinueUrl: String = "/test"
   val testCredentialId: String = UUID.randomUUID().toString
   val GGProviderId: String = UUID.randomUUID().toString
@@ -33,5 +35,7 @@ object TestConstants {
   val testSignOutUrl: String = "Sign out"
   val testDefaultServiceName: String = "Entity Validation Service"
   val testCallingServiceName: String = "Test Service"
+
+  val testJourneyConfig: JourneyConfig = JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl))
 
 }

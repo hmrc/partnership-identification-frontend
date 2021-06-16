@@ -16,27 +16,27 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
-import play.api.mvc._
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.forms.CaptureSautrForm
+import uk.gov.hmrc.partnershipidentificationfrontend.forms.CapturePostCodeForm.postCodeForm
 import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipInformationService}
-import uk.gov.hmrc.partnershipidentificationfrontend.views.html.capture_sautr_page
+import uk.gov.hmrc.partnershipidentificationfrontend.views.html.capture_post_code_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CaptureSautrController @Inject()(mcc: MessagesControllerComponents,
-                                       view: capture_sautr_page,
-                                       partnershipInformationService: PartnershipInformationService,
-                                       journeyService: JourneyService,
-                                       val authConnector: AuthConnector
-                                      )(implicit val config: AppConfig,
-                                        executionContext: ExecutionContext) extends FrontendController(mcc) with AuthorisedFunctions {
+class CapturePostCodeController @Inject()(mcc: MessagesControllerComponents,
+                                          view: capture_post_code_page,
+                                          val authConnector: AuthConnector,
+                                          journeyService: JourneyService,
+                                          partnershipInformationService: PartnershipInformationService
+                                         )(implicit val config: AppConfig,
+                                           ec: ExecutionContext) extends FrontendController(mcc) with AuthorisedFunctions {
 
   def show(journeyId: String): Action[AnyContent] = Action.async {
     implicit request =>
@@ -44,7 +44,7 @@ class CaptureSautrController @Inject()(mcc: MessagesControllerComponents,
         case Some(authInternalId) =>
           journeyService.getJourneyConfig(journeyId, authInternalId).map {
             journeyConfig =>
-              Ok(view(journeyId, journeyConfig.pageConfig, routes.CaptureSautrController.submit(journeyId), CaptureSautrForm.form))
+              Ok(view(journeyConfig.pageConfig, routes.CapturePostCodeController.submit(journeyId), postCodeForm))
           }
         case _ =>
           throw new InternalServerException("Internal ID could not be retrieved from Auth")
@@ -57,32 +57,16 @@ class CaptureSautrController @Inject()(mcc: MessagesControllerComponents,
         case Some(authInternalId) =>
           journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
             journeyConfig =>
-              CaptureSautrForm.form.bindFromRequest().fold(
-                formWithErrors => {
+              postCodeForm.bindFromRequest.fold(
+                formWithErrors =>
                   Future.successful(
-                    BadRequest(view(journeyId, journeyConfig.pageConfig, routes.CaptureSautrController.submit(journeyId), formWithErrors))
-                  )
-                },
-                sautr =>
-                  partnershipInformationService.storeSautr(journeyId, sautr).map {
-                    _ => Redirect(routes.CapturePostCodeController.show(journeyId))
+                    BadRequest(view(journeyConfig.pageConfig, routes.CapturePostCodeController.submit(journeyId), formWithErrors))
+                  ),
+                postCode =>
+                  partnershipInformationService.storePostCode(journeyId, postCode).map {
+                    _ => NotImplemented
                   }
               )
-          }
-        case _ =>
-          throw new InternalServerException("Internal ID could not be retrieved from Auth")
-      }
-  }
-
-  def noSautr(journeyId: String): Action[AnyContent] = Action.async {
-    implicit request =>
-      authorised().retrieve(internalId) {
-        case Some(authInternalId) =>
-          journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
-            _ =>
-              partnershipInformationService.removeSautr(journeyId).map {
-                _ => NotImplemented //TODO update to check your answers
-              }
           }
         case _ =>
           throw new InternalServerException("Internal ID could not be retrieved from Auth")

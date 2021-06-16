@@ -19,19 +19,18 @@ package uk.gov.hmrc.partnershipidentificationfrontend.testonly.forms
 import play.api.data.Form
 import play.api.data.Forms.{mapping, text}
 import play.api.data.validation.Constraint
+import uk.gov.hmrc.partnershipidentificationfrontend.forms.utils.MappingUtil.optText
 import uk.gov.hmrc.partnershipidentificationfrontend.forms.utils.ValidationHelper.validate
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
-import uk.gov.hmrc.partnershipidentificationfrontend.forms.utils.MappingUtil.optText
 
 
 object TestCreateJourneyForm {
 
-  var continueUrl = "continueUrl"
+  val continueUrl = "continueUrl"
   val serviceName = "serviceName"
   val deskProServiceId = "deskProServiceId"
   val alphanumericRegex = "^[A-Z0-9]*$"
-  var signOutUrl = "signOutUrl"
-  var enableSautrCheck = "enableSautrCheck"
+  val signOutUrl = "signOutUrl"
 
   def continueUrlEmpty: Constraint[String] = Constraint("continue_url.not_entered")(
     continueUrl => validate(
@@ -69,4 +68,3 @@ object TestCreateJourneyForm {
   }
 
 }
-

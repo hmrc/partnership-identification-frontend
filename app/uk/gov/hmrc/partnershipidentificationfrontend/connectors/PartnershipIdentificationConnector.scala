@@ -28,13 +28,13 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PartnershipIdentificationConnector @Inject()(http: HttpClient,
                                                    appConfig: AppConfig
-                                                             )(implicit ec: ExecutionContext) extends HttpReadsInstances {
+                                                  )(implicit ec: ExecutionContext) extends HttpReadsInstances {
 
   def retrievePartnershipInformation[DataType](journeyId: String,
                                                dataKey: String
-                                                     )(implicit dataTypeReads: Reads[DataType],
-                                                       manifest: Manifest[DataType],
-                                                       hc: HeaderCarrier): Future[Option[DataType]] =
+                                              )(implicit dataTypeReads: Reads[DataType],
+                                                manifest: Manifest[DataType],
+                                                hc: HeaderCarrier): Future[Option[DataType]] =
     http.GET[Option[DataType]](s"${appConfig.partnershipInformationUrl(journeyId)}/$dataKey")
 
 
@@ -45,7 +45,7 @@ class PartnershipIdentificationConnector @Inject()(http: HttpClient,
 
   def removePartnershipInformation(journeyId: String,
                                    dataKey: String
-                                    )(implicit hc: HeaderCarrier): Future[SuccessfullyRemoved.type] =
+                                  )(implicit hc: HeaderCarrier): Future[SuccessfullyRemoved.type] =
     http.DELETE[SuccessfullyRemoved.type](s"${appConfig.partnershipInformationUrl(journeyId)}/$dataKey")(RemovePartnershipDetailsHttpReads, hc, ec)
 
 }

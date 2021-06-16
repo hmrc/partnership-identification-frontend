@@ -11,19 +11,27 @@ feedback.before                                             = This is a new serv
 feedback.link                                               = feedback
 feedback.after                                              = (opens in new tab) will help us to improve it.
 
-app.common.back                                             = Back
-## Base
+base.back                                                   = Back
 base.save_and_continue                                      = Save and continue
+base.getpagehelp.linkText                                   = Is this page not working properly?
+
 error.summary.title                                         = There is a problem
 error.title-prefix                                          = 'Error: '
 
-## SA-UTR Page
-sa-utr.title                                                = What is your Unique Taxpayer Reference?
-sa-utr.heading                                              = What is your Unique Taxpayer Reference?
-sa-utr.line_1                                               = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about Self Assessment. It may be called ‘reference’, ‘UTR’ or ‘official use’. You can <a href="https://www.gov.uk/find-lost-utr-number">find a lost UTR number.</a>
-sa-utr.line_2                                               = I do not have a Unique Taxpayer Reference
-sa-utr.details.line_1                                       = Your UTR helps us identify your partnership.
-sa-utr.details.line_2                                       = I cannot find my UTR
-sa-utr.details.line_3                                       = My partnership does not have a UTR
-sa-utr.error                                                = Enter a Unique Taxpayer Reference in the correct format
-getpagehelp.linkText                                        = Is this page not working properly?
+## Capture SA-UTR Page
+capture-sa-utr.title                                        = What is your Unique Taxpayer Reference?
+capture-sa-utr.heading                                      = What is your Unique Taxpayer Reference?
+capture-sa-utr.line_1                                       = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about Self Assessment. It may be called ‘reference’, ‘UTR’ or ‘official use’. You can <a href="https://www.gov.uk/find-lost-utr-number">find a lost UTR number.</a>
+capture-sa-utr.line_2                                       = I do not have a Unique Taxpayer Reference
+capture-sa-utr.details.line_1                               = Your UTR helps us identify your partnership.
+capture-sa-utr.details.line_2                                = I cannot find my UTR
+capture-sa-utr.details.line_3                               = My partnership does not have a UTR
+capture-sa-utr.error                                        = Enter a Unique Taxpayer Reference in the correct format
+
+## Capture PostCode Page
+capture-postcode.title                                      = What is the postcode where the partnership is registered for Self Assessment?
+capture-postcode.heading                                    = What is the postcode where the partnership is registered for Self Assessment?
+capture-postcode.hint_text                                  = For example, AB1 2YZ
+capture-postcode.error.not_entered                          = Enter the postcode where the partnership is registered for Self Assessment
+capture-postcode.error.invalid_format                       = Enter a valid postcode
+capture-postcode.error.invalid_characters                   = Enter a postcode using only letters and numbers
