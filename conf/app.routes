@@ -9,3 +9,5 @@ GET         /:journeyId/no-sa-utr                               uk.gov.hmrc.part
 
 GET         /:journeyId/self-assessment-postcode                uk.gov.hmrc.partnershipidentificationfrontend.controllers.CapturePostCodeController.show(journeyId: String)
 POST        /:journeyId/self-assessment-postcode                uk.gov.hmrc.partnershipidentificationfrontend.controllers.CapturePostCodeController.submit(journeyId: String)
+
+GET         /:journeyId/start-business-verification             uk.gov.hmrc.partnershipidentificationfrontend.controllers.BusinessVerificationController.startBusinessVerificationJourney(journeyId)

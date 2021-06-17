@@ -18,15 +18,15 @@ package uk.gov.hmrc.partnershipidentificationfrontend.service
 
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.{GatewayTimeoutException, HeaderCarrier}
-import uk.gov.hmrc.partnershipidentificationfrontend.connectors.mocks.MockPartnershipInformationConnector
+import uk.gov.hmrc.partnershipidentificationfrontend.connectors.mocks.MockPartnershipIdentificationConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.UnitSpec
 
 import scala.concurrent.Future
 
-class PartnershipInformationServiceSpec extends UnitSpec with MockPartnershipInformationConnector {
+class PartnershipIdentificationServiceSpec extends UnitSpec with MockPartnershipIdentificationConnector {
 
-  object TestService extends PartnershipInformationService(mockPartnershipInformationConnector)
+  object TestService extends PartnershipIdentificationService(mockPartnershipIdentificationConnector)
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 

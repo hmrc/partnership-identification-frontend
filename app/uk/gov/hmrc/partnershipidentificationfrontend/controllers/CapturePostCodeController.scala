@@ -22,7 +22,7 @@ import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.forms.CapturePostCodeForm.postCodeForm
-import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipInformationService}
+import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipIdentificationService}
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.capture_post_code_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -34,7 +34,7 @@ class CapturePostCodeController @Inject()(mcc: MessagesControllerComponents,
                                           view: capture_post_code_page,
                                           val authConnector: AuthConnector,
                                           journeyService: JourneyService,
-                                          partnershipInformationService: PartnershipInformationService
+                                          partnershipIdentificationService: PartnershipIdentificationService
                                          )(implicit val config: AppConfig,
                                            ec: ExecutionContext) extends FrontendController(mcc) with AuthorisedFunctions {
 
@@ -63,7 +63,7 @@ class CapturePostCodeController @Inject()(mcc: MessagesControllerComponents,
                     BadRequest(view(journeyConfig.pageConfig, routes.CapturePostCodeController.submit(journeyId), formWithErrors))
                   ),
                 postCode =>
-                  partnershipInformationService.storePostCode(journeyId, postCode).map {
+                  partnershipIdentificationService.storePostCode(journeyId, postCode).map {
                     _ => NotImplemented
                   }
               )

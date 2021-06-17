@@ -18,17 +18,23 @@ package uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config
 
 import play.api.inject.{Binding, Module}
 import play.api.{Configuration, Environment}
+import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.models.FeatureSwitch
 
 import javax.inject.Singleton
 
 @Singleton
 class FeatureSwitchingModule extends Module with FeatureSwitchRegistry {
 
-  val switches = Seq()
+  val switches = Seq(BusinessVerificationStub)
 
   override def bindings(environment: Environment, configuration: Configuration): Seq[Binding[_]] = {
     Seq(
       bind[FeatureSwitchRegistry].to(this).eagerly()
     )
   }
+}
+
+case object BusinessVerificationStub extends FeatureSwitch {
+  override val configName: String = "feature-switch.business-verification-stub"
+  override val displayName: String = "Use stub for Business Verification flow"
 }

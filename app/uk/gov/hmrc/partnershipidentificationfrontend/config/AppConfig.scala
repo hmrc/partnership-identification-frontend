@@ -17,18 +17,19 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.config
 
 import play.api.Configuration
+import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.{BusinessVerificationStub, FeatureSwitching}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class AppConfig @Inject()(config: Configuration,
-                          servicesConfig: ServicesConfig) {
+                          servicesConfig: ServicesConfig) extends FeatureSwitching {
 
   lazy val selfBaseUrl: String = servicesConfig.baseUrl("self")
   lazy val selfUrl: String = servicesConfig.getString("microservice.services.self.url")
 
-  val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
+  lazy val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
 
   lazy val timeToLiveSeconds: Long = servicesConfig.getString("mongodb.timeToLiveSeconds").toLong
 
@@ -63,5 +64,16 @@ class AppConfig @Inject()(config: Configuration,
 
   lazy val timeout: Int = servicesConfig.getInt("timeout.timeout")
   lazy val countdown: Int = servicesConfig.getInt("timeout.countdown")
+
+  private lazy val businessVerificationUrl = servicesConfig.getString("microservice.services.business-verification.url")
+
+  def createBusinessVerificationJourneyUrl: String = {
+    val baseUri = if (isEnabled(BusinessVerificationStub)) {
+      s"$selfBaseUrl/identify-your-partnership/test-only/business-verification"
+    } else
+      businessVerificationUrl
+
+    s"$baseUri/journey"
+  }
 
 }
