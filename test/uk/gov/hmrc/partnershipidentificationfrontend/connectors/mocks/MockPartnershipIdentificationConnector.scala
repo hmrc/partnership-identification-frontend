@@ -28,20 +28,20 @@ import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIden
 
 import scala.concurrent.Future
 
-trait MockPartnershipInformationConnector extends MockitoSugar with BeforeAndAfterEach {
+trait MockPartnershipIdentificationConnector extends MockitoSugar with BeforeAndAfterEach {
   self: Suite =>
 
-  val mockPartnershipInformationConnector: PartnershipIdentificationConnector = mock[PartnershipIdentificationConnector]
+  val mockPartnershipIdentificationConnector: PartnershipIdentificationConnector = mock[PartnershipIdentificationConnector]
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockPartnershipInformationConnector)
+    reset(mockPartnershipIdentificationConnector)
   }
 
   def mockRetrievePartnershipInformation[T](journeyId: String,
                                             dataKey: String
                                                   )(response: Future[Option[T]]): OngoingStubbing[_] =
-    when(mockPartnershipInformationConnector.retrievePartnershipInformation[T](
+    when(mockPartnershipIdentificationConnector.retrievePartnershipInformation[T](
       ArgumentMatchers.eq(journeyId),
       ArgumentMatchers.eq(dataKey)
     )(ArgumentMatchers.any[Reads[T]],
@@ -50,7 +50,7 @@ trait MockPartnershipInformationConnector extends MockitoSugar with BeforeAndAft
     )).thenReturn(response)
 
   def verifyRetrievePartnershipInformation[T](journeyId: String, dataKey: String): Unit =
-    verify(mockPartnershipInformationConnector).retrievePartnershipInformation[T](
+    verify(mockPartnershipIdentificationConnector).retrievePartnershipInformation[T](
       ArgumentMatchers.eq(journeyId),
       ArgumentMatchers.eq(dataKey)
     )(ArgumentMatchers.any[Reads[T]],
@@ -61,7 +61,7 @@ trait MockPartnershipInformationConnector extends MockitoSugar with BeforeAndAft
                        dataKey: String,
                        data: T
                       )(response: Future[SuccessfullyStored.type]): OngoingStubbing[_] =
-    when(mockPartnershipInformationConnector.storeData[T](
+    when(mockPartnershipIdentificationConnector.storeData[T](
       ArgumentMatchers.eq(journeyId),
       ArgumentMatchers.eq(dataKey),
       ArgumentMatchers.eq(data)
@@ -72,7 +72,7 @@ trait MockPartnershipInformationConnector extends MockitoSugar with BeforeAndAft
   def verifyStoreData[T](journeyId: String,
                          dataKey: String,
                          data: T): Unit =
-    verify(mockPartnershipInformationConnector).storeData(
+    verify(mockPartnershipIdentificationConnector).storeData(
       ArgumentMatchers.eq(journeyId),
       ArgumentMatchers.eq(dataKey),
       ArgumentMatchers.eq(data)

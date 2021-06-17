@@ -20,13 +20,14 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.PartnershipIdentificationConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.RemovePartnershipDetailsHttpParser.SuccessfullyRemoved
-import uk.gov.hmrc.partnershipidentificationfrontend.service.PartnershipInformationService._
+import uk.gov.hmrc.partnershipidentificationfrontend.models.BusinessVerificationStatus
+import uk.gov.hmrc.partnershipidentificationfrontend.service.PartnershipIdentificationService._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class PartnershipInformationService @Inject()(connector: PartnershipIdentificationConnector) {
+class PartnershipIdentificationService @Inject()(connector: PartnershipIdentificationConnector) {
 
   def storeSautr(journeyId: String,
                  sautr: String
@@ -38,6 +39,11 @@ class PartnershipInformationService @Inject()(connector: PartnershipIdentificati
                    )(implicit hc: HeaderCarrier): Future[SuccessfullyStored.type] =
     connector.storeData[String](journeyId, PostCodeKey, postCode)
 
+  def storeBusinessVerificationStatus(journeyId: String,
+                                      businessVerification: BusinessVerificationStatus
+                                     )(implicit hc: HeaderCarrier): Future[SuccessfullyStored.type] =
+    connector.storeData[BusinessVerificationStatus](journeyId, VerificationStatusKey, businessVerification)
+
   def retrieveSautr(journeyId: String)(implicit hc: HeaderCarrier): Future[Option[String]] =
     connector.retrievePartnershipInformation[String](journeyId, SautrKey)
 
@@ -46,7 +52,9 @@ class PartnershipInformationService @Inject()(connector: PartnershipIdentificati
 }
 
 
-object PartnershipInformationService {
+object PartnershipIdentificationService {
   val SautrKey: String = "sautr"
   val PostCodeKey: String = "postcode"
+  val VerificationStatusKey = "businessVerification"
+
 }

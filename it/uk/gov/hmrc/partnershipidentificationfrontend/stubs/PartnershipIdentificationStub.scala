@@ -17,8 +17,9 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.stubs
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.libs.json.JsString
-import uk.gov.hmrc.partnershipidentificationfrontend.utils.WiremockMethods
+import play.api.libs.json.{JsString, Json}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.BusinessVerificationStatus
+import uk.gov.hmrc.partnershipidentificationfrontend.utils.{WiremockHelper, WiremockMethods}
 
 trait PartnershipIdentificationStub extends WiremockMethods {
 
@@ -35,6 +36,22 @@ trait PartnershipIdentificationStub extends WiremockMethods {
       uri = s"/partnership-identification/journey/$journeyId/postcode", body = JsString(postCode)
     ).thenReturn(
       status = status
+    )
+
+  def stubStoreBusinessVerificationStatus(journeyId: String,
+                                          businessVerificationStatus: BusinessVerificationStatus
+                                         )(status: Int): StubMapping =
+    when(method = PUT,
+      uri = s"/partnership-identification/journey/$journeyId/businessVerification",
+      body = Json.toJson(businessVerificationStatus)
+    ).thenReturn(
+      status = status
+    )
+
+  def verifyStoreBusinessVerificationStatus(journeyId: String, businessVerificationStatus: BusinessVerificationStatus): Unit =
+    WiremockHelper.verifyPut(
+      uri = s"/partnership-identification/journey/$journeyId/businessVerification",
+      optBody = Some(Json.toJson(businessVerificationStatus).toString())
     )
 
   def stubRetrieveSautr(journeyId: String)(status: Int, body: String = ""): StubMapping = {

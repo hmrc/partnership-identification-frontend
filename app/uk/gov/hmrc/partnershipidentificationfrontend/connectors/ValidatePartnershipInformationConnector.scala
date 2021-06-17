@@ -16,11 +16,10 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 
-import play.api.libs.json.JsObject
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipInformation
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.ValidatePartnershipInformationHttpParser._
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipInformation
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

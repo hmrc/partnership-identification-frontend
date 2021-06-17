@@ -22,7 +22,7 @@ import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.forms.CaptureSautrForm
-import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipInformationService}
+import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipIdentificationService}
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.capture_sautr_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CaptureSautrController @Inject()(mcc: MessagesControllerComponents,
                                        view: capture_sautr_page,
-                                       partnershipInformationService: PartnershipInformationService,
+                                       partnershipIdentificationService: PartnershipIdentificationService,
                                        journeyService: JourneyService,
                                        val authConnector: AuthConnector
                                       )(implicit val config: AppConfig,
@@ -64,7 +64,7 @@ class CaptureSautrController @Inject()(mcc: MessagesControllerComponents,
                   )
                 },
                 sautr =>
-                  partnershipInformationService.storeSautr(journeyId, sautr).map {
+                  partnershipIdentificationService.storeSautr(journeyId, sautr).map {
                     _ => Redirect(routes.CapturePostCodeController.show(journeyId))
                   }
               )
@@ -80,7 +80,7 @@ class CaptureSautrController @Inject()(mcc: MessagesControllerComponents,
         case Some(authInternalId) =>
           journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
             _ =>
-              partnershipInformationService.removeSautr(journeyId).map {
+              partnershipIdentificationService.removeSautr(journeyId).map {
                 _ => NotImplemented //TODO update to check your answers
               }
           }
