@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.assets
 
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig, PartnershipInformation}
 
 import java.util.UUID
 
@@ -37,5 +37,7 @@ object TestConstants {
   val testCallingServiceName: String = "Test Service"
 
   val testJourneyConfig: JourneyConfig = JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl))
+
+  val testPartnershipInformation: PartnershipInformation = PartnershipInformation(testPostCode, Some(testSautr))
 
 }
