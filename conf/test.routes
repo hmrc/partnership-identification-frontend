@@ -10,3 +10,5 @@ POST       /create-journey                                                      
 
 + nocsrf
 POST       /business-verification/journey                                                   uk.gov.hmrc.partnershipidentificationfrontend.testonly.stubs.controllers.BusinessVerificationStubController.createBusinessVerificationJourney
+GET        /business-verification/journey/:journeyId/status                                 uk.gov.hmrc.partnershipidentificationfrontend.testonly.stubs.controllers.BusinessVerificationStubController.retrieveVerificationResult(journeyId)
+

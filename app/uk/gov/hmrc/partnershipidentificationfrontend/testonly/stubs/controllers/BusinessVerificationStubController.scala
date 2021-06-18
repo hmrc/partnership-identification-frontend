@@ -17,7 +17,7 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.testonly.stubs.controllers
 
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, InjectedController}
+import play.api.mvc.{Action, AnyContent, InjectedController}
 
 import java.util.UUID
 import javax.inject.Singleton
@@ -37,6 +37,19 @@ class BusinessVerificationStubController extends InjectedController {
           "redirectUri" -> (continueUrl + s"?journeyId=$businessVerificationJourneyId")
         ))
       }
+  }
+
+  def retrieveVerificationResult(businessVerificationJourneyId: String): Action[AnyContent] = Action.async {
+    Future.successful {
+      Ok(Json.obj(
+        "journeyType" -> "BUSINESS_VERIFICATION",
+        "origin" -> "vat",
+        "identifier" -> {
+          "saUtr" -> "1234567890"
+        },
+        "verificationStatus" -> "PASS"
+      ))
+    }
   }
 
 }

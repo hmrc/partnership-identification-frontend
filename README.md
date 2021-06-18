@@ -1,5 +1,5 @@
 
-# partnership-identification-frontend
+# Partnership Identification Frontend
 
 This is a Scala/Play frontend to allow Partnerships to provide their information to HMRC.
 
@@ -14,17 +14,25 @@ This is a Scala/Play frontend to allow Partnerships to provide their information
 3. Run the frontend locally using
    `sbt 'run 9722 -Dapplication.router=testOnlyDoNotUseInAppConf.Routes'`
 
+### Testing
+See the TestREADME for more information on how to use our stubs for testing
+
 ## End-Points
 ### POST /journey
 
 ---
 Creates a new journey, storing the journeyConfig against the journeyId.
 #### Request:
-Request body must contain the continueUrl.
+optServiceName will default to `Entity Validation Service` if the field is not provided.
+
+All other fields must be provided.
 
 ```
 {
-  "continueUrl" : "/testUrl"
+   "continueUrl" : "/test",
+   "optServiceName" : "Service Name",
+   "deskProServiceId" : "abc",
+   "signOutUrl" : "/sign-out",
 }
 ```
 
@@ -36,16 +44,7 @@ Example Response body:
 ```
 {“journeyStartUrl” : "/testUrl"}
 ```
-### Test End-Points
 
-#### GET/POST test-only/create-journey
-
----
-This is a test entry point which simulates a service making the initial call to setup a journey.
-
-1. ContinueURL(Required)
-
-   - Where to redirect the user after the journey has been completed
    
 ### License
 

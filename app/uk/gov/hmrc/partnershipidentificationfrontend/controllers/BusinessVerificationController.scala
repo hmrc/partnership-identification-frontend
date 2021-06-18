@@ -49,6 +49,23 @@ class BusinessVerificationController @Inject()(mcc: MessagesControllerComponents
       }
   }
 
+  def retrieveBusinessVerificationResult(journeyId: String): Action[AnyContent] = Action.async {
+    implicit req =>
+      authorised() {
+        req.getQueryString("journeyId") match {
+          case Some(businessVerificationJourneyId) =>
+            businessVerificationService.retrieveBusinessVerificationStatus(businessVerificationJourneyId).flatMap {
+              verificationStatus =>
+                partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, verificationStatus).map {
+                  _ => NotImplemented //Update once integrated with Register API
+                }
+            }
+          case None =>
+            throw new InternalServerException("JourneyID is missing from Business Verification callback")
+        }
+      }
+  }
+
 
 
 }
