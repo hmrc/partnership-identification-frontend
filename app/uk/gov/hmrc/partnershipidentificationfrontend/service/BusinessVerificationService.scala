@@ -17,7 +17,7 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.service
 
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
-import uk.gov.hmrc.partnershipidentificationfrontend.connectors.CreateBusinessVerificationJourneyConnector
+import uk.gov.hmrc.partnershipidentificationfrontend.connectors.{CreateBusinessVerificationJourneyConnector, RetrieveBusinessVerificationStatusConnector}
 import uk.gov.hmrc.partnershipidentificationfrontend.models._
 
 import javax.inject.{Inject, Singleton}
@@ -25,6 +25,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class BusinessVerificationService @Inject()(createBusinessVerificationJourneyConnector: CreateBusinessVerificationJourneyConnector,
+                                            retrieveBusinessVerificationStatusConnector: RetrieveBusinessVerificationStatusConnector,
                                             partnershipIdentificationService: PartnershipIdentificationService
                                            )(implicit val executionContext: ExecutionContext) {
 
@@ -42,5 +43,8 @@ class BusinessVerificationService @Inject()(createBusinessVerificationJourneyCon
         }
       }
     }
+
+  def retrieveBusinessVerificationStatus(businessVerificationJourneyId: String)(implicit hc: HeaderCarrier): Future[BusinessVerificationStatus] =
+    retrieveBusinessVerificationStatusConnector.retrieveBusinessVerificationStatus(businessVerificationJourneyId)
 
 }

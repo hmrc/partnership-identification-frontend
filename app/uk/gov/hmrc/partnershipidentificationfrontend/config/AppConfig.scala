@@ -76,4 +76,13 @@ class AppConfig @Inject()(config: Configuration,
     s"$baseUri/journey"
   }
 
+  def getBusinessVerificationResultUrl(journeyId: String): String = {
+    val baseUri = if (isEnabled(BusinessVerificationStub)) {
+      s"$selfBaseUrl/identify-your-partnership/test-only/business-verification"
+    } else
+      businessVerificationUrl
+
+    s"$baseUri/journey/$journeyId/status"
+  }
+
 }

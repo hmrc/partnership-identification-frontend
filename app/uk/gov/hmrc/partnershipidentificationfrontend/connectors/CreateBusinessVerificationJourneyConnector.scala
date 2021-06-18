@@ -22,6 +22,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse, Int
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.CreateBusinessVerificationJourneyConnector.BusinessVerificationHttpReads
 import uk.gov.hmrc.partnershipidentificationfrontend.models._
+import uk.gov.hmrc.partnershipidentificationfrontend.controllers.routes
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,7 +44,7 @@ class CreateBusinessVerificationJourneyConnector @Inject()(http: HttpClient,
           Json.obj(
             "saUtr" -> sautr
           )),
-        "continueUrl" -> "" // TODO implement redirect route to retrieve BV status
+        "continueUrl" -> routes.BusinessVerificationController.retrieveBusinessVerificationResult(journeyId).url
       )
 
     http.POST[JsObject, Either[JourneyCreationFailure, JourneyCreated]](appConfig.createBusinessVerificationJourneyUrl, jsonBody)(

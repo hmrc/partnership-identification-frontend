@@ -18,6 +18,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.stubs
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.{JsObject, Json}
+import uk.gov.hmrc.partnershipidentificationfrontend.controllers.routes
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.WiremockMethods
 
 trait BusinessVerificationStub extends WiremockMethods {
@@ -34,7 +35,7 @@ trait BusinessVerificationStub extends WiremockMethods {
           "saUtr" -> sautr
         )
       ),
-      "continueUrl" -> "" //TODO implement redirect to retrieve bv status
+      "continueUrl" -> routes.BusinessVerificationController.retrieveBusinessVerificationResult(journeyId).url
     )
 
     when(method = POST, uri = "/business-verification/journey", postBody)
@@ -43,6 +44,15 @@ trait BusinessVerificationStub extends WiremockMethods {
         body = body
       )
   }
+
+  def stubRetrieveBusinessVerificationResult(journeyId: String)
+                                            (status: Int,
+                                             body: JsObject = Json.obj()): StubMapping =
+    when(method = GET, uri = s"/business-verification/journey/$journeyId/status")
+      .thenReturn(
+        status = status,
+        body = body
+      )
 
   def stubCreateBusinessVerificationJourneyFromStub(sautr: String,
                                                     journeyId: String
@@ -56,7 +66,7 @@ trait BusinessVerificationStub extends WiremockMethods {
           "saUtr" -> sautr
         )
       ),
-      "continueUrl" -> "" // TODO implement redirect to retrieve bv status
+      "continueUrl" -> routes.BusinessVerificationController.retrieveBusinessVerificationResult(journeyId).url
     )
 
     when(method = POST, uri = "/identify-your-partnership/test-only/business-verification/journey", postBody)
@@ -65,6 +75,15 @@ trait BusinessVerificationStub extends WiremockMethods {
         body = body
       )
   }
+
+  def stubRetrieveBusinessVerificationResultFromStub(journeyId: String)
+                                                    (status: Int,
+                                                     body: JsObject = Json.obj()): StubMapping =
+    when(method = GET, uri = s"/identify-your-partnership/test-only/business-verification/journey/$journeyId/status")
+      .thenReturn(
+        status = status,
+        body = body
+      )
 
 }
 

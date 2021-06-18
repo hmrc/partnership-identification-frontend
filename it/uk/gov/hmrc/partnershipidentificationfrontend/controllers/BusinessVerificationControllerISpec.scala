@@ -143,4 +143,61 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
       }
     }
   }
+
+  "GET /business-verification-result" when {
+    s"the $BusinessVerificationStub feature switch is enabled" should {
+      "return Not Implemented if BV status is stored successfully" in {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+        enable(BusinessVerificationStub)
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrieveBusinessVerificationResultFromStub(testBusinessVerificationJourneyId)(OK, Json.obj("verificationStatus" -> "PASS"))
+        stubStoreBusinessVerificationStatus(journeyId = testJourneyId, businessVerificationStatus = BusinessVerificationPass)(status = OK)
+
+        lazy val result = get(s"$baseUrl/$testJourneyId/business-verification-result" + s"?journeyId=$testBusinessVerificationJourneyId")
+
+        result must have(
+          httpStatus(NOT_IMPLEMENTED)//, TODO implement registration controller
+          // redirectUri(routes.RegistrationController.register(testJourneyId).url))
+        )
+        verifyStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationPass)
+      }
+
+      "throw an exception when the query string is missing" in {
+        enable(BusinessVerificationStub)
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrieveBusinessVerificationResultFromStub(testBusinessVerificationJourneyId)(OK, Json.obj("verificationStatus" -> "PASS"))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+
+        lazy val result = get(s"$baseUrl/$testJourneyId/business-verification-result")
+
+        result.status mustBe INTERNAL_SERVER_ERROR
+      }
+    }
+
+    s"the $BusinessVerificationStub feature switch is disabled" should {
+      "return Not Implemented if BV status is stored successfully" in {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrieveBusinessVerificationResult(testBusinessVerificationJourneyId)(OK, Json.obj("verificationStatus" -> "PASS"))
+        stubStoreBusinessVerificationStatus(journeyId = testJourneyId, businessVerificationStatus = BusinessVerificationPass)(status = OK)
+
+        lazy val result = get(s"$baseUrl/$testJourneyId/business-verification-result" + s"?journeyId=$testBusinessVerificationJourneyId")
+
+        result must have(
+          httpStatus(NOT_IMPLEMENTED) //, TODO implement registration controller
+          // redirectUri(routes.RegistrationController.register(testJourneyId).url)
+        )
+        verifyStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationPass)
+      }
+
+      "throw an exception when the query string is missing" in {
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrieveBusinessVerificationResult(testBusinessVerificationJourneyId)(OK, Json.obj("verificationStatus" -> "PASS"))
+
+        lazy val result = get(s"$baseUrl/$testJourneyId/business-verification-result")
+
+        result.status mustBe INTERNAL_SERVER_ERROR
+      }
+    }
+  }
 }
