@@ -17,14 +17,14 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.api.controllers
 
 import play.api.libs.json.Json
-import play.api.mvc.{Action, ControllerComponents}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.controllers.{routes => controllerRoutes}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.service.JourneyService
+import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipIdentificationService}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
@@ -34,7 +34,8 @@ import scala.concurrent.ExecutionContext
 class JourneyController @Inject()(controllerComponents: ControllerComponents,
                                   journeyService: JourneyService,
                                   val authConnector: AuthConnector,
-                                  appConfig: AppConfig
+                                  appConfig: AppConfig,
+                                  partnershipIdentificationService: PartnershipIdentificationService
                                  )(implicit ec: ExecutionContext) extends BackendController(controllerComponents) with AuthorisedFunctions {
 
   def createJourney(): Action[JourneyConfig] = Action.async(parse.json[JourneyConfig]) {
@@ -49,6 +50,18 @@ class JourneyController @Inject()(controllerComponents: ControllerComponents,
           }
         case _ =>
           throw new InternalServerException("Internal ID could not be retrieved from Auth")
+      }
+  }
+
+  def retrieveJourneyData(journeyId: String): Action[AnyContent] = Action.async {
+    implicit req =>
+      authorised() {
+        partnershipIdentificationService.retrievePartnershipDetails(journeyId).map {
+          case Some(journeyData) =>
+            Ok(Json.toJson(journeyData))
+          case None =>
+            NotFound
+        }
       }
   }
 

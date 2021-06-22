@@ -16,12 +16,26 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{JsPath, OFormat, OWrites, Reads}
 
 case class PartnershipInformation(postcode: String, optSautr: Option[String])
 
-object PartnershipInformation{
+object PartnershipInformation {
 
-  implicit val format: OFormat[PartnershipInformation] = Json.format[PartnershipInformation]
+  private val SautrKey = "sautr"
+  private val PostcodeKey = "postcode"
+
+  val reads: Reads[PartnershipInformation] = (
+    (JsPath \ PostcodeKey).read[String] and
+      (JsPath \ SautrKey).readNullable[String]
+    ) (PartnershipInformation.apply _)
+
+  val writes: OWrites[PartnershipInformation] = (
+    (JsPath \ PostcodeKey).write[String] and
+      (JsPath \ SautrKey).writeNullable[String]
+    ) (unlift(PartnershipInformation.unapply))
+
+  implicit val format: OFormat[PartnershipInformation] = OFormat(reads, writes)
 
 }

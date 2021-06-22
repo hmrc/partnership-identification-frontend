@@ -19,8 +19,9 @@ package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 import play.api.libs.json.{Reads, Writes}
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser._
+import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.RemovePartnershipDetailsHttpParser.{RemovePartnershipDetailsHttpReads, SuccessfullyRemoved}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipInformation
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,6 +38,9 @@ class PartnershipIdentificationConnector @Inject()(http: HttpClient,
                                                 hc: HeaderCarrier): Future[Option[DataType]] =
     http.GET[Option[DataType]](s"${appConfig.partnershipInformationUrl(journeyId)}/$dataKey")
 
+  def retrievePartnershipInformation(journeyId: String
+                                    )(implicit hc: HeaderCarrier): Future[Option[PartnershipInformation]] =
+    http.GET[Option[PartnershipInformation]](appConfig.partnershipInformationUrl(journeyId))
 
   def storeData[DataType](journeyId: String, dataKey: String, data: DataType
                          )(implicit dataTypeWriter: Writes[DataType], hc: HeaderCarrier): Future[SuccessfullyStored.type] = {

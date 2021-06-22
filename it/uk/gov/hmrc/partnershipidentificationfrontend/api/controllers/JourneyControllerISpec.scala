@@ -18,11 +18,11 @@ package uk.gov.hmrc.partnershipidentificationfrontend.api.controllers
 
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.{testDeskProServiceId, testInternalId, testJourneyId, testSignOutUrl}
+import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
+import uk.gov.hmrc.partnershipidentificationfrontend.controllers.{routes => appRoutes}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuthStub, JourneyStub, PartnershipIdentificationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
-import uk.gov.hmrc.partnershipidentificationfrontend.controllers.{routes => appRoutes}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -66,6 +66,50 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
       lazy val result = post("/partnership-identification/api/journey", Json.toJson(testJourneyConfig))
 
       result.status mustBe SEE_OTHER
+    }
+  }
+
+  "GET /api/journey/:journeyId" should {
+    "return captured data" when {
+      "the journeyId exists" in {
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrievePartnershipDetails(testJourneyId)(
+          status = OK,
+          body = testPartnershipInformationJson
+        )
+
+        lazy val result = get(s"/partnership-identification/api/journey/$testJourneyId")
+
+        result.status mustBe OK
+        result.json mustBe Json.toJsObject(testPartnershipInformation)
+      }
+    }
+
+    "return not found" when {
+      "the journey Id does not exist" in {
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrievePartnershipDetails(testJourneyId)(status = NOT_FOUND)
+
+        lazy val result = get(s"/partnership-identification/api/journey/$testJourneyId")
+
+        result.status mustBe NOT_FOUND
+      }
+    }
+
+    "redirect to Sign In Page" when {
+      "the user is not signed in" in {
+        stubAuthFailure()
+
+        lazy val result = get(s"/partnership-identification/api/journey/$testJourneyId")
+
+        result must have(
+          httpStatus(SEE_OTHER),
+          redirectUri("/bas-gateway/sign-in" +
+            s"?continue_url=%2Fpartnership-identification%2Fapi%2Fjourney%2F$testJourneyId" +
+            "&origin=partnership-identification-frontend"
+          )
+        )
+      }
     }
   }
 

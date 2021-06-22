@@ -1,2 +1,3 @@
 + nocsrf
 POST       /journey                                         uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.JourneyController.createJourney
+GET        /journey/:journeyId                              uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.JourneyController.retrieveJourneyData(journeyId: String)

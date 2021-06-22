@@ -86,7 +86,7 @@ class CapturePostCodeControllerISpec extends ComponentSpecHelper
 
   "POST /self-assessment-postcode" when {
     "a valid postcode is submitted" should {
-      "store the postcode and return NOT_IMPLEMENTED" in { // TODO update test name to "store postcode and redirect to CYA page"
+      "store the postcode and redirect to the Check Your Answers page" in {
         lazy val result: WSResponse = {
           await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
@@ -95,8 +95,8 @@ class CapturePostCodeControllerISpec extends ComponentSpecHelper
         }
 
         result must have {
-          httpStatus(NOT_IMPLEMENTED) // TODO change to SEE_OTHER when CYA page is developed
-          //redirectUri(routes.CheckYourAnswersController.show(testJourneyId).url) // TODO uncomment when CYA page is developed
+          httpStatus(SEE_OTHER)
+          redirectUri(routes.CheckYourAnswersController.show(testJourneyId).url)
         }
       }
     }

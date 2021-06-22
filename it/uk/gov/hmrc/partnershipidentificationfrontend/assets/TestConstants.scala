@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.assets
 
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig, PartnershipInformation}
 
 import java.util.UUID
@@ -38,6 +39,13 @@ object TestConstants {
   val testCallingServiceName: String = "Test Service"
 
   val testJourneyConfig: JourneyConfig = JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl))
+
+  val testPartnershipInformationJson: JsObject = {
+    Json.obj(
+      "sautr" -> testSautr,
+      "postcode" -> testPostCode
+    )
+  }
 
   val testPartnershipInformation: PartnershipInformation = PartnershipInformation(testPostCode, Some(testSautr))
 

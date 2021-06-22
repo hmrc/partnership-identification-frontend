@@ -17,7 +17,7 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.stubs
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.libs.json.{JsString, Json}
+import play.api.libs.json.{JsString, JsValue, Json}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.BusinessVerificationStatus
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.{WiremockHelper, WiremockMethods}
 
@@ -62,4 +62,13 @@ trait PartnershipIdentificationStub extends WiremockMethods {
       body = JsString(body)
     )
   }
+
+  def stubRetrievePartnershipDetails(journeyId: String)(status: Int, body: JsValue = Json.obj()): StubMapping =
+    when(method = GET,
+      uri = s"/partnership-identification/journey/$journeyId"
+    ).thenReturn(
+      status = status,
+      body = body
+    )
+
 }
