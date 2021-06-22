@@ -52,6 +52,7 @@ object MessageLookup {
     object Error {
       val invalidSautrEntered = "Enter a Unique Taxpayer Reference in the correct format"
     }
+
   }
 
   object CapturePostCode {
@@ -64,5 +65,14 @@ object MessageLookup {
       val invalidPostCodeEntered = "Enter a valid postcode"
       val invalidCharactersEntered = "Enter a postcode using only letters and numbers"
     }
+
   }
+
+  object CheckYourAnswers {
+    val title = "Check your answers"
+    val heading = "Check your answers"
+    val sautr = "Unique Taxpayers Reference"
+    val postCode = "Postcode"
+  }
+
 }

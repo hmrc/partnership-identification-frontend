@@ -21,30 +21,37 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.forms.CapturePostCodeForm.postCodeForm
 import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipIdentificationService}
-import uk.gov.hmrc.partnershipidentificationfrontend.views.html.capture_post_code_page
+import uk.gov.hmrc.partnershipidentificationfrontend.views.html.check_your_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class CapturePostCodeController @Inject()(mcc: MessagesControllerComponents,
-                                          view: capture_post_code_page,
-                                          val authConnector: AuthConnector,
-                                          journeyService: JourneyService,
-                                          partnershipIdentificationService: PartnershipIdentificationService
-                                         )(implicit val config: AppConfig,
-                                           ec: ExecutionContext) extends FrontendController(mcc) with AuthorisedFunctions {
+class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
+                                           view: check_your_answers_page,
+                                           val authConnector: AuthConnector,
+                                           journeyService: JourneyService,
+                                           partnershipInformationService: PartnershipIdentificationService
+                                          )(implicit val config: AppConfig, executionContext: ExecutionContext)
+  extends FrontendController(mcc) with AuthorisedFunctions {
 
   def show(journeyId: String): Action[AnyContent] = Action.async {
     implicit request =>
       authorised().retrieve(internalId) {
         case Some(authInternalId) =>
-          journeyService.getJourneyConfig(journeyId, authInternalId).map {
+          journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
             journeyConfig =>
-              Ok(view(journeyConfig.pageConfig, routes.CapturePostCodeController.submit(journeyId), postCodeForm))
+              partnershipInformationService.retrievePartnershipInformation(journeyId).map {
+                case Some(partnershipInformation) => Ok(view(
+                  journeyId,
+                  journeyConfig.pageConfig,
+                  routes.CheckYourAnswersController.submit(journeyId),
+                  partnershipInformation
+                ))
+                case _ => throw new InternalServerException(s"No data stored for journeyId: $journeyId")
+              }
           }
         case _ =>
           throw new InternalServerException("Internal ID could not be retrieved from Auth")
@@ -57,20 +64,15 @@ class CapturePostCodeController @Inject()(mcc: MessagesControllerComponents,
         case Some(authInternalId) =>
           journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
             journeyConfig =>
-              postCodeForm.bindFromRequest.fold(
-                formWithErrors =>
-                  Future.successful(
-                    BadRequest(view(journeyConfig.pageConfig, routes.CapturePostCodeController.submit(journeyId), formWithErrors))
-                  ),
-                postCode =>
-                  partnershipIdentificationService.storePostCode(journeyId, postCode).map {
-                    _ => Redirect(routes.CheckYourAnswersController.show(journeyId))
-                  }
-              )
+              partnershipInformationService.retrievePartnershipInformation(journeyId).map {
+                case Some(_) => Redirect(journeyConfig.continueUrl + s"?journeyId=$journeyId")
+                case _ =>
+                  throw new InternalServerException(s"No data stored for journeyId: $journeyId")
+              }
           }
         case _ =>
           throw new InternalServerException("Internal ID could not be retrieved from Auth")
       }
   }
-
 }
+

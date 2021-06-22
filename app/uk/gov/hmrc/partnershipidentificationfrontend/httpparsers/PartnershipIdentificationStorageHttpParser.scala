@@ -20,6 +20,7 @@ import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HttpReads, HttpResponse, InternalServerException}
 
 object PartnershipIdentificationStorageHttpParser {
+
   case object SuccessfullyStored
 
   implicit object PartnershipIdentificationStorageHttpReads extends HttpReads[SuccessfullyStored.type] {

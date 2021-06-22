@@ -20,7 +20,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.PartnershipIdentificationConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.RemovePartnershipDetailsHttpParser.SuccessfullyRemoved
-import uk.gov.hmrc.partnershipidentificationfrontend.models.BusinessVerificationStatus
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, PartnershipInformation}
 import uk.gov.hmrc.partnershipidentificationfrontend.service.PartnershipIdentificationService._
 
 import javax.inject.{Inject, Singleton}
@@ -44,13 +44,21 @@ class PartnershipIdentificationService @Inject()(connector: PartnershipIdentific
                                      )(implicit hc: HeaderCarrier): Future[SuccessfullyStored.type] =
     connector.storeData[BusinessVerificationStatus](journeyId, VerificationStatusKey, businessVerification)
 
+  def retrievePartnershipDetails(journeyId: String)(implicit hc: HeaderCarrier): Future[Option[PartnershipInformation]] =
+    connector.retrievePartnershipInformation(journeyId)
+
   def retrieveSautr(journeyId: String)(implicit hc: HeaderCarrier): Future[Option[String]] =
     connector.retrievePartnershipInformation[String](journeyId, SautrKey)
 
+  def retrievePostCode(journeyId: String)(implicit hc: HeaderCarrier): Future[Option[String]] =
+    connector.retrievePartnershipInformation[String](journeyId, PostCodeKey)
+
   def removeSautr(journeyId: String)(implicit hc: HeaderCarrier): Future[SuccessfullyRemoved.type] =
     connector.removePartnershipInformation(journeyId, SautrKey)
-}
 
+  def retrievePartnershipInformation(journeyId: String)(implicit hc: HeaderCarrier): Future[Option[PartnershipInformation]] =
+    connector.retrievePartnershipInformation(journeyId)
+}
 
 object PartnershipIdentificationService {
   val SautrKey: String = "sautr"

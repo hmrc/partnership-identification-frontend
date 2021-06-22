@@ -14,6 +14,8 @@ feedback.after                                              = (opens in new tab)
 base.back                                                   = Back
 base.save_and_continue                                      = Save and continue
 base.getpagehelp.linkText                                   = Is this page not working properly?
+base.confirm_and_continue                                   = Confirm and continue
+base.change                                                 = Change
 
 error.summary.title                                         = There is a problem
 error.title-prefix                                          = 'Error: '
@@ -35,3 +37,9 @@ capture-postcode.hint_text                                  = For example, AB1 2
 capture-postcode.error.not_entered                          = Enter the postcode where the partnership is registered for Self Assessment
 capture-postcode.error.invalid_format                       = Enter a valid postcode
 capture-postcode.error.invalid_characters                   = Enter a postcode using only letters and numbers
+
+## Check Your Answers Page
+check-your-answers.title                                    = Check your answers
+check-your-answers.heading                                  = Check your answers
+check-your-answers.sautr                                    = Unique Taxpayers Reference
+check-your-answers.postcode                                 = Postcode

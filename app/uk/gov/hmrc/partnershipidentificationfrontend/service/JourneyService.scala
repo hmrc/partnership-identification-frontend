@@ -41,5 +41,6 @@ class JourneyService @Inject()(journeyConnector: JourneyConnector,
       case None =>
         throw new NotFoundException(s"Journey config was not found for journey ID $journeyId")
     }
+
 }
 
