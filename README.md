@@ -45,6 +45,29 @@ Example Response body:
 {“journeyStartUrl” : "/testUrl"}
 ```
 
+#### GET /journey/:journeyId
+
+---
+Retrieves all the journey data that is stored against a specific journeyID.
+#### Request:
+A valid journeyId must be sent in the URI
+
+#### Response:
+Status:
+
+| Expected Response                       | Reason
+|-----------------------------------------|------------------------------
+| ```OK(200)```                           |  ```JourneyId exists```
+| ```NOT_FOUND(404)```                    | ```JourneyId doesn't exist```
+
+Example response body:
+```
+{
+   "sautr": "1234567890",
+   "postcode": "AA11AA"
+   "identifiersMatch": true
+}
+```
    
 ### License
 

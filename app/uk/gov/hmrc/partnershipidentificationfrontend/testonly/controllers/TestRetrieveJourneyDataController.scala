@@ -34,7 +34,7 @@ class TestRetrieveJourneyDataController @Inject()(messagesControllerComponents: 
   def retrievePartnershipDetails(journeyId: String): Action[AnyContent] = Action.async {
     implicit request =>
       authorised() {
-        partnershipIdentificationConnector.retrievePartnershipInformation(journeyId).map {
+        partnershipIdentificationConnector.retrievePartnershipFullJourneyData(journeyId).map {
           case Some(journeyData) =>
             Ok(Json.toJsObject(journeyData))
           case None =>

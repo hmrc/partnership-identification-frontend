@@ -75,13 +75,13 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(
           status = OK,
-          body = testPartnershipInformationJson
+          body = testPartnershipFullJourneyDataJson
         )
 
         lazy val result = get(s"/partnership-identification/api/journey/$testJourneyId")
 
         result.status mustBe OK
-        result.json mustBe Json.toJsObject(testPartnershipInformation)
+        result.json mustBe Json.toJsObject(testPartnershipFullJourneyData)
       }
     }
 

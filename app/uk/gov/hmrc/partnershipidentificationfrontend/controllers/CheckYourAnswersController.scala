@@ -21,7 +21,8 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipIdentificationService}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{PartnershipInformation, ValidatePartnershipInformationModel}
+import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipIdentificationService, ValidatePartnershipInformationService}
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.check_your_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -33,7 +34,8 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
                                            view: check_your_answers_page,
                                            val authConnector: AuthConnector,
                                            journeyService: JourneyService,
-                                           partnershipInformationService: PartnershipIdentificationService
+                                           partnershipInformationService: PartnershipIdentificationService,
+                                           validatePartnershipInformationService: ValidatePartnershipInformationService
                                           )(implicit val config: AppConfig, executionContext: ExecutionContext)
   extends FrontendController(mcc) with AuthorisedFunctions {
 
@@ -64,8 +66,18 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
         case Some(authInternalId) =>
           journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
             journeyConfig =>
-              partnershipInformationService.retrievePartnershipInformation(journeyId).map {
-                case Some(_) => Redirect(journeyConfig.continueUrl + s"?journeyId=$journeyId")
+              partnershipInformationService.retrievePartnershipInformation(journeyId).flatMap {
+                case Some(PartnershipInformation(postcode, Some(sautr))) =>
+                  validatePartnershipInformationService.validate(ValidatePartnershipInformationModel(postcode, sautr)).flatMap {
+                    validatePartnershipResponse =>
+                      partnershipInformationService.storeIdentifiersMatch(journeyId, validatePartnershipResponse).map {
+                        _ => Redirect(journeyConfig.continueUrl + s"?journeyId=$journeyId")
+                      }
+                  }
+                case Some(PartnershipInformation(_, None)) =>
+                  partnershipInformationService.storeIdentifiersMatch(journeyId, identifiersMatch = false).map {
+                    _ => Redirect(journeyConfig.continueUrl + s"?journeyId=$journeyId")
+                  }
                 case _ =>
                   throw new InternalServerException(s"No data stored for journeyId: $journeyId")
               }
@@ -75,4 +87,3 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
       }
   }
 }
-

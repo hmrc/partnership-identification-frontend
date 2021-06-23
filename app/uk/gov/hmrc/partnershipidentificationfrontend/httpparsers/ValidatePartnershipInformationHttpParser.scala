@@ -22,7 +22,7 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse, InternalServerException}
 
 object ValidatePartnershipInformationHttpParser {
 
-  implicit object RemovePartnershipDetailsHttpReads extends HttpReads[Boolean] {
+  implicit object ValidatePartnershipDetailsHttpReads extends HttpReads[Boolean] {
     override def read(method: String, url: String, response: HttpResponse): Boolean = {
       response.status match {
         case OK =>

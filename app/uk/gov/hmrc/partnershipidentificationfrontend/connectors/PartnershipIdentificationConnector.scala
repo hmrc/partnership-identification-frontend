@@ -21,7 +21,8 @@ import uk.gov.hmrc.http._
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.RemovePartnershipDetailsHttpParser.{RemovePartnershipDetailsHttpReads, SuccessfullyRemoved}
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipInformation
+import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.RetrievePartnershipFullJourneyDataHttpParser.RetrievePartnershipFullJourneyDataHttpReads
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{PartnershipFullJourneyData, PartnershipInformation}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,6 +42,10 @@ class PartnershipIdentificationConnector @Inject()(http: HttpClient,
   def retrievePartnershipInformation(journeyId: String
                                     )(implicit hc: HeaderCarrier): Future[Option[PartnershipInformation]] =
     http.GET[Option[PartnershipInformation]](appConfig.partnershipInformationUrl(journeyId))
+
+  def retrievePartnershipFullJourneyData(journeyId: String
+                                        )(implicit hc: HeaderCarrier): Future[Option[PartnershipFullJourneyData]] =
+    http.GET[Option[PartnershipFullJourneyData]](appConfig.partnershipInformationUrl(journeyId))(RetrievePartnershipFullJourneyDataHttpReads, hc, ec)
 
   def storeData[DataType](journeyId: String, dataKey: String, data: DataType
                          )(implicit dataTypeWriter: Writes[DataType], hc: HeaderCarrier): Future[SuccessfullyStored.type] = {

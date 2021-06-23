@@ -80,7 +80,7 @@ trait CheckYourAnswersViewTests {
         val postcodeRow = summaryListRows.last
 
         postcodeRow.getSummaryListQuestion mustBe messages.postCode
-        postcodeRow.getSummaryListAnswer mustBe testPostCode
+        postcodeRow.getSummaryListAnswer mustBe testPostcode
         postcodeRow.getSummaryListChangeLink mustBe routes.CapturePostCodeController.show(journeyId).url
         postcodeRow.getSummaryListChangeText mustBe s"${Base.change} ${messages.postCode}"
       }

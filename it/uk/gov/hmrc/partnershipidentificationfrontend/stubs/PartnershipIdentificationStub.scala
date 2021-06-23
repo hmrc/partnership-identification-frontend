@@ -48,6 +48,13 @@ trait PartnershipIdentificationStub extends WiremockMethods {
       status = status
     )
 
+  def stubStoreIdentifiersMatch(journeyId: String, identifiersMatch: Boolean)(status: Int): StubMapping =
+    when(method = PUT,
+      uri = s"/partnership-identification/journey/$journeyId/identifiersMatch", body = identifiersMatch
+    ).thenReturn(
+      status = status
+    )
+
   def verifyStoreBusinessVerificationStatus(journeyId: String, businessVerificationStatus: BusinessVerificationStatus): Unit =
     WiremockHelper.verifyPut(
       uri = s"/partnership-identification/journey/$journeyId/businessVerification",

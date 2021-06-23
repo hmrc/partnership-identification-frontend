@@ -17,7 +17,7 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.assets
 
 import play.api.libs.json.{JsObject, Json}
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig, PartnershipInformation}
+import uk.gov.hmrc.partnershipidentificationfrontend.models._
 
 import java.util.UUID
 
@@ -25,7 +25,7 @@ object TestConstants {
 
   val testJourneyId: String = UUID.randomUUID().toString
   val testSautr: String = "1234567890"
-  val testPostCode: String = "AA11AA"
+  val testPostcode: String = "AA11AA"
   val testContinueUrl: String = "/test"
   val testCredentialId: String = UUID.randomUUID().toString
   val GGProviderId: String = UUID.randomUUID().toString
@@ -43,10 +43,20 @@ object TestConstants {
   val testPartnershipInformationJson: JsObject = {
     Json.obj(
       "sautr" -> testSautr,
-      "postcode" -> testPostCode
+      "postcode" -> testPostcode
     )
   }
 
-  val testPartnershipInformation: PartnershipInformation = PartnershipInformation(testPostCode, Some(testSautr))
+  val testPartnershipFullJourneyDataJson: JsObject = {
+    Json.obj(
+      "sautr" -> testSautr,
+      "postcode" -> testPostcode,
+      "identifiersMatch" -> true
+    )
+  }
+
+  val testPartnershipInformation: PartnershipInformation = PartnershipInformation(testPostcode, Some(testSautr))
+  val testPartnershipFullJourneyData: PartnershipFullJourneyData = PartnershipFullJourneyData(testPostcode, Some(testSautr), identifiersMatch = true)
+  val testValidatePartnershipInformation: ValidatePartnershipInformationModel = ValidatePartnershipInformationModel(testPostcode, testSautr)
 
 }
