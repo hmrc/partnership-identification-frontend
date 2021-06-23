@@ -19,7 +19,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 import play.api.libs.json.Json
 import play.api.test.Helpers.{GATEWAY_TIMEOUT, OK, await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
-import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.testPartnershipInformation
+import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.{testPartnershipInformation, testValidatePartnershipInformation}
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.ValidatePartnershipInformationStub
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 
@@ -36,7 +36,7 @@ class ValidatePartnershipInformationConnectorISpec extends ComponentSpecHelper w
       "the supplied postcode matches what is held downstream" in {
         stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> true))
 
-        val result = await(connector.validate(testPartnershipInformation))
+        val result = await(connector.validate(testValidatePartnershipInformation))
 
         result mustBe true
       }
@@ -46,7 +46,7 @@ class ValidatePartnershipInformationConnectorISpec extends ComponentSpecHelper w
       "the supplied postcode does not match what is held downstream" in {
         stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> false))
 
-        val result = await(connector.validate(testPartnershipInformation))
+        val result = await(connector.validate(testValidatePartnershipInformation))
 
         result mustBe false
       }
@@ -56,13 +56,13 @@ class ValidatePartnershipInformationConnectorISpec extends ComponentSpecHelper w
       "any other response is returned" in {
         stubValidate(testPartnershipInformation)(GATEWAY_TIMEOUT, body = Json.obj())
 
-        intercept[InternalServerException](await(connector.validate(testPartnershipInformation)))
+        intercept[InternalServerException](await(connector.validate(testValidatePartnershipInformation)))
       }
 
       "invalid JSON is returned" in {
         stubValidate(testPartnershipInformation)(OK, body = Json.obj())
 
-        intercept[InternalServerException](await(connector.validate(testPartnershipInformation)))
+        intercept[InternalServerException](await(connector.validate(testValidatePartnershipInformation)))
       }
     }
   }

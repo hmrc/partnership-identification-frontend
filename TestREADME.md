@@ -53,6 +53,32 @@ Example Response body:
 {“redirectUri” : "/testUrl?journeyId=<businessVerificationJourneyId>"}
 ```
 
+#### GET test-only/retrieve-journey/:journeyId or test-only/retrieve-journey
+
+---
+Retrieves all the journey data that is stored against a specific journeyID.
+
+##### Request:
+A valid journeyId must be sent in the URI or as a query parameter
+
+##### Response:
+Status:
+
+| Expected Response                       | Reason
+|-----------------------------------------|------------------------------
+| ```OK(200)```                           |  ```JourneyId exists```
+| ```NOT_FOUND(404)```                    | ```JourneyId doesn't exist```
+
+Example response body:
+
+```
+{
+   "sautr": "1234567890",
+   "postcode": "AA11AA"
+   "identifiersMatch": true
+}
+```
+
 #### GET  test-only/verification-question/journey/:journeyId/status
 
 ---

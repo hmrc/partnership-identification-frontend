@@ -56,7 +56,7 @@ class JourneyController @Inject()(controllerComponents: ControllerComponents,
   def retrieveJourneyData(journeyId: String): Action[AnyContent] = Action.async {
     implicit req =>
       authorised() {
-        partnershipIdentificationService.retrievePartnershipDetails(journeyId).map {
+        partnershipIdentificationService.retrievePartnershipFullJourneyData(journeyId).map {
           case Some(journeyData) =>
             Ok(Json.toJson(journeyData))
           case None =>

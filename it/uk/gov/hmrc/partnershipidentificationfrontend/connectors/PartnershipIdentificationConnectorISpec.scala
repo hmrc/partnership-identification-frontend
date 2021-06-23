@@ -66,4 +66,23 @@ class PartnershipIdentificationConnectorISpec extends ComponentSpecHelper with P
     }
   }
 
+  s"retrievePartnershipFullJourneyData($testJourneyId)" should {
+    "return all the data stored against the journeyId" in {
+      stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJson)
+
+      val result = await(partnershipInformationConnector.retrievePartnershipFullJourneyData(testJourneyId))
+
+      result mustBe Some(testPartnershipFullJourneyData)
+    }
+    "return None" when {
+      "no data is stored against the journeyId" in {
+        stubRetrievePartnershipDetails(testJourneyId)(NOT_FOUND)
+
+        val result = await(partnershipInformationConnector.retrievePartnershipFullJourneyData(testJourneyId))
+
+        result mustBe None
+      }
+    }
+  }
+
 }

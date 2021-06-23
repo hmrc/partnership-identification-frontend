@@ -16,10 +16,11 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.FeatureSwitching
-import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuthStub, PartnershipIdentificationStub}
+import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuthStub, PartnershipIdentificationStub, ValidatePartnershipInformationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.views.CheckYourAnswersViewTests
 
@@ -27,7 +28,8 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
   with CheckYourAnswersViewTests
   with PartnershipIdentificationStub
   with AuthStub
-  with FeatureSwitching {
+  with FeatureSwitching
+  with ValidatePartnershipInformationStub {
 
   "GET /check-your-answers-business" when {
     "the applicant has an sautr and a postcode" should {
@@ -58,16 +60,62 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
   }
 
   "POST /check-your-answers-business" should {
-    "redirect to the continueUrl " in {
-      await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
-      stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-      stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJson)
+    "store the result of the Validate Partnership call and redirect to the continueUrl" when {
+      "the applicant has an sautr and a postcode" in {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJson)
+        stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> true))
+        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(OK)
 
-      lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
+        lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
-      result must have {
-        httpStatus(SEE_OTHER)
-        redirectUri(testContinueUrl)
+        result must have {
+          httpStatus(SEE_OTHER)
+          redirectUri(testContinueUrl)
+        }
+      }
+    }
+    "store identifiersMatch as false and redirect to the continueUrl" when {
+      "the applicant does not have a sautr" in {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+
+        val testPartnershipInformationJsonNoSautr: JsObject = {
+          Json.obj(
+            "postcode" -> testPostcode
+          )
+        }
+
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJsonNoSautr)
+        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
+
+        lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
+
+        result must have {
+          httpStatus(SEE_OTHER)
+          redirectUri(testContinueUrl)
+        }
+      }
+    }
+    "throw an internal server error" when {
+      "no data is stored for the applicant's journeyId" in {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrievePartnershipDetails(testJourneyId)(NOT_FOUND)
+
+        lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
+
+        result.status mustBe INTERNAL_SERVER_ERROR
+      }
+    }
+    "the user is not signed in" should {
+      "redirect to the sign in page" in {
+        stubAuthFailure()
+        lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
+
+        result.status mustBe SEE_OTHER
+        result.header(LOCATION) mustBe Some(s"/bas-gateway/sign-in?continue_url=%2Fidentify-your-partnership%2F$testJourneyId%2Fcheck-your-answers-business&origin=partnership-identification-frontend")
       }
     }
   }

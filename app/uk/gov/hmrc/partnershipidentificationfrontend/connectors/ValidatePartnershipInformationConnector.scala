@@ -19,7 +19,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.ValidatePartnershipInformationHttpParser._
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipInformation
+import uk.gov.hmrc.partnershipidentificationfrontend.models.ValidatePartnershipInformationModel
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -28,8 +28,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class ValidatePartnershipInformationConnector @Inject()(http: HttpClient,
                                                         appConfig: AppConfig) {
 
-  def validate(partnershipInformation: PartnershipInformation)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] =
-    http.POST[PartnershipInformation, Boolean](
+  def validate(partnershipInformation: ValidatePartnershipInformationModel)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] =
+    http.POST[ValidatePartnershipInformationModel, Boolean](
       url = appConfig.validatePartnershipInformationUrl,
       body = partnershipInformation
     )

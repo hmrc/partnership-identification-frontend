@@ -90,8 +90,8 @@ class CapturePostCodeControllerISpec extends ComponentSpecHelper
         lazy val result: WSResponse = {
           await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-          stubStorePostCode(testJourneyId, testPostCode)(OK)
-          post(s"$baseUrl/$testJourneyId/self-assessment-postcode")("postcode" -> testPostCode)
+          stubStorePostCode(testJourneyId, testPostcode)(OK)
+          post(s"$baseUrl/$testJourneyId/self-assessment-postcode")("postcode" -> testPostcode)
         }
 
         result must have {
