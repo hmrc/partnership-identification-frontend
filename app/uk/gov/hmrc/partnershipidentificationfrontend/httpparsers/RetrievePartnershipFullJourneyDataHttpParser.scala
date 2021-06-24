@@ -20,7 +20,7 @@ import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsError, JsPath, JsSuccess, Reads}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse, InternalServerException}
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipFullJourneyData
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, PartnershipFullJourneyData}
 
 object RetrievePartnershipFullJourneyDataHttpParser {
 
@@ -44,11 +44,13 @@ object RetrievePartnershipFullJourneyDataHttpParser {
   private val SautrKey = "sautr"
   private val PostcodeKey = "postcode"
   private val IdentifiersMatchKey = "identifiersMatch"
+  private val BusinessVerificationKey = "businessVerification"
 
   val partnershipFullJourneyDataReads: Reads[PartnershipFullJourneyData] = (
     (JsPath \ PostcodeKey).read[String] and
       (JsPath \ SautrKey).readNullable[String] and
-      (JsPath \ IdentifiersMatchKey).read[Boolean]
+      (JsPath \ IdentifiersMatchKey).read[Boolean] and
+      (JsPath \ BusinessVerificationKey).read[BusinessVerificationStatus]
     ) (PartnershipFullJourneyData.apply _)
 
 }

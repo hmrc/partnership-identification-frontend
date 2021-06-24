@@ -20,6 +20,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.FeatureSwitching
+import uk.gov.hmrc.partnershipidentificationfrontend.models.BusinessVerificationUnchallenged
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuthStub, PartnershipIdentificationStub, ValidatePartnershipInformationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.views.CheckYourAnswersViewTests
@@ -60,8 +61,8 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
   }
 
   "POST /check-your-answers-business" should {
-    "store the result of the Validate Partnership call and redirect to the continueUrl" when {
-      "the applicant has an sautr and a postcode" in {
+    "redirect to the Business Verification Journey" when {
+      "the applicant's known facts successfully match" in {
         await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJson)
@@ -72,11 +73,30 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
 
         result must have {
           httpStatus(SEE_OTHER)
-          redirectUri(testContinueUrl)
+          redirectUri(routes.BusinessVerificationController.startBusinessVerificationJourney(testJourneyId).url)
         }
+
+        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)
       }
     }
-    "store identifiersMatch as false and redirect to the continueUrl" when {
+    "redirect to the continueUrl" when {
+      "the applicant's known facts do not match" in {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJson)
+        stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> false))
+        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
+        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)(OK)
+
+        lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
+
+        result must have {
+          httpStatus(SEE_OTHER)
+          redirectUri(testContinueUrl)
+        }
+
+        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
+      }
       "the applicant does not have a sautr" in {
         await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
@@ -96,6 +116,8 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           httpStatus(SEE_OTHER)
           redirectUri(testContinueUrl)
         }
+
+        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
       }
     }
     "throw an internal server error" when {
