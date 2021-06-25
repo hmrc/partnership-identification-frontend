@@ -18,7 +18,6 @@ package uk.gov.hmrc.partnershipidentificationfrontend.service
 
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.ValidatePartnershipInformationConnector
-import uk.gov.hmrc.partnershipidentificationfrontend.models.ValidatePartnershipInformationModel
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -26,7 +25,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ValidatePartnershipInformationService @Inject()(validatePartnershipInformationConnector: ValidatePartnershipInformationConnector) {
 
-  def validate(partnershipInformation: ValidatePartnershipInformationModel)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] =
-    validatePartnershipInformationConnector.validate(partnershipInformation)
+  def validate(sautr: String, postcode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] =
+    validatePartnershipInformationConnector.validate(sautr, postcode)
 
 }

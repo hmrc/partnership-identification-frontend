@@ -73,6 +73,7 @@ object MessageLookup {
     val heading = "Check your answers"
     val sautr = "Unique Taxpayers Reference"
     val postCode = "Postcode"
+    val noSautr = "The business does not have a UTR"
   }
 
 }

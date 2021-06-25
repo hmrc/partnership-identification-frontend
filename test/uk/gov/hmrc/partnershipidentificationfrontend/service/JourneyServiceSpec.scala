@@ -26,8 +26,8 @@ import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, Page
 import uk.gov.hmrc.partnershipidentificationfrontend.repositories.mocks.MockJourneyConfigRepository
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.UnitSpec
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class JourneyServiceSpec extends UnitSpec with MockJourneyConnector with MockJourneyConfigRepository {
 

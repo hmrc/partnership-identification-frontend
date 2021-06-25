@@ -21,8 +21,8 @@ import play.api.libs.json.{JsObject, Json, Writes}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse, InternalServerException}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.CreateBusinessVerificationJourneyConnector.BusinessVerificationHttpReads
-import uk.gov.hmrc.partnershipidentificationfrontend.models._
 import uk.gov.hmrc.partnershipidentificationfrontend.controllers.routes
+import uk.gov.hmrc.partnershipidentificationfrontend.models._
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

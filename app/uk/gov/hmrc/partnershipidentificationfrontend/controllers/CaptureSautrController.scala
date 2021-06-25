@@ -80,8 +80,8 @@ class CaptureSautrController @Inject()(mcc: MessagesControllerComponents,
         case Some(authInternalId) =>
           journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
             _ =>
-              partnershipIdentificationService.removeSautr(journeyId).map {
-                _ => NotImplemented //TODO update to check your answers
+              partnershipIdentificationService.removeSaInformation(journeyId).map {
+                _ => Redirect(routes.CheckYourAnswersController.show(journeyId))
               }
           }
         case _ =>

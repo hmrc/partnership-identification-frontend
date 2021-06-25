@@ -56,10 +56,10 @@
             <div class="govuk-details__text">
                 <p>@messages("capture-sa-utr.details.line_1")</p>
                 <p>
-                    <a class="govuk-link" href="https://www.tax.service.gov.uk/ask-for-copy-of-your-corporation-tax-utr" target="_blank">@messages("capture-sa-utr.details.line_2")</a>
+                    <a class="govuk-link" id="cannot-find-utr" href="https://www.tax.service.gov.uk/ask-for-copy-of-your-corporation-tax-utr" target="_blank">@messages("capture-sa-utr.details.line_2")</a>
                 </p>
                 <p>
-                    <a class="govuk-link" href="@routes.CaptureSautrController.noSautr(journeyId)">@messages("capture-sa-utr.details.line_3")</a>
+                    <a class="govuk-link" id="no-sautr" href="@routes.CaptureSautrController.noSautr(journeyId)">@messages("capture-sa-utr.details.line_3")</a>
                 </p>
             </div>
         </details>

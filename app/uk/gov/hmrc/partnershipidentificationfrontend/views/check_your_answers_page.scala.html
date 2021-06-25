@@ -1,9 +1,8 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 @import uk.gov.hmrc.partnershipidentificationfrontend.controllers.{routes => Routes}
-@import uk.gov.hmrc.partnershipidentificationfrontend.models.{PageConfig, PartnershipInformation}
+@import uk.gov.hmrc.partnershipidentificationfrontend.models.{PageConfig, PartnershipInformation, SaInformation}
 @import uk.gov.hmrc.partnershipidentificationfrontend.views.html.templates.govuk_template
-
 
 @this(layout: govuk_template,
         govUkHeader: GovukHeader,
@@ -28,33 +27,48 @@
 @html = {
 @govukSummaryList(SummaryList(
     classes = "govuk-!-margin-bottom-9",
-    rows = Seq() ++ partnershipInformation.optSautr.map {
-        sautr =>
-            SummaryListRow(
-                key = Key(content = Text(messages("check-your-answers.sautr"))),
-                value = Value(content = Text(sautr)),
-                actions = Some(Actions(items = Seq(
-                    ActionItem(
-                        href = Routes.CaptureSautrController.show(journeyId).url,
-                        content = Text(messages("base.change")),
-                        visuallyHiddenText = Some(messages("check-your-answers.sautr"))
-                    )
-                )))
-            )
-    } ++ Seq(
-        SummaryListRow(
-            key = Key(content = Text(messages("check-your-answers.postcode"))),
-            value = Value(content = Text(partnershipInformation.postcode)),
-            actions = Some(Actions(items = Seq(
-                ActionItem(
-                    href = Routes.CapturePostCodeController.show(journeyId).url,
-                    content = Text(messages("base.change")),
-                    visuallyHiddenText = Some(messages("check-your-answers.postcode"))
+    rows = partnershipInformation.optSaInformation match {
+        case Some(SaInformation(sautr, postcode)) =>
+            Seq(
+                SummaryListRow(
+                    key = Key(content = Text(messages("check-your-answers.sautr"))),
+                    value = Value(content = Text(sautr)),
+                    actions = Some(Actions(items = Seq(
+                        ActionItem(
+                            href = Routes.CaptureSautrController.show(journeyId).url,
+                            content = Text(messages("base.change")),
+                            visuallyHiddenText = Some(messages("check-your-answers.sautr"))
+                        )
+                    )))
+                ),
+                SummaryListRow(
+                    key = Key(content = Text(messages("check-your-answers.postcode"))),
+                    value = Value(content = Text(postcode)),
+                    actions = Some(Actions(items = Seq(
+                        ActionItem(
+                            href = Routes.CapturePostCodeController.show(journeyId).url,
+                            content = Text(messages("base.change")),
+                            visuallyHiddenText = Some(messages("check-your-answers.postcode"))
+                        )
+                    )))
                 )
-            )))
-        )
+            )
+        case None =>
+            Seq(
+                SummaryListRow(
+                    key = Key(content = Text(messages("check-your-answers.sautr"))),
+                    value = Value(content = Text(messages("check-your-answers.no-sautr"))),
+                    actions = Some(Actions(items = Seq(
+                        ActionItem(
+                            href = Routes.CaptureSautrController.show(journeyId).url,
+                            content = Text(messages("base.change")),
+                            visuallyHiddenText = Some(messages("check-your-answers.sautr"))
+                        )
+                    )))
+                )
+            )
+        }
     )
-)
 )
 
 @formWithCSRF(action = formAction) {

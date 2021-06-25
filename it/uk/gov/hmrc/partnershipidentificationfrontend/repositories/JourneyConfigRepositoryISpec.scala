@@ -20,7 +20,7 @@ import org.scalatest.concurrent.{AbstractPatienceConfiguration, Eventually}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import play.api.{Application, Environment, Mode}
-import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.{testContinueUrl, testDeskProServiceId, testInternalId, testJourneyId, testSignOutUrl}
+import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 
