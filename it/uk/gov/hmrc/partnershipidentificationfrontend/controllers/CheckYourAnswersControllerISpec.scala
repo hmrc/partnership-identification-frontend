@@ -20,7 +20,7 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.FeatureSwitching
-import uk.gov.hmrc.partnershipidentificationfrontend.models.BusinessVerificationUnchallenged
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationUnchallenged, SaInformation}
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuthStub, PartnershipIdentificationStub, ValidatePartnershipInformationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.views.CheckYourAnswersViewTests
@@ -46,7 +46,23 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
       }
 
       "return a view which" should {
-        testCheckYourAnswersView(result, testJourneyId)
+        testCheckYourAnswersView(result, testJourneyId, Some(SaInformation(testSautr, testPostcode)))
+      }
+    }
+    "the applicant does not have an SAUTR" should {
+      lazy val result = {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationNoSautrJson)
+        get(s"$baseUrl/$testJourneyId/check-your-answers-business")
+      }
+
+      "return OK" in {
+        result.status mustBe OK
+      }
+
+      "return a view which" should {
+        testCheckYourAnswersView(result, testJourneyId, optSaInformation = None)
       }
     }
     "the user is not signed in" should {

@@ -20,8 +20,10 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.{GatewayTimeoutException, HeaderCarrier}
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.mocks.MockPartnershipIdentificationConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants._
+import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.RemovePartnershipDetailsHttpParser.SuccessfullyRemoved
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.UnitSpec
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class PartnershipIdentificationServiceSpec extends UnitSpec with MockPartnershipIdentificationConnector {
@@ -73,6 +75,19 @@ class PartnershipIdentificationServiceSpec extends UnitSpec with MockPartnership
         )
         verifyRetrievePartnershipInformation[String](testJourneyId, dataKey)
       }
+    }
+  }
+
+  "removeSaInformation" should {
+    "call to remove both SAUTR and postcode" in {
+      mockRemovePartnershipInformation(testJourneyId, "sautr")(Future.successful(SuccessfullyRemoved))
+      mockRemovePartnershipInformation(testJourneyId, "postcode")(Future.successful(SuccessfullyRemoved))
+
+      val result = await(TestService.removeSaInformation(testJourneyId))
+
+      result mustBe SuccessfullyRemoved
+      verifyRemovePartnershipInformation(testJourneyId, "sautr")
+      verifyRemovePartnershipInformation(testJourneyId, "postcode")
     }
   }
 

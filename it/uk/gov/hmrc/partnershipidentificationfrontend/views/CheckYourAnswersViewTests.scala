@@ -23,6 +23,7 @@ import uk.gov.hmrc.partnershipidentificationfrontend.assets.MessageLookup.{Base,
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.controllers.routes
+import uk.gov.hmrc.partnershipidentificationfrontend.models.SaInformation
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ViewSpecHelper.ElementExtensions
 
@@ -32,7 +33,7 @@ import scala.collection.JavaConverters._
 trait CheckYourAnswersViewTests {
   this: ComponentSpecHelper =>
 
-  def testCheckYourAnswersView(result: => WSResponse, journeyId: String): Unit = {
+  def testCheckYourAnswersView(result: => WSResponse, journeyId: String, optSaInformation: Option[SaInformation]): Unit = {
     lazy val doc: Document = Jsoup.parse(result.body)
     lazy val config = app.injector.instanceOf[AppConfig]
 
@@ -53,7 +54,7 @@ trait CheckYourAnswersViewTests {
     }
 
     "have the correct title" in {
-        doc.title mustBe messages.title
+      doc.title mustBe messages.title
     }
 
     "have the correct heading" in {
@@ -63,26 +64,43 @@ trait CheckYourAnswersViewTests {
     "have a summary list which" should {
       lazy val summaryListRows = doc.getSummaryListRows.iterator().asScala.toList
 
-      "have 2 rows" in {
-        summaryListRows.size mustBe 2
-      }
 
-      "have an sautr row" in {
-        val sautrRow = summaryListRows.head
+      optSaInformation match {
+        case Some(saInformation) =>
+          "have an sautr row" in {
+            val sautrRow = summaryListRows.head
 
-        sautrRow.getSummaryListQuestion mustBe messages.sautr
-        sautrRow.getSummaryListAnswer mustBe testSautr
-        sautrRow.getSummaryListChangeLink mustBe routes.CaptureSautrController.show(journeyId).url
-        sautrRow.getSummaryListChangeText mustBe s"${Base.change} ${messages.sautr}"
-      }
+            sautrRow.getSummaryListQuestion mustBe messages.sautr
+            sautrRow.getSummaryListAnswer mustBe saInformation.sautr
+            sautrRow.getSummaryListChangeLink mustBe routes.CaptureSautrController.show(journeyId).url
+            sautrRow.getSummaryListChangeText mustBe s"${Base.change} ${messages.sautr}"
+          }
 
-      "have a postcode row" in {
-        val postcodeRow = summaryListRows.last
+          "have a postcode row" in {
+            val postcodeRow = summaryListRows.last
 
-        postcodeRow.getSummaryListQuestion mustBe messages.postCode
-        postcodeRow.getSummaryListAnswer mustBe testPostcode
-        postcodeRow.getSummaryListChangeLink mustBe routes.CapturePostCodeController.show(journeyId).url
-        postcodeRow.getSummaryListChangeText mustBe s"${Base.change} ${messages.postCode}"
+            postcodeRow.getSummaryListQuestion mustBe messages.postCode
+            postcodeRow.getSummaryListAnswer mustBe saInformation.postcode
+            postcodeRow.getSummaryListChangeLink mustBe routes.CapturePostCodeController.show(journeyId).url
+            postcodeRow.getSummaryListChangeText mustBe s"${Base.change} ${messages.postCode}"
+          }
+
+          "have 2 rows" in {
+            summaryListRows.size mustBe 2
+          }
+        case None =>
+          "have an sautr row" in {
+            val sautrRow = summaryListRows.head
+
+            sautrRow.getSummaryListQuestion mustBe messages.sautr
+            sautrRow.getSummaryListAnswer mustBe messages.noSautr
+            sautrRow.getSummaryListChangeLink mustBe routes.CaptureSautrController.show(journeyId).url
+            sautrRow.getSummaryListChangeText mustBe s"${Base.change} ${messages.sautr}"
+          }
+
+          "have 1 row" in {
+            summaryListRows.size mustBe 1
+          }
       }
 
       "have a continue and confirm button" in {

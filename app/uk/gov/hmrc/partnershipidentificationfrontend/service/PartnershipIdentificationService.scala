@@ -24,10 +24,10 @@ import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificatio
 import uk.gov.hmrc.partnershipidentificationfrontend.service.PartnershipIdentificationService._
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PartnershipIdentificationService @Inject()(connector: PartnershipIdentificationConnector) {
+class PartnershipIdentificationService @Inject()(connector: PartnershipIdentificationConnector)(implicit ec: ExecutionContext) {
 
   def storeSautr(journeyId: String,
                  sautr: String
@@ -55,8 +55,10 @@ class PartnershipIdentificationService @Inject()(connector: PartnershipIdentific
   def retrievePostCode(journeyId: String)(implicit hc: HeaderCarrier): Future[Option[String]] =
     connector.retrievePartnershipInformation[String](journeyId, PostCodeKey)
 
-  def removeSautr(journeyId: String)(implicit hc: HeaderCarrier): Future[SuccessfullyRemoved.type] =
-    connector.removePartnershipInformation(journeyId, SautrKey)
+  def removeSaInformation(journeyId: String)(implicit hc: HeaderCarrier): Future[SuccessfullyRemoved.type] = for {
+    _ <- connector.removePartnershipInformation(journeyId, SautrKey)
+    _ <- connector.removePartnershipInformation(journeyId, PostCodeKey)
+  } yield SuccessfullyRemoved
 
   def retrievePartnershipInformation(journeyId: String)(implicit hc: HeaderCarrier): Future[Option[PartnershipInformation]] =
     connector.retrievePartnershipInformation(journeyId)

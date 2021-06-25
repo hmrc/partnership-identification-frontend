@@ -25,6 +25,7 @@ import play.api.libs.json.{Reads, Writes}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.PartnershipIdentificationConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
+import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.RemovePartnershipDetailsHttpParser.SuccessfullyRemoved
 
 import scala.concurrent.Future
 
@@ -40,7 +41,7 @@ trait MockPartnershipIdentificationConnector extends MockitoSugar with BeforeAnd
 
   def mockRetrievePartnershipInformation[T](journeyId: String,
                                             dataKey: String
-                                                  )(response: Future[Option[T]]): OngoingStubbing[_] =
+                                           )(response: Future[Option[T]]): OngoingStubbing[_] =
     when(mockPartnershipIdentificationConnector.retrievePartnershipInformation[T](
       ArgumentMatchers.eq(journeyId),
       ArgumentMatchers.eq(dataKey)
@@ -79,4 +80,19 @@ trait MockPartnershipIdentificationConnector extends MockitoSugar with BeforeAnd
     )(ArgumentMatchers.any[Writes[T]],
       ArgumentMatchers.any[HeaderCarrier])
 
+  def mockRemovePartnershipInformation[T](journeyId: String,
+                                          dataKey: String
+                                         )(response: Future[SuccessfullyRemoved.type]): OngoingStubbing[_] =
+    when(mockPartnershipIdentificationConnector.removePartnershipInformation(
+      ArgumentMatchers.eq(journeyId),
+      ArgumentMatchers.eq(dataKey)
+    )(ArgumentMatchers.any[HeaderCarrier])).thenReturn(response)
+
+  def verifyRemovePartnershipInformation[T](journeyId: String,
+                                          dataKey: String
+                                         ): Unit =
+    verify(mockPartnershipIdentificationConnector).removePartnershipInformation(
+      ArgumentMatchers.eq(journeyId),
+      ArgumentMatchers.eq(dataKey)
+    )(ArgumentMatchers.any[HeaderCarrier])
 }

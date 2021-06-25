@@ -31,6 +31,22 @@ trait PartnershipIdentificationStub extends WiremockMethods {
       status = status
     )
 
+  def stubRemoveSautr(journeyId: String)(status: Int, body: String = ""): StubMapping =
+    when(method = DELETE,
+      uri = s"/partnership-identification/journey/$journeyId/sautr"
+    ).thenReturn(
+      status = status,
+      body = body
+    )
+
+  def stubRemovePostcode(journeyId: String)(status: Int, body: String = ""): StubMapping =
+    when(method = DELETE,
+      uri = s"/partnership-identification/journey/$journeyId/postcode"
+    ).thenReturn(
+      status = status,
+      body = body
+    )
+
   def stubStorePostCode(journeyId: String, postCode: String)(status: Int): StubMapping =
     when(method = PUT,
       uri = s"/partnership-identification/journey/$journeyId/postcode", body = JsString(postCode)

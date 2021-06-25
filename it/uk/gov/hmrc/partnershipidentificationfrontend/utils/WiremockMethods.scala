@@ -96,5 +96,9 @@ trait WiremockMethods {
     override val wireMockMapping: UrlPattern => MappingBuilder = put
   }
 
+  case object DELETE extends HTTPMethod {
+    override val wireMockMapping: UrlPattern => MappingBuilder = delete
+  }
+
 }
 
