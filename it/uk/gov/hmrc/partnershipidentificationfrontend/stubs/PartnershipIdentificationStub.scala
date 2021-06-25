@@ -61,6 +61,12 @@ trait PartnershipIdentificationStub extends WiremockMethods {
       optBody = Some(Json.toJson(businessVerificationStatus).toString())
     )
 
+  def verifyStoreIdentifiersMatch(journeyId: String, identifiersMatch: Boolean): Unit =
+    WiremockHelper.verifyPut(
+      uri = s"/partnership-identification/journey/$journeyId/identifiersMatch",
+      optBody = Some(Json.toJson(identifiersMatch).toString())
+    )
+
   def stubRetrieveSautr(journeyId: String)(status: Int, body: String = ""): StubMapping = {
     when(method = GET,
       uri = s"/partnership-identification/journey/$journeyId/sautr"

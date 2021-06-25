@@ -21,7 +21,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{PartnershipInformation, ValidatePartnershipInformationModel}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationUnchallenged, PartnershipInformation, ValidatePartnershipInformationModel}
 import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipIdentificationService, ValidatePartnershipInformationService}
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.check_your_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -70,8 +70,17 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
                 case Some(PartnershipInformation(postcode, Some(sautr))) =>
                   validatePartnershipInformationService.validate(ValidatePartnershipInformationModel(postcode, sautr)).flatMap {
                     validatePartnershipResponse =>
-                      partnershipInformationService.storeIdentifiersMatch(journeyId, validatePartnershipResponse).map {
-                        _ => Redirect(journeyConfig.continueUrl + s"?journeyId=$journeyId")
+                      if (validatePartnershipResponse) {
+                        partnershipInformationService.storeIdentifiersMatch(journeyId, validatePartnershipResponse).map {
+                          _ => Redirect(routes.BusinessVerificationController.startBusinessVerificationJourney(journeyId))
+                        }
+                      }
+                      else {
+                        for {
+                          _ <- partnershipInformationService.storeIdentifiersMatch(journeyId, validatePartnershipResponse)
+                          _ <- partnershipInformationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
+                        } yield
+                          Redirect(journeyConfig.continueUrl + s"?journeyId=$journeyId")
                       }
                   }
                 case Some(PartnershipInformation(_, None)) =>
@@ -86,4 +95,5 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
           throw new InternalServerException("Internal ID could not be retrieved from Auth")
       }
   }
+
 }
