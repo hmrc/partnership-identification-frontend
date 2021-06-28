@@ -18,7 +18,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.stubs
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.{JsString, JsValue, Json}
-import uk.gov.hmrc.partnershipidentificationfrontend.models.BusinessVerificationStatus
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, RegistrationStatus}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.{WiremockHelper, WiremockMethods}
 
 trait PartnershipIdentificationStub extends WiremockMethods {
@@ -71,6 +71,22 @@ trait PartnershipIdentificationStub extends WiremockMethods {
       status = status
     )
 
+  def stubStoreRegistrationStatus(journeyId: String, registrationStatus: RegistrationStatus)(status: Int): StubMapping = {
+    when(method = PUT,
+      uri = s"/partnership-identification/journey/$journeyId/registration",
+      body = Json.toJsObject(registrationStatus)
+    ).thenReturn(
+      status = status
+    )
+  }
+
+  def verifyStoreRegistrationStatus(journeyId: String, registrationStatus: RegistrationStatus): Unit = {
+
+    val jsonBody = Json.toJsObject(registrationStatus)
+
+    WiremockHelper.verifyPut(uri = s"/partnership-identification/journey/$journeyId/registration", optBody = Some(jsonBody.toString()))
+  }
+
   def verifyStoreBusinessVerificationStatus(journeyId: String, businessVerificationStatus: BusinessVerificationStatus): Unit =
     WiremockHelper.verifyPut(
       uri = s"/partnership-identification/journey/$journeyId/businessVerification",
@@ -95,6 +111,14 @@ trait PartnershipIdentificationStub extends WiremockMethods {
   def stubRetrievePartnershipDetails(journeyId: String)(status: Int, body: JsValue = Json.obj()): StubMapping =
     when(method = GET,
       uri = s"/partnership-identification/journey/$journeyId"
+    ).thenReturn(
+      status = status,
+      body = body
+    )
+
+  def stubRetrieveBusinessVerificationStatus(journeyId: String)(status: Int, body: JsValue = Json.obj()): StubMapping =
+    when(method = GET,
+      uri = s"/partnership-identification/journey/$journeyId/businessVerification"
     ).thenReturn(
       status = status,
       body = body

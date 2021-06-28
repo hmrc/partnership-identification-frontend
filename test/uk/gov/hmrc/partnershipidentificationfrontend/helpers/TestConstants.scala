@@ -23,6 +23,7 @@ object TestConstants {
   val testContinueUrl = "/test"
   val testJourneyId: String = UUID.randomUUID().toString
   val testInternalId: String = UUID.randomUUID().toString
+  val testSafeId: String = UUID.randomUUID().toString
   val testSignOutUrl = "/signOutUrl"
 
   val testSautr: String = "1234567890"

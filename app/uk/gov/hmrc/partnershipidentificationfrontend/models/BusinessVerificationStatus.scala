@@ -26,13 +26,10 @@ case object BusinessVerificationFail extends BusinessVerificationStatus
 
 case object BusinessVerificationUnchallenged extends BusinessVerificationStatus
 
-case object SaEnrolled extends BusinessVerificationStatus
-
 object BusinessVerificationStatus {
   val BusinessVerificationPassKey = "PASS"
   val BusinessVerificationFailKey = "FAIL"
   val BusinessVerificationUnchallengedKey = "UNCHALLENGED"
-  val BusinessVerificationSaEnrolledKey = "SA_ENROLLED"
   val BusinessVerificationStatusKey = "verificationStatus"
 
   implicit val format: Format[BusinessVerificationStatus] = new Format[BusinessVerificationStatus] {
@@ -41,7 +38,6 @@ object BusinessVerificationStatus {
         case BusinessVerificationPass => BusinessVerificationPassKey
         case BusinessVerificationFail => BusinessVerificationFailKey
         case BusinessVerificationUnchallenged => BusinessVerificationUnchallengedKey
-        case SaEnrolled => BusinessVerificationSaEnrolledKey
       }
 
       Json.obj(BusinessVerificationStatusKey -> businessVerificationStatusString)
@@ -52,7 +48,6 @@ object BusinessVerificationStatus {
         case BusinessVerificationPassKey => BusinessVerificationPass
         case BusinessVerificationFailKey => BusinessVerificationFail
         case BusinessVerificationUnchallengedKey => BusinessVerificationUnchallenged
-        case BusinessVerificationSaEnrolledKey => SaEnrolled
       }
   }
 
