@@ -20,7 +20,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.PartnershipIdentificationConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.RemovePartnershipDetailsHttpParser.SuccessfullyRemoved
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, PartnershipFullJourneyData, PartnershipInformation}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, PartnershipFullJourneyData, PartnershipInformation, RegistrationStatus}
 import uk.gov.hmrc.partnershipidentificationfrontend.service.PartnershipIdentificationService._
 
 import javax.inject.{Inject, Singleton}
@@ -49,6 +49,11 @@ class PartnershipIdentificationService @Inject()(connector: PartnershipIdentific
                            )(implicit hc: HeaderCarrier): Future[SuccessfullyStored.type] =
     connector.storeData[Boolean](journeyId, IdentifiersMatchKey, identifiersMatch)
 
+  def storeRegistrationStatus(journeyId: String,
+                              registrationStatus: RegistrationStatus
+                             )(implicit hc: HeaderCarrier): Future[SuccessfullyStored.type] =
+    connector.storeData[RegistrationStatus](journeyId, RegistrationKey, registrationStatus)
+
   def retrieveSautr(journeyId: String)(implicit hc: HeaderCarrier): Future[Option[String]] =
     connector.retrievePartnershipInformation[String](journeyId, SautrKey)
 
@@ -65,6 +70,11 @@ class PartnershipIdentificationService @Inject()(connector: PartnershipIdentific
 
   def retrievePartnershipFullJourneyData(journeyId: String)(implicit hc: HeaderCarrier): Future[Option[PartnershipFullJourneyData]] =
     connector.retrievePartnershipFullJourneyData(journeyId)
+
+  def retrieveBusinessVerificationStatus(journeyId: String
+                                        )(implicit hc: HeaderCarrier): Future[Option[BusinessVerificationStatus]] =
+    connector.retrievePartnershipInformation[BusinessVerificationStatus](journeyId, VerificationStatusKey)
+
 }
 
 object PartnershipIdentificationService {
@@ -72,4 +82,5 @@ object PartnershipIdentificationService {
   val PostCodeKey: String = "postcode"
   val VerificationStatusKey: String = "businessVerification"
   val IdentifiersMatchKey: String = "identifiersMatch"
+  val RegistrationKey: String = "registration"
 }

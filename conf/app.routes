@@ -15,3 +15,5 @@ POST        /:journeyId/check-your-answers-business        uk.gov.hmrc.partnersh
 
 GET         /:journeyId/start-business-verification        uk.gov.hmrc.partnershipidentificationfrontend.controllers.BusinessVerificationController.startBusinessVerificationJourney(journeyId)
 GET         /:journeyId/business-verification-result       uk.gov.hmrc.partnershipidentificationfrontend.controllers.BusinessVerificationController.retrieveBusinessVerificationResult(journeyId)
+
+GET         /:journeyId/register                           uk.gov.hmrc.partnershipidentificationfrontend.controllers.RegistrationController.register(journeyId)

@@ -32,6 +32,7 @@ object TestConstants {
   val testGroupId: String = UUID.randomUUID().toString
   val testInternalId: String = UUID.randomUUID().toString
   val testBusinessVerificationJourneyId: String = UUID.randomUUID().toString
+  val testSafeId: String = UUID.randomUUID().toString
 
   val testDeskProServiceId: String = "vrs"
   val testSignOutUrl: String = "Sign out"
