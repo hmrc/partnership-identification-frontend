@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.FeatureSwitching
@@ -49,6 +49,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         testCheckYourAnswersView(result, testJourneyId, Some(SaInformation(testSautr, testPostcode)))
       }
     }
+
     "the applicant does not have an SAUTR" should {
       lazy val result = {
         await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
@@ -65,6 +66,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         testCheckYourAnswersView(result, testJourneyId, optSaInformation = None)
       }
     }
+
     "the user is not signed in" should {
       "redirect to the sign in page" in {
         stubAuthFailure()
@@ -95,6 +97,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)
       }
     }
+
     "redirect to the continueUrl" when {
       "the applicant's known facts do not match" in {
         await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
@@ -113,18 +116,13 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
 
         verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
       }
+
       "the applicant does not have a sautr" in {
         await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-
-        val testPartnershipInformationJsonNoSautr: JsObject = {
-          Json.obj(
-            "postcode" -> testPostcode
-          )
-        }
-
-        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJsonNoSautr)
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationNoSautrJson)
         stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
+        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)(OK)
 
         lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
@@ -136,6 +134,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
       }
     }
+
     "throw an internal server error" when {
       "no data is stored for the applicant's journeyId" in {
         await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
@@ -147,6 +146,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         result.status mustBe INTERNAL_SERVER_ERROR
       }
     }
+
     "the user is not signed in" should {
       "redirect to the sign in page" in {
         stubAuthFailure()

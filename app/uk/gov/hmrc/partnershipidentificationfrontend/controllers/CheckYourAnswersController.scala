@@ -68,25 +68,27 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
             journeyConfig =>
               partnershipInformationService.retrievePartnershipInformation(journeyId).flatMap {
                 case Some(PartnershipInformation(Some(SaInformation(sautr, postcode)))) =>
-                  validatePartnershipInformationService.validate(sautr, postcode).flatMap {
-                    validatePartnershipResponse =>
-                      if (validatePartnershipResponse) {
-                        partnershipInformationService.storeIdentifiersMatch(journeyId, validatePartnershipResponse).map {
+                  validatePartnershipInformationService.validateIdentifiers(sautr, postcode).flatMap {
+                    identifiersMatch =>
+                      if (identifiersMatch) {
+                        partnershipInformationService.storeIdentifiersMatch(journeyId, identifiersMatch).map {
                           _ => Redirect(routes.BusinessVerificationController.startBusinessVerificationJourney(journeyId))
                         }
                       }
                       else {
                         for {
-                          _ <- partnershipInformationService.storeIdentifiersMatch(journeyId, validatePartnershipResponse)
+                          _ <- partnershipInformationService.storeIdentifiersMatch(journeyId, identifiersMatch)
                           _ <- partnershipInformationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
                         } yield
                           Redirect(journeyConfig.continueUrl + s"?journeyId=$journeyId")
                       }
                   }
                 case Some(PartnershipInformation(None)) =>
-                  partnershipInformationService.storeIdentifiersMatch(journeyId, identifiersMatch = false).map {
-                    _ => Redirect(journeyConfig.continueUrl + s"?journeyId=$journeyId")
-                  }
+                  for {
+                    _ <- partnershipInformationService.storeIdentifiersMatch(journeyId, identifiersMatch = false)
+                    _ <- partnershipInformationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
+                  } yield
+                    Redirect(journeyConfig.continueUrl + s"?journeyId=$journeyId")
                 case _ =>
                   throw new InternalServerException(s"No data stored for journeyId: $journeyId")
               }

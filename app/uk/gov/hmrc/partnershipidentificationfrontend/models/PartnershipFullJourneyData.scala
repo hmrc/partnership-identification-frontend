@@ -19,7 +19,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.models
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-case class PartnershipFullJourneyData(postcode: String,
+case class PartnershipFullJourneyData(postcode: Option[String],
                                       optSautr: Option[String],
                                       identifiersMatch: Boolean,
                                       businessVerification: BusinessVerificationStatus)
@@ -32,14 +32,14 @@ object PartnershipFullJourneyData {
   private val BusinessVerificationKey = "businessVerification"
 
   val reads: Reads[PartnershipFullJourneyData] = (
-    (JsPath \ PostcodeKey).read[String] and
+    (JsPath \ PostcodeKey).readNullable[String] and
       (JsPath \ SautrKey).readNullable[String] and
       (JsPath \ IdentifiersMatchKey).read[Boolean] and
       (JsPath \ BusinessVerificationKey).read[BusinessVerificationStatus]
     ) (PartnershipFullJourneyData.apply _)
 
   val writes: OWrites[PartnershipFullJourneyData] = (
-    (JsPath \ PostcodeKey).write[String] and
+    (JsPath \ PostcodeKey).writeNullable[String] and
       (JsPath \ SautrKey).writeNullable[String] and
       (JsPath \ IdentifiersMatchKey).write[Boolean] and
       (JsPath \ BusinessVerificationKey).write[BusinessVerificationStatus]
