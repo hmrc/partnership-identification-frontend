@@ -61,6 +61,6 @@ object TestConstants {
   val testPartnershipInformationNoSautrJson: JsObject = Json.obj()
 
   val testPartnershipInformation: PartnershipInformation = PartnershipInformation(Some(SaInformation(testSautr, testPostcode)))
-  val testPartnershipFullJourneyData: PartnershipFullJourneyData = PartnershipFullJourneyData(testPostcode, Some(testSautr), identifiersMatch = true, BusinessVerificationPass)
+  val testPartnershipFullJourneyData: PartnershipFullJourneyData = PartnershipFullJourneyData(Some(testPostcode), Some(testSautr), identifiersMatch = true, BusinessVerificationPass)
 
 }

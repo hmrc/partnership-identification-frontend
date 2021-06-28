@@ -17,10 +17,9 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.httpparsers
 
 import play.api.http.Status.{NOT_FOUND, OK}
-import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.{JsError, JsPath, JsSuccess, Reads}
+import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse, InternalServerException}
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, PartnershipFullJourneyData}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipFullJourneyData
 
 object RetrievePartnershipFullJourneyDataHttpParser {
 
@@ -28,7 +27,7 @@ object RetrievePartnershipFullJourneyDataHttpParser {
     override def read(method: String, url: String, response: HttpResponse): Option[PartnershipFullJourneyData] = {
       response.status match {
         case OK =>
-          response.json.validate[PartnershipFullJourneyData](partnershipFullJourneyDataReads) match {
+          response.json.validate[PartnershipFullJourneyData] match {
             case JsSuccess(partnershipDetails, _) => Some(partnershipDetails)
             case JsError(errors) =>
               throw new InternalServerException(s"`Failed to read Partnerhsip Journey Data with the following error/s: $errors")
@@ -40,17 +39,4 @@ object RetrievePartnershipFullJourneyDataHttpParser {
       }
     }
   }
-
-  private val SautrKey = "sautr"
-  private val PostcodeKey = "postcode"
-  private val IdentifiersMatchKey = "identifiersMatch"
-  private val BusinessVerificationKey = "businessVerification"
-
-  val partnershipFullJourneyDataReads: Reads[PartnershipFullJourneyData] = (
-    (JsPath \ PostcodeKey).read[String] and
-      (JsPath \ SautrKey).readNullable[String] and
-      (JsPath \ IdentifiersMatchKey).read[Boolean] and
-      (JsPath \ BusinessVerificationKey).read[BusinessVerificationStatus]
-    ) (PartnershipFullJourneyData.apply _)
-
 }

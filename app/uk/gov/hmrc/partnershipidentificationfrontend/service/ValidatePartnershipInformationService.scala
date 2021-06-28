@@ -25,7 +25,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ValidatePartnershipInformationService @Inject()(validatePartnershipInformationConnector: ValidatePartnershipInformationConnector) {
 
-  def validate(sautr: String, postcode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] =
+  def validateIdentifiers(sautr: String, postcode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] =
     validatePartnershipInformationConnector.validate(sautr, postcode)
 
 }
