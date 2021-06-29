@@ -63,8 +63,8 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
           lazy val result = get(s"$baseUrl/$testJourneyId/start-business-verification")
 
           result must have(
-            httpStatus(NOT_IMPLEMENTED) //, TODO implement registration controller
-            //redirectUri(routes.RegistrationController.register(testJourneyId).url)
+            httpStatus(SEE_OTHER),
+            redirectUri(routes.RegistrationController.register(testJourneyId).url)
           )
           verifyStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)
         }
@@ -82,8 +82,8 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
           lazy val result = get(s"$baseUrl/$testJourneyId/start-business-verification")
 
           result must have(
-            httpStatus(NOT_IMPLEMENTED) //, TODO implement registration controller
-            //redirectUri(routes.RegistrationController.register(testJourneyId).url)
+            httpStatus(SEE_OTHER),
+            redirectUri(routes.RegistrationController.register(testJourneyId).url)
           )
           verifyStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationFail)
         }
@@ -117,8 +117,8 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
           lazy val result = get(s"$baseUrl/$testJourneyId/start-business-verification")
 
           result must have(
-            httpStatus(NOT_IMPLEMENTED) //, TODO implement registration controller
-            //redirectUri(routes.RegistrationController.register(testJourneyId).url)
+            httpStatus(SEE_OTHER),
+            redirectUri(routes.RegistrationController.register(testJourneyId).url)
           )
           verifyStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)
         }
@@ -135,8 +135,8 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
           lazy val result = get(s"$baseUrl/$testJourneyId/start-business-verification")
 
           result must have(
-            httpStatus(NOT_IMPLEMENTED) //, TODO implement registration controller
-            //redirectUri(routes.RegistrationController.register(testJourneyId).url)
+            httpStatus(SEE_OTHER),
+            redirectUri(routes.RegistrationController.register(testJourneyId).url)
           )
           verifyStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationFail)
         }
@@ -156,9 +156,8 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
         lazy val result = get(s"$baseUrl/$testJourneyId/business-verification-result" + s"?journeyId=$testBusinessVerificationJourneyId")
 
         result must have(
-          httpStatus(SEE_OTHER), //, TODO implement registration controller
-          // redirectUri(routes.RegistrationController.register(testJourneyId).url))
-          redirectUri(testContinueUrl)
+          httpStatus(SEE_OTHER),
+          redirectUri(routes.RegistrationController.register(testJourneyId).url)
         )
         verifyStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationPass)
       }
@@ -185,9 +184,8 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
         lazy val result = get(s"$baseUrl/$testJourneyId/business-verification-result" + s"?journeyId=$testBusinessVerificationJourneyId")
 
         result must have(
-          httpStatus(SEE_OTHER), //, TODO implement registration controller
-          // redirectUri(routes.RegistrationController.register(testJourneyId).url)
-          redirectUri(testContinueUrl)
+          httpStatus(SEE_OTHER),
+          redirectUri(routes.RegistrationController.register(testJourneyId).url)
         )
         verifyStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationPass)
       }

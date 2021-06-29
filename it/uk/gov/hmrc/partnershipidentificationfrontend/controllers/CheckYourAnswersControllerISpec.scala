@@ -20,7 +20,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.FeatureSwitching
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationUnchallenged, SaInformation}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationUnchallenged, RegistrationNotCalled, SaInformation}
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuthStub, PartnershipIdentificationStub, ValidatePartnershipInformationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.views.CheckYourAnswersViewTests
@@ -111,7 +111,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
 
         result must have {
           httpStatus(SEE_OTHER)
-          redirectUri(testContinueUrl)
+          redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
         }
 
         verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
@@ -123,12 +123,13 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationNoSautrJson)
         stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
         stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)(OK)
+        stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
 
         lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
         result must have {
           httpStatus(SEE_OTHER)
-          redirectUri(testContinueUrl)
+          redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
         }
 
         verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)

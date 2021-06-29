@@ -34,8 +34,7 @@ class RegistrationController @Inject()(registrationOrchestrationService: Registr
     implicit request =>
       authorised() {
         registrationOrchestrationService.register(journeyId).map {
-          _ => NotImplemented
-          // Redirect(routes.JourneyRedirectController.redirectToContinueUrl(journeyId)) TODO uncomment when navigation logic ticket is played
+            _ => Redirect(routes.JourneyRedirectController.redirectToContinueUrl(journeyId))
         }
       }
   }

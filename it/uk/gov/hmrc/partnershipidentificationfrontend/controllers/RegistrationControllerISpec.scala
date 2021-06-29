@@ -37,9 +37,8 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
         val result = get(s"$baseUrl/$testJourneyId/register")
 
-        result.status mustBe NOT_IMPLEMENTED // TODO change to SEE_OTHER
-        // result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-        // TODO uncomment when navigation story is played
+        result.status mustBe SEE_OTHER
+        result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
         verifyRegister(testSautr)
         verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
       }
@@ -53,9 +52,8 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
         val result = get(s"$baseUrl/$testJourneyId/register")
 
-        result.status mustBe NOT_IMPLEMENTED // TODO change to SEE_OTHER
-        // result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-        // TODO uncomment when navigation story is played
+        result.status mustBe SEE_OTHER
+        result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
         verifyRegister(testSautr)
         verifyStoreRegistrationStatus(testJourneyId, RegistrationFailed)
       }

@@ -23,7 +23,7 @@ import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, RegistrationStatus}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, PartnershipInformation, RegistrationStatus}
 import uk.gov.hmrc.partnershipidentificationfrontend.service.PartnershipIdentificationService
 
 import scala.concurrent.Future
@@ -39,35 +39,53 @@ trait MockPartnershipIdentificationService extends MockitoSugar with BeforeAndAf
   }
 
   def mockRetrieveSautr(journeyId: String)
-                       (response: Future[Option[String]]): OngoingStubbing[_] = {
+                       (response: Future[Option[String]]): OngoingStubbing[_] =
     when(mockPartnershipIdentificationService.retrieveSautr(
       ArgumentMatchers.eq(journeyId)
     )(ArgumentMatchers.any[HeaderCarrier])
     ).thenReturn(response)
-  }
 
   def mockRetrieveBusinessVerificationResponse(journeyId: String)
-                                              (response: Future[Option[BusinessVerificationStatus]]): OngoingStubbing[_] = {
+                                              (response: Future[Option[BusinessVerificationStatus]]): OngoingStubbing[_] =
     when(mockPartnershipIdentificationService.retrieveBusinessVerificationStatus(
       ArgumentMatchers.eq(journeyId)
     )(ArgumentMatchers.any[HeaderCarrier])
     ).thenReturn(response)
-  }
 
   def mockStoreRegistrationResponse(journeyId: String, registrationStatus: RegistrationStatus)
-                                   (response: Future[SuccessfullyStored.type]): OngoingStubbing[_] = {
+                                   (response: Future[SuccessfullyStored.type]): OngoingStubbing[_] =
     when(mockPartnershipIdentificationService.storeRegistrationStatus(
       ArgumentMatchers.eq(journeyId),
       ArgumentMatchers.eq(registrationStatus)
     )(ArgumentMatchers.any[HeaderCarrier])
     ).thenReturn(response)
-  }
 
-  def verifyStoreRegistrationResponse(journeyId: String, registrationStatus: RegistrationStatus): Unit = {
+  def mockStoreIdentifiersMatch(journeyId: String, identifiersMatch: Boolean)(response: Future[SuccessfullyStored.type]): OngoingStubbing[_] =
+    when(mockPartnershipIdentificationService.storeIdentifiersMatch(
+      ArgumentMatchers.eq(journeyId),
+      ArgumentMatchers.eq(identifiersMatch)
+    )(ArgumentMatchers.any[HeaderCarrier])
+    ).thenReturn(response)
+
+
+  def mockStoreBusinessVerificationResponse(journeyId: String, businessVerificationStatus: BusinessVerificationStatus)
+                                           (response: Future[SuccessfullyStored.type]): OngoingStubbing[_] =
+    when(mockPartnershipIdentificationService.storeBusinessVerificationStatus(
+      ArgumentMatchers.eq(journeyId),
+      ArgumentMatchers.eq(businessVerificationStatus)
+    )(ArgumentMatchers.any[HeaderCarrier])
+    ).thenReturn(response)
+
+  def mockRetrievePartnershipInformation(journeyId: String)(response: Future[Option[PartnershipInformation]]): OngoingStubbing[_] =
+    when(mockPartnershipIdentificationService.retrievePartnershipInformation(
+      ArgumentMatchers.eq(journeyId)
+    )(ArgumentMatchers.any[HeaderCarrier])
+    ).thenReturn(response)
+
+  def verifyStoreRegistrationResponse(journeyId: String, registrationStatus: RegistrationStatus): Unit =
     verify(mockPartnershipIdentificationService).storeRegistrationStatus(
       ArgumentMatchers.eq(journeyId),
       ArgumentMatchers.eq(registrationStatus)
     )(ArgumentMatchers.any[HeaderCarrier])
-  }
 
 }

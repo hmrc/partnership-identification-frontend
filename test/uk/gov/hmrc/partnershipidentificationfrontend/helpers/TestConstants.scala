@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.helpers
 
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{PartnershipInformation, SaInformation}
+
 import java.util.UUID
 
 object TestConstants {
@@ -24,8 +26,11 @@ object TestConstants {
   val testJourneyId: String = UUID.randomUUID().toString
   val testInternalId: String = UUID.randomUUID().toString
   val testSafeId: String = UUID.randomUUID().toString
+  val testPostcode: String = "AA11AA"
   val testSignOutUrl = "/signOutUrl"
 
   val testSautr: String = "1234567890"
+
+  val testPartnershipInformation: PartnershipInformation = PartnershipInformation(Some(SaInformation(testSautr, testPostcode)))
 
 }

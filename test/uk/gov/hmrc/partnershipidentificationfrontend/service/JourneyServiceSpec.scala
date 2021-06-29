@@ -16,6 +16,8 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.service
 
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.test.Helpers._
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.core.errors.GenericDriverException
@@ -24,12 +26,11 @@ import uk.gov.hmrc.partnershipidentificationfrontend.connectors.mocks.MockJourne
 import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants.{testInternalId, _}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
 import uk.gov.hmrc.partnershipidentificationfrontend.repositories.mocks.MockJourneyConfigRepository
-import uk.gov.hmrc.partnershipidentificationfrontend.utils.UnitSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class JourneyServiceSpec extends UnitSpec with MockJourneyConnector with MockJourneyConfigRepository {
+class JourneyServiceSpec extends AnyWordSpec with Matchers with MockJourneyConnector with MockJourneyConfigRepository {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 

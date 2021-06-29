@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.partnershipidentificationfrontend.utils
+package uk.gov.hmrc.partnershipidentificationfrontend.models
 
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
+sealed trait ValidationResponse
 
-trait UnitSpec extends AnyWordSpec with Matchers {}
+case object IdentifiersMatched extends ValidationResponse
+
+case object IdentifiersMismatch extends ValidationResponse
+
+case object NoSautrProvided extends ValidationResponse

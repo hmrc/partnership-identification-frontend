@@ -17,10 +17,9 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
-import uk.gov.hmrc.partnershipidentificationfrontend.service.{BusinessVerificationService, JourneyService, PartnershipIdentificationService}
+import uk.gov.hmrc.partnershipidentificationfrontend.service.{BusinessVerificationService, PartnershipIdentificationService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -31,7 +30,6 @@ class BusinessVerificationController @Inject()(mcc: MessagesControllerComponents
                                                val authConnector: AuthConnector,
                                                businessVerificationService: BusinessVerificationService,
                                                partnershipIdentificationService: PartnershipIdentificationService,
-                                               journeyService: JourneyService
                                               )(implicit val executionContext: ExecutionContext) extends FrontendController(mcc) with AuthorisedFunctions {
 
   def startBusinessVerificationJourney(journeyId: String): Action[AnyContent] = Action.async {
@@ -43,7 +41,7 @@ class BusinessVerificationController @Inject()(mcc: MessagesControllerComponents
               case Some(redirectUri) =>
                 Future.successful(Redirect(redirectUri))
               case None =>
-                Future.successful(NotImplemented)
+                Future.successful(Redirect(routes.RegistrationController.register(journeyId)))
             }
           case None =>
             throw new InternalServerException(s"There is no SAUTR for $journeyId")
@@ -53,24 +51,18 @@ class BusinessVerificationController @Inject()(mcc: MessagesControllerComponents
 
   def retrieveBusinessVerificationResult(journeyId: String): Action[AnyContent] = Action.async {
     implicit req =>
-      authorised().retrieve(internalId) {
-        case Some(authInternalId) =>
-          req.getQueryString("journeyId") match {
-            case Some(businessVerificationJourneyId) =>
-              businessVerificationService.retrieveBusinessVerificationStatus(businessVerificationJourneyId).flatMap {
-                verificationStatus =>
-                  partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, verificationStatus).flatMap {
-                    _ => //Update once integrated with Register API
-                      journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
-                        journeyConfig => Future.successful(Redirect(journeyConfig.continueUrl + s"?journeyId=$journeyId"))
-                      }
-                  }
-              }
-            case None =>
-              throw new InternalServerException("JourneyID is missing from Business Verification callback")
-          }
-        case _ =>
-          throw new InternalServerException("Internal ID could not be retrieved from Auth")
+      authorised() {
+        req.getQueryString("journeyId") match {
+          case Some(businessVerificationJourneyId) =>
+            businessVerificationService.retrieveBusinessVerificationStatus(businessVerificationJourneyId).flatMap {
+              verificationStatus =>
+                partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, verificationStatus).map {
+                  _ => Redirect(routes.RegistrationController.register(journeyId))
+                }
+            }
+          case None =>
+            throw new InternalServerException("JourneyID is missing from Business Verification callback")
+        }
       }
   }
 

@@ -16,17 +16,18 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.service
 
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.{GatewayTimeoutException, HeaderCarrier}
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.mocks.MockPartnershipIdentificationConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.RemovePartnershipDetailsHttpParser.SuccessfullyRemoved
-import uk.gov.hmrc.partnershipidentificationfrontend.utils.UnitSpec
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class PartnershipIdentificationServiceSpec extends UnitSpec with MockPartnershipIdentificationConnector {
+class PartnershipIdentificationServiceSpec extends AnyWordSpec with Matchers with MockPartnershipIdentificationConnector {
 
   object TestService extends PartnershipIdentificationService(mockPartnershipIdentificationConnector)
 
