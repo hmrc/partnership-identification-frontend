@@ -17,3 +17,5 @@ GET         /:journeyId/start-business-verification        uk.gov.hmrc.partnersh
 GET         /:journeyId/business-verification-result       uk.gov.hmrc.partnershipidentificationfrontend.controllers.BusinessVerificationController.retrieveBusinessVerificationResult(journeyId)
 
 GET         /:journeyId/register                           uk.gov.hmrc.partnershipidentificationfrontend.controllers.RegistrationController.register(journeyId)
+
+GET         /journey/redirect/:journeyId                   uk.gov.hmrc.partnershipidentificationfrontend.controllers.JourneyRedirectController.redirectToContinueUrl(journeyId)

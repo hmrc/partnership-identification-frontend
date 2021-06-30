@@ -19,10 +19,12 @@ package uk.gov.hmrc.partnershipidentificationfrontend.models
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-case class PartnershipFullJourneyData(postcode: Option[String],
+case class PartnershipFullJourneyData(optPostcode: Option[String],
                                       optSautr: Option[String],
                                       identifiersMatch: Boolean,
-                                      businessVerification: BusinessVerificationStatus)
+                                      businessVerification: BusinessVerificationStatus,
+                                      registrationStatus: RegistrationStatus
+                                     )
 
 object PartnershipFullJourneyData {
 
@@ -30,19 +32,22 @@ object PartnershipFullJourneyData {
   private val PostcodeKey = "postcode"
   private val IdentifiersMatchKey = "identifiersMatch"
   private val BusinessVerificationKey = "businessVerification"
+  private val RegistrationStatusKey = "registration"
 
   val reads: Reads[PartnershipFullJourneyData] = (
     (JsPath \ PostcodeKey).readNullable[String] and
       (JsPath \ SautrKey).readNullable[String] and
       (JsPath \ IdentifiersMatchKey).read[Boolean] and
-      (JsPath \ BusinessVerificationKey).read[BusinessVerificationStatus]
+      (JsPath \ BusinessVerificationKey).read[BusinessVerificationStatus] and
+      (JsPath \ RegistrationStatusKey).read[RegistrationStatus]
     ) (PartnershipFullJourneyData.apply _)
 
   val writes: OWrites[PartnershipFullJourneyData] = (
     (JsPath \ PostcodeKey).writeNullable[String] and
       (JsPath \ SautrKey).writeNullable[String] and
       (JsPath \ IdentifiersMatchKey).write[Boolean] and
-      (JsPath \ BusinessVerificationKey).write[BusinessVerificationStatus]
+      (JsPath \ BusinessVerificationKey).write[BusinessVerificationStatus] and
+      (JsPath \ RegistrationStatusKey).write[RegistrationStatus]
     ) (unlift(PartnershipFullJourneyData.unapply))
 
   implicit val format: OFormat[PartnershipFullJourneyData] = OFormat(reads, writes)

@@ -55,6 +55,10 @@ object TestConstants {
       "identifiersMatch" -> true,
       "businessVerification" -> Json.obj(
         "verificationStatus" -> "PASS"
+      ),
+      "registration" -> Json.obj(
+        "registrationStatus" -> "REGISTERED",
+        "registeredBusinessPartnerId" -> testSafeId
       )
     )
   }
@@ -62,6 +66,6 @@ object TestConstants {
   val testPartnershipInformationNoSautrJson: JsObject = Json.obj()
 
   val testPartnershipInformation: PartnershipInformation = PartnershipInformation(Some(SaInformation(testSautr, testPostcode)))
-  val testPartnershipFullJourneyData: PartnershipFullJourneyData = PartnershipFullJourneyData(Some(testPostcode), Some(testSautr), identifiersMatch = true, BusinessVerificationPass)
+  val testPartnershipFullJourneyData: PartnershipFullJourneyData = PartnershipFullJourneyData(Some(testPostcode), Some(testSautr), identifiersMatch = true, BusinessVerificationPass, Registered(testSafeId))
 
 }

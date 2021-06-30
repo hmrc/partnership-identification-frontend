@@ -21,8 +21,8 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationUnchallenged, PartnershipInformation, SaInformation}
-import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipIdentificationService, ValidatePartnershipInformationService}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{IdentifiersMatched, IdentifiersMismatch, NoSautrProvided}
+import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, ValidationOrchestrationService, PartnershipIdentificationService}
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.check_your_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -34,10 +34,10 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
                                            view: check_your_answers_page,
                                            val authConnector: AuthConnector,
                                            journeyService: JourneyService,
-                                           partnershipInformationService: PartnershipIdentificationService,
-                                           validatePartnershipInformationService: ValidatePartnershipInformationService
-                                          )(implicit val config: AppConfig, executionContext: ExecutionContext)
-  extends FrontendController(mcc) with AuthorisedFunctions {
+                                           partnershipIdentificationService: PartnershipIdentificationService,
+                                           validationOrchestrationService: ValidationOrchestrationService
+                                          )(implicit val config: AppConfig,
+                                            executionContext: ExecutionContext) extends FrontendController(mcc) with AuthorisedFunctions {
 
   def show(journeyId: String): Action[AnyContent] = Action.async {
     implicit request =>
@@ -45,14 +45,16 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
         case Some(authInternalId) =>
           journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
             journeyConfig =>
-              partnershipInformationService.retrievePartnershipInformation(journeyId).map {
-                case Some(partnershipInformation) => Ok(view(
-                  journeyId,
-                  journeyConfig.pageConfig,
-                  routes.CheckYourAnswersController.submit(journeyId),
-                  partnershipInformation
-                ))
-                case _ => throw new InternalServerException(s"No data stored for journeyId: $journeyId")
+              partnershipIdentificationService.retrievePartnershipInformation(journeyId).map {
+                case Some(partnershipInformation) =>
+                  Ok(view(
+                    journeyId,
+                    journeyConfig.pageConfig,
+                    routes.CheckYourAnswersController.submit(journeyId),
+                    partnershipInformation
+                  ))
+                case _ =>
+                  throw new InternalServerException(s"No data stored for journeyId: $journeyId")
               }
           }
         case _ =>
@@ -65,32 +67,12 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
       authorised().retrieve(internalId) {
         case Some(authInternalId) =>
           journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
-            journeyConfig =>
-              partnershipInformationService.retrievePartnershipInformation(journeyId).flatMap {
-                case Some(PartnershipInformation(Some(SaInformation(sautr, postcode)))) =>
-                  validatePartnershipInformationService.validateIdentifiers(sautr, postcode).flatMap {
-                    identifiersMatch =>
-                      if (identifiersMatch) {
-                        partnershipInformationService.storeIdentifiersMatch(journeyId, identifiersMatch).map {
-                          _ => Redirect(routes.BusinessVerificationController.startBusinessVerificationJourney(journeyId))
-                        }
-                      }
-                      else {
-                        for {
-                          _ <- partnershipInformationService.storeIdentifiersMatch(journeyId, identifiersMatch)
-                          _ <- partnershipInformationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
-                        } yield
-                          Redirect(journeyConfig.continueUrl + s"?journeyId=$journeyId")
-                      }
-                  }
-                case Some(PartnershipInformation(None)) =>
-                  for {
-                    _ <- partnershipInformationService.storeIdentifiersMatch(journeyId, identifiersMatch = false)
-                    _ <- partnershipInformationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
-                  } yield
-                    Redirect(journeyConfig.continueUrl + s"?journeyId=$journeyId")
-                case _ =>
-                  throw new InternalServerException(s"No data stored for journeyId: $journeyId")
+            _ =>
+              validationOrchestrationService.orchestrate(journeyId).map{
+                case IdentifiersMatched =>
+                  Redirect(routes.BusinessVerificationController.startBusinessVerificationJourney(journeyId))
+                case NoSautrProvided | IdentifiersMismatch =>
+                  Redirect(routes.JourneyRedirectController.redirectToContinueUrl(journeyId))
               }
           }
         case _ =>
