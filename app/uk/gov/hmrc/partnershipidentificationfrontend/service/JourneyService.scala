@@ -42,5 +42,7 @@ class JourneyService @Inject()(journeyConnector: JourneyConnector,
         throw new NotFoundException(s"Journey config was not found for journey ID $journeyId")
     }
 
-}
+  def storeBusinessEntity(journeyId: String, authInternalId: String, businessEntity: String): Future[Unit] =
+    journeyConfigRepository.upsertBusinessEntity(journeyId, authInternalId, businessEntity)
 
+}
