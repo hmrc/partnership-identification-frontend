@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class BusinessVerificationController @Inject()(mcc: MessagesControllerComponents,
                                                val authConnector: AuthConnector,
                                                businessVerificationService: BusinessVerificationService,
-                                               partnershipIdentificationService: PartnershipIdentificationService,
+                                               partnershipIdentificationService: PartnershipIdentificationService
                                               )(implicit val executionContext: ExecutionContext) extends FrontendController(mcc) with AuthorisedFunctions {
 
   def startBusinessVerificationJourney(journeyId: String): Action[AnyContent] = Action.async {
