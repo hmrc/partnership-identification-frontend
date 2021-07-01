@@ -8,6 +8,9 @@ POST       /api/feature-switches                                                
 GET        /general-partnership/create-journey                                              uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateGeneralPartnershipJourneyController.show
 POST       /general-partnership/create-journey                                              uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateGeneralPartnershipJourneyController.submit
 
+GET        /scottish-partnership/create-journey                                              uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateScottishPartnershipJourneyController.show
+POST       /scottish-partnership/create-journey                                              uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateScottishPartnershipJourneyController.submit
+
 GET        /retrieve-journey/:journeyId                                                     uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestRetrieveJourneyDataController.retrievePartnershipDetails(journeyId)
 GET        /retrieve-journey                                                                uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestRetrieveJourneyDataController.retrievePartnershipDetails(journeyId)
 
