@@ -29,7 +29,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with AuthStub with PartnershipIdentificationStub {
 
-  "POST /api/journey" should {
+  "POST /api/general-partnership/journey" should {
     "return a created journey" in {
       stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
       stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
@@ -43,7 +43,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
         )
       )
 
-      lazy val result = post("/partnership-identification/api/journey", Json.toJson(testJourneyConfig))
+      lazy val result = post("/partnership-identification/api/general-partnership/journey", Json.toJson(testJourneyConfig))
 
       (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
 
@@ -63,7 +63,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
         )
       )
 
-      lazy val result = post("/partnership-identification/api/journey", Json.toJson(testJourneyConfig))
+      lazy val result = post("/partnership-identification/api/general-partnership/journey", Json.toJson(testJourneyConfig))
 
       result.status mustBe SEE_OTHER
     }

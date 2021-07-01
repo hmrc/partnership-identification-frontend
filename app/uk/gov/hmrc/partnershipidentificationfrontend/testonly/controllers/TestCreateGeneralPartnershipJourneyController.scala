@@ -29,12 +29,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TestCreateJourneyController @Inject()(messagesControllerComponents: MessagesControllerComponents,
-                                            testCreateJourneyConnector: TestCreateJourneyConnector,
-                                            view: test_create_journey,
-                                            val authConnector: AuthConnector
-                                           )(implicit ec: ExecutionContext,
-                                             appConfig: AppConfig) extends FrontendController(messagesControllerComponents) with AuthorisedFunctions {
+class TestCreateGeneralPartnershipJourneyController @Inject()(messagesControllerComponents: MessagesControllerComponents,
+                                                              testCreateJourneyConnector: TestCreateJourneyConnector,
+                                                              view: test_create_journey,
+                                                              val authConnector: AuthConnector
+                                                             )(implicit ec: ExecutionContext,
+                                                               appConfig: AppConfig) extends FrontendController(messagesControllerComponents) with AuthorisedFunctions {
 
   private val defaultPageConfig = PageConfig(
     optServiceName = None,
@@ -51,7 +51,7 @@ class TestCreateJourneyController @Inject()(messagesControllerComponents: Messag
     implicit request =>
       authorised() {
         Future.successful(
-          Ok(view(defaultPageConfig, form.fill(defaultJourneyConfig), routes.TestCreateJourneyController.submit()))
+          Ok(view(defaultPageConfig, form.fill(defaultJourneyConfig), routes.TestCreateGeneralPartnershipJourneyController.submit()))
         )
       }
   }
@@ -62,10 +62,10 @@ class TestCreateJourneyController @Inject()(messagesControllerComponents: Messag
         form.bindFromRequest().fold(
           formWithErrors =>
             Future.successful(
-              BadRequest(view(defaultPageConfig, formWithErrors, routes.TestCreateJourneyController.submit()))
+              BadRequest(view(defaultPageConfig, formWithErrors, routes.TestCreateGeneralPartnershipJourneyController.submit()))
             ),
           journeyConfig =>
-            testCreateJourneyConnector.createJourney(journeyConfig)
+            testCreateJourneyConnector.createGeneralPartnershipJourney(journeyConfig)
               .map(journeyUrl => SeeOther(journeyUrl))
         )
       }

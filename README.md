@@ -17,11 +17,14 @@ This is a Scala/Play frontend to allow Partnerships to provide their information
 ### Testing
 See the TestREADME for more information on how to use our stubs for testing
 
-## End-Points
-### POST /journey
+# End-Points
 
 ---
-Creates a new journey, storing the journeyConfig against the journeyId.
+## Creating the General Partnership journey
+### POST /general-partnership/journey
+
+---
+Creates a new journey for a General Partnership, storing the journeyConfig against the journeyId.
 #### Request:
 optServiceName will default to `Entity Validation Service` if the field is not provided.
 
@@ -45,7 +48,7 @@ Example Response body:
 {“journeyStartUrl” : "/testUrl"}
 ```
 
-#### GET /journey/:journeyId
+### GET /journey/:journeyId
 
 ---
 Retrieves all the journey data that is stored against a specific journeyID.

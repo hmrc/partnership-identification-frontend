@@ -12,10 +12,10 @@ Shows all feature switches:
 
     - Use stub for Partnership Known Facts SAUTR call
 
-#### GET test-only/create-journey
+#### GET test-only/general-partnership/create-journey
 
 ---
-This is a test entry point which simulates a service by triggering the initial POST call to set up a journey.
+This is a test entry point which simulates a service by triggering the initial POST call to set up a journey for General Partnerships.
 
 1. Continue URL (Required)
 
@@ -35,23 +35,6 @@ This is a test entry point which simulates a service by triggering the initial P
 
     - Shown in the HMRC header - typically a link to a feedback questionnaire
     - This is currently autofilled but can be changed
-   
-#### POST test-only/verification-question/journey
-
----
-Stubs creating a Business Verification journey. The Business Verification Stub Feature Switch will need to be enabled.
-
-##### Request:
-No body is required for this request
-
-##### Response:
-Status: **Created(201)**
-
-Example Response body:
-
-```
-{“redirectUri” : "/testUrl?journeyId=<businessVerificationJourneyId>"}
-```
 
 #### GET test-only/retrieve-journey/:journeyId or test-only/retrieve-journey
 
@@ -77,6 +60,23 @@ Example response body:
    "postcode": "AA11AA"
    "identifiersMatch": true
 }
+```
+
+#### POST test-only/verification-question/journey
+
+---
+Stubs creating a Business Verification journey. The Business Verification Stub Feature Switch will need to be enabled.
+
+##### Request:
+No body is required for this request
+
+##### Response:
+Status: **Created(201)**
+
+Example Response body:
+
+```
+{“redirectUri” : "/testUrl?journeyId=<businessVerificationJourneyId>"}
 ```
 
 #### GET  test-only/verification-question/journey/:journeyId/status
