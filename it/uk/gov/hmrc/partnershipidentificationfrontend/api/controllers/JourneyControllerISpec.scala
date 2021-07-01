@@ -69,6 +69,46 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
     }
   }
 
+  "POST /api/scottish-partnership/journey" should {
+    "return a created journey" in {
+      stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+      stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
+
+      val testJourneyConfig = JourneyConfig(
+        continueUrl = "/testContinueUrl",
+        pageConfig = PageConfig(
+          optServiceName = None,
+          deskProServiceId = testDeskProServiceId,
+          signOutUrl = testSignOutUrl
+        )
+      )
+
+      lazy val result = post("/partnership-identification/api/scottish-partnership/journey", Json.toJson(testJourneyConfig))
+
+      (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
+
+      await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testJourneyConfig)
+    }
+
+    "return See Other" in {
+      stubAuthFailure()
+      stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
+
+      val testJourneyConfig = JourneyConfig(
+        continueUrl = "/testContinueUrl",
+        pageConfig = PageConfig(
+          optServiceName = None,
+          deskProServiceId = testDeskProServiceId,
+          signOutUrl = testSignOutUrl
+        )
+      )
+
+      lazy val result = post("/partnership-identification/api/scottish-partnership/journey", Json.toJson(testJourneyConfig))
+
+      result.status mustBe SEE_OTHER
+    }
+  }
+
   "GET /api/journey/:journeyId" should {
     "return captured data" when {
       "the journeyId exists" in {

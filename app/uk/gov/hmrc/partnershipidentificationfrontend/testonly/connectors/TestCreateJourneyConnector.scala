@@ -16,21 +16,31 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.testonly.connectors
 
+import javax.inject.{Inject, Singleton}
 import play.api.http.Status.CREATED
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.routes
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
 
-import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TestCreateJourneyConnector @Inject()(httpClient: HttpClient,
                                            appConfig: AppConfig
                                           )(implicit ec: ExecutionContext) {
+
   def createGeneralPartnershipJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier): Future[String] = {
     val url = appConfig.selfBaseUrl + routes.JourneyController.createGeneralPartnershipJourney().url
+
+    httpClient.POST(url, journeyConfig).map {
+      case response@HttpResponse(CREATED, _, _) =>
+        (response.json \ "journeyStartUrl").as[String]
+    }
+  }
+
+  def createScottishPartnershipJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier): Future[String] = {
+    val url = appConfig.selfBaseUrl + routes.JourneyController.createScottishPartnershipJourney().url
 
     httpClient.POST(url, journeyConfig).map {
       case response@HttpResponse(CREATED, _, _) =>

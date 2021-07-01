@@ -56,6 +56,24 @@ class JourneyController @Inject()(controllerComponents: ControllerComponents,
       }
   }
 
+  def createScottishPartnershipJourney(): Action[JourneyConfig] = Action.async(parse.json[JourneyConfig]) {
+    implicit req =>
+      authorised().retrieve(internalId) {
+        case Some(authInternalId) =>
+          journeyService.createJourney(req.body, authInternalId).flatMap {
+            journeyId =>
+              journeyService.storeScottishPartnershipEntity(journeyId, authInternalId).map {
+                _ =>
+                  Created(Json.obj(
+                    "journeyStartUrl" -> s"${appConfig.selfUrl}${controllerRoutes.CaptureSautrController.show(journeyId).url}"
+                  ))
+              }
+          }
+        case _ =>
+          throw new InternalServerException("Internal ID could not be retrieved from Auth")
+      }
+  }
+
   def retrieveJourneyData(journeyId: String): Action[AnyContent] = Action.async {
     implicit req =>
       authorised() {
