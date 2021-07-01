@@ -38,15 +38,18 @@ class JourneyController @Inject()(controllerComponents: ControllerComponents,
                                   partnershipIdentificationService: PartnershipIdentificationService
                                  )(implicit ec: ExecutionContext) extends BackendController(controllerComponents) with AuthorisedFunctions {
 
-  def createJourney(): Action[JourneyConfig] = Action.async(parse.json[JourneyConfig]) {
+  def createGeneralPartnershipJourney(): Action[JourneyConfig] = Action.async(parse.json[JourneyConfig]) {
     implicit req =>
       authorised().retrieve(internalId) {
         case Some(authInternalId) =>
-          journeyService.createJourney(req.body, authInternalId).map {
+          journeyService.createJourney(req.body, authInternalId).flatMap {
             journeyId =>
-              Created(Json.obj(
-                "journeyStartUrl" -> s"${appConfig.selfUrl}${controllerRoutes.CaptureSautrController.show(journeyId).url}"
-              ))
+              journeyService.storeGeneralPartnershipEntity(journeyId, authInternalId).map {
+                _ =>
+                  Created(Json.obj(
+                    "journeyStartUrl" -> s"${appConfig.selfUrl}${controllerRoutes.CaptureSautrController.show(journeyId).url}"
+                  ))
+              }
           }
         case _ =>
           throw new InternalServerException("Internal ID could not be retrieved from Auth")
