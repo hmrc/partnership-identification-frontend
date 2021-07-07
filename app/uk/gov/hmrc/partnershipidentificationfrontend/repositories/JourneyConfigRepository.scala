@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.repositories
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.{Index, IndexType}
@@ -25,6 +25,7 @@ import reactivemongo.play.json.JsObjectDocumentWriter
 import uk.gov.hmrc.mongo.ReactiveRepository
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, PartnershipType, ScottishPartnership}
 import uk.gov.hmrc.partnershipidentificationfrontend.repositories.JourneyConfigRepository._
 
 import java.time.Instant
@@ -37,7 +38,7 @@ class JourneyConfigRepository @Inject()(reactiveMongoComponent: ReactiveMongoCom
                                        (implicit ec: ExecutionContext) extends ReactiveRepository[JourneyConfig, String](
   collectionName = "partnership-identification-frontend",
   mongo = reactiveMongoComponent.mongoConnector.db,
-  domainFormat = JourneyConfig.format,
+  domainFormat = journeyConfigMongoFormat,
   idFormat = implicitly[Format[String]]
 ) {
 
@@ -49,20 +50,6 @@ class JourneyConfigRepository @Inject()(reactiveMongoComponent: ReactiveMongoCom
         CreationTimestampKey -> Json.obj("$date" -> Instant.now.toEpochMilli)
       ) ++ Json.toJsObject(journeyConfig)
     )
-
-  def upsertBusinessEntity(journeyId: String, authInternalId: String, businessEntity: String): Future[Unit] =
-    collection.update(ordered = true).one(
-      Json.obj(
-        JourneyIdKey -> journeyId,
-        AuthInternalIdKey -> authInternalId
-      ),
-      Json.obj("$set" -> Json.obj(
-        BusinessEntityKey -> businessEntity
-      ))
-    ).filter(_.n == 1).map {
-      _ => Unit
-    }
-
 
   def findJourneyConfig(journeyId: String, authInternalId: String): Future[Option[JourneyConfig]] =
     collection.find(
@@ -103,4 +90,19 @@ object JourneyConfigRepository {
   val AuthInternalIdKey = "authInternalId"
   val CreationTimestampKey = "creationTimestamp"
   val BusinessEntityKey = "businessEntity"
+  val GeneralPartnershipKey = "generalPartnership"
+  val ScottishPartnershipKey = "scottishPartnership"
+
+  implicit val partnershipTypeMongoFormat: Format[PartnershipType] = new Format[PartnershipType] {
+    override def reads(json: JsValue): JsResult[PartnershipType] = json.validate[String].collect(JsonValidationError("Invalid partnership type")) {
+      case GeneralPartnershipKey => GeneralPartnership
+      case ScottishPartnershipKey => ScottishPartnership
+    }
+
+    override def writes(partnershipType: PartnershipType): JsValue = partnershipType match {
+      case GeneralPartnership => JsString(GeneralPartnershipKey)
+      case ScottishPartnership => JsString(ScottishPartnershipKey)
+    }
+  }
+  implicit val journeyConfigMongoFormat: OFormat[JourneyConfig] = Json.format[JourneyConfig]
 }

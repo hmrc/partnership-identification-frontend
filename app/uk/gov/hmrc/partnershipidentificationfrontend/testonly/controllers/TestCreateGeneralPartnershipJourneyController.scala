@@ -19,6 +19,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.GeneralPartnership
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.connectors.TestCreateJourneyConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.forms.TestCreateJourneyForm.form
@@ -44,14 +45,15 @@ class TestCreateGeneralPartnershipJourneyController @Inject()(messagesController
 
   private val defaultJourneyConfig = JourneyConfig(
     continueUrl = s"${appConfig.selfUrl}/identify-your-partnership/test-only/retrieve-journey",
-    pageConfig = defaultPageConfig
+    pageConfig = defaultPageConfig,
+    GeneralPartnership
   )
 
   val show: Action[AnyContent] = Action.async {
     implicit request =>
       authorised() {
         Future.successful(
-          Ok(view(defaultPageConfig, form.fill(defaultJourneyConfig), routes.TestCreateGeneralPartnershipJourneyController.submit()))
+          Ok(view(defaultPageConfig, form(GeneralPartnership).fill(defaultJourneyConfig), routes.TestCreateGeneralPartnershipJourneyController.submit()))
         )
       }
   }
@@ -59,7 +61,7 @@ class TestCreateGeneralPartnershipJourneyController @Inject()(messagesController
   val submit: Action[AnyContent] = Action.async {
     implicit request =>
       authorised() {
-        form.bindFromRequest().fold(
+        form(GeneralPartnership).bindFromRequest().fold(
           formWithErrors =>
             Future.successful(
               BadRequest(view(defaultPageConfig, formWithErrors, routes.TestCreateGeneralPartnershipJourneyController.submit()))

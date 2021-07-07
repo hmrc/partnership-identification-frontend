@@ -16,11 +16,10 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.api.controllers
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.controllers.{routes => appRoutes}
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuthStub, JourneyStub, PartnershipIdentificationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 
@@ -29,21 +28,18 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with AuthStub with PartnershipIdentificationStub {
 
+  val testJourneyConfigJson: JsObject = Json.obj(
+    "continueUrl" -> testJourneyConfig.continueUrl,
+    "deskProServiceId" -> testJourneyConfig.pageConfig.deskProServiceId,
+    "signOutUrl" -> testJourneyConfig.pageConfig.signOutUrl
+  )
+
   "POST /api/general-partnership/journey" should {
     "return a created journey" in {
       stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
       stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
 
-      val testJourneyConfig = JourneyConfig(
-        continueUrl = "/testContinueUrl",
-        pageConfig = PageConfig(
-          optServiceName = None,
-          deskProServiceId = testDeskProServiceId,
-          signOutUrl = testSignOutUrl
-        )
-      )
-
-      lazy val result = post("/partnership-identification/api/general-partnership/journey", Json.toJson(testJourneyConfig))
+      lazy val result = post("/partnership-identification/api/general-partnership/journey", testJourneyConfigJson)
 
       (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
 
@@ -54,16 +50,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
       stubAuthFailure()
       stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
 
-      val testJourneyConfig = JourneyConfig(
-        continueUrl = "/testContinueUrl",
-        pageConfig = PageConfig(
-          optServiceName = None,
-          deskProServiceId = testDeskProServiceId,
-          signOutUrl = testSignOutUrl
-        )
-      )
-
-      lazy val result = post("/partnership-identification/api/general-partnership/journey", Json.toJson(testJourneyConfig))
+      lazy val result = post("/partnership-identification/api/general-partnership/journey", testJourneyConfigJson)
 
       result.status mustBe SEE_OTHER
     }
@@ -74,36 +61,18 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
       stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
       stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
 
-      val testJourneyConfig = JourneyConfig(
-        continueUrl = "/testContinueUrl",
-        pageConfig = PageConfig(
-          optServiceName = None,
-          deskProServiceId = testDeskProServiceId,
-          signOutUrl = testSignOutUrl
-        )
-      )
-
-      lazy val result = post("/partnership-identification/api/scottish-partnership/journey", Json.toJson(testJourneyConfig))
+      lazy val result = post("/partnership-identification/api/scottish-partnership/journey", testJourneyConfigJson)
 
       (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
 
-      await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testJourneyConfig)
+      await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testScottishPartnershipJourneyConfig)
     }
 
     "return See Other" in {
       stubAuthFailure()
       stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
 
-      val testJourneyConfig = JourneyConfig(
-        continueUrl = "/testContinueUrl",
-        pageConfig = PageConfig(
-          optServiceName = None,
-          deskProServiceId = testDeskProServiceId,
-          signOutUrl = testSignOutUrl
-        )
-      )
-
-      lazy val result = post("/partnership-identification/api/scottish-partnership/journey", Json.toJson(testJourneyConfig))
+      lazy val result = post("/partnership-identification/api/scottish-partnership/journey", testJourneyConfigJson)
 
       result.status mustBe SEE_OTHER
     }

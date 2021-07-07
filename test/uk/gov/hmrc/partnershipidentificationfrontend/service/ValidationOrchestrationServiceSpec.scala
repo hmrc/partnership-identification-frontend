@@ -25,8 +25,8 @@ import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIden
 import uk.gov.hmrc.partnershipidentificationfrontend.models._
 import uk.gov.hmrc.partnershipidentificationfrontend.service.mocks.{MockPartnershipIdentificationService, MockValidatePartnershipInformationService}
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class ValidationOrchestrationServiceSpec extends AnyWordSpec
     with Matchers
