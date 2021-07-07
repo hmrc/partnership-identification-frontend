@@ -24,6 +24,7 @@ import reactivemongo.core.errors.GenericDriverException
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException, NotFoundException}
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.mocks.MockJourneyConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants.{testInternalId, _}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.GeneralPartnership
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
 import uk.gov.hmrc.partnershipidentificationfrontend.repositories.mocks.MockJourneyConfigRepository
 
@@ -42,7 +43,8 @@ class JourneyServiceSpec extends AnyWordSpec with Matchers with MockJourneyConne
       optServiceName = None,
       deskProServiceId = "vrs",
       signOutUrl = testSignOutUrl
-    )
+    ),
+    GeneralPartnership
   )
 
   "createJourney" should {

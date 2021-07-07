@@ -18,7 +18,6 @@ package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.AuthStub
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 
@@ -30,7 +29,7 @@ class JourneyRedirectControllerISpec extends ComponentSpecHelper with AuthStub {
       await(journeyConfigRepository.insertJourneyConfig(
         testJourneyId,
         testInternalId,
-        JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl))
+        testJourneyConfig
       ))
 
       lazy val result = get(s"$baseUrl/journey/redirect/$testJourneyId")

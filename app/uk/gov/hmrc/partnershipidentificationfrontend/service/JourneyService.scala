@@ -20,9 +20,8 @@ import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.JourneyConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.repositories.JourneyConfigRepository
-import uk.gov.hmrc.partnershipidentificationfrontend.service.JourneyService.{generalPartnershipKey, scottishPartnershipKey}
-import javax.inject.Inject
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class JourneyService @Inject()(journeyConnector: JourneyConnector,
@@ -42,16 +41,4 @@ class JourneyService @Inject()(journeyConnector: JourneyConnector,
       case None =>
         throw new NotFoundException(s"Journey config was not found for journey ID $journeyId")
     }
-
-  def storeGeneralPartnershipEntity(journeyId: String, authInternalId: String): Future[Unit] =
-    journeyConfigRepository.upsertBusinessEntity(journeyId, authInternalId, generalPartnershipKey)
-
-  def storeScottishPartnershipEntity(journeyId: String, authInternalId: String): Future[Unit] =
-    journeyConfigRepository.upsertBusinessEntity(journeyId, authInternalId, scottishPartnershipKey)
-
-}
-
-object JourneyService {
-  private val generalPartnershipKey: String = "General Partnership"
-  private val scottishPartnershipKey: String = "Scottish Partnership"
 }

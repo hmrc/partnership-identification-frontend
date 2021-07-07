@@ -21,6 +21,7 @@ import play.api.data.Forms.{mapping, text}
 import play.api.data.validation.Constraint
 import uk.gov.hmrc.partnershipidentificationfrontend.forms.utils.MappingUtil.optText
 import uk.gov.hmrc.partnershipidentificationfrontend.forms.utils.ValidationHelper.validate
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.PartnershipType
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
 
 
@@ -53,14 +54,14 @@ object TestCreateJourneyForm {
     )
   )
 
-  val form: Form[JourneyConfig] = {
+  def form(partnershipType: PartnershipType): Form[JourneyConfig] = {
     Form(mapping(
       continueUrl -> text.verifying(continueUrlEmpty),
       serviceName -> optText,
       deskProServiceId -> text.verifying(deskProServiceIdEmpty),
       signOutUrl -> text.verifying(signOutUrlEmpty)
     )((continueUrl, serviceName, deskProServiceId, signOutUrl) =>
-      JourneyConfig.apply(continueUrl, PageConfig(serviceName, deskProServiceId, signOutUrl))
+      JourneyConfig.apply(continueUrl, PageConfig(serviceName, deskProServiceId, signOutUrl), partnershipType)
     )(journeyConfig =>
       Some(journeyConfig.continueUrl, journeyConfig.pageConfig.optServiceName,
         journeyConfig.pageConfig.deskProServiceId, journeyConfig.pageConfig.signOutUrl)

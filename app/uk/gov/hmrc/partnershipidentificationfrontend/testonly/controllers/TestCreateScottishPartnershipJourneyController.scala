@@ -16,16 +16,17 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers
 
-import javax.inject.Inject
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.ScottishPartnership
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.connectors.TestCreateJourneyConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.forms.TestCreateJourneyForm.form
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.views.html.test_create_journey
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TestCreateScottishPartnershipJourneyController @Inject()(messagesControllerComponents: MessagesControllerComponents,
@@ -43,14 +44,15 @@ class TestCreateScottishPartnershipJourneyController @Inject()(messagesControlle
 
   private val defaultJourneyConfig = JourneyConfig(
     continueUrl = s"${appConfig.selfUrl}/identify-your-partnership/test-only/retrieve-journey",
-    pageConfig = defaultPageConfig
+    pageConfig = defaultPageConfig,
+    ScottishPartnership
   )
 
   val show: Action[AnyContent] = Action.async {
     implicit request =>
       authorised() {
         Future.successful(
-          Ok(view(defaultPageConfig, form.fill(defaultJourneyConfig), routes.TestCreateScottishPartnershipJourneyController.submit()))
+          Ok(view(defaultPageConfig, form(ScottishPartnership).fill(defaultJourneyConfig), routes.TestCreateScottishPartnershipJourneyController.submit()))
         )
       }
   }
@@ -58,7 +60,7 @@ class TestCreateScottishPartnershipJourneyController @Inject()(messagesControlle
   val submit: Action[AnyContent] = Action.async {
     implicit request =>
       authorised() {
-        form.bindFromRequest().fold(
+        form(ScottishPartnership).bindFromRequest().fold(
           formWithErrors =>
             Future.successful(
               BadRequest(view(defaultPageConfig, formWithErrors, routes.TestCreateScottishPartnershipJourneyController.submit()))

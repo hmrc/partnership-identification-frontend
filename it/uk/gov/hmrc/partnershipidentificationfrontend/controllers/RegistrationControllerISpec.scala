@@ -19,8 +19,8 @@ package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
-import uk.gov.hmrc.partnershipidentificationfrontend.models._
 import uk.gov.hmrc.partnershipidentificationfrontend.models.BusinessVerificationStatus.format
+import uk.gov.hmrc.partnershipidentificationfrontend.models._
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs._
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 

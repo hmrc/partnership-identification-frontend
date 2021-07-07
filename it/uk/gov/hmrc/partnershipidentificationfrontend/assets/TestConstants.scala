@@ -17,6 +17,7 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.assets
 
 import play.api.libs.json.{JsObject, Json}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, ScottishPartnership}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig, PartnershipInformation, SaInformation, _}
 
 import java.util.UUID
@@ -39,7 +40,8 @@ object TestConstants {
   val testDefaultServiceName: String = "Entity Validation Service"
   val testCallingServiceName: String = "Test Service"
 
-  val testJourneyConfig: JourneyConfig = JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl))
+  val testJourneyConfig: JourneyConfig = JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), GeneralPartnership)
+  val testScottishPartnershipJourneyConfig: JourneyConfig = JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), ScottishPartnership)
 
   val testPartnershipInformationJson: JsObject = {
     Json.obj(

@@ -16,6 +16,9 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.models
 
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.PartnershipType
+object PartnershipType {
+  sealed trait PartnershipType
 
-case class JourneyConfig(continueUrl: String, pageConfig: PageConfig, partnershipType: PartnershipType)
+  case object GeneralPartnership extends PartnershipType
+  case object ScottishPartnership extends PartnershipType
+}

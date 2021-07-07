@@ -22,7 +22,7 @@ import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{IdentifiersMatched, IdentifiersMismatch, NoSautrProvided}
-import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, ValidationOrchestrationService, PartnershipIdentificationService}
+import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipIdentificationService, ValidationOrchestrationService}
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.check_your_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
