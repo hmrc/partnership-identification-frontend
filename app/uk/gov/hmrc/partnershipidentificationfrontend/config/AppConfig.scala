@@ -85,6 +85,7 @@ class AppConfig @Inject()(config: Configuration,
     s"$baseUri/journey/$journeyId/status"
   }
 
-  def registerUrl: String = s"$backendUrl/partnership-identification/register"
+  lazy val registerGeneralPartnershipUrl: String = s"$backendUrl/partnership-identification/register-general-partnership"
+  lazy val registerScottishPartnershipUrl: String = s"$backendUrl/partnership-identification/register-scottish-partnership"
 
 }

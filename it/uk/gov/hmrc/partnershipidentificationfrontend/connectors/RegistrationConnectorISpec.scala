@@ -29,12 +29,12 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
   private implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
-  "register" should {
+  "registerGeneralPartnership" should {
     "return Registered" when {
       "the registration has been successful" in {
-        stubRegister(testSautr)(OK, Registered(testSafeId))
+        stubRegisterGeneralPartnership(testSautr)(OK, Registered(testSafeId))
 
-        val result = await(registrationConnector.register(testSautr))
+        val result = await(registrationConnector.registerGeneralPartnership(testSautr))
 
         result mustBe Registered(testSafeId)
       }
@@ -42,9 +42,31 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
     "return RegistrationFailed" when {
       "the registration has not been successful" in {
-        stubRegister(testSautr)(OK, RegistrationFailed)
+        stubRegisterGeneralPartnership(testSautr)(OK, RegistrationFailed)
 
-        val result = await(registrationConnector.register(testSautr))
+        val result = await(registrationConnector.registerGeneralPartnership(testSautr))
+
+        result mustBe RegistrationFailed
+      }
+    }
+  }
+
+  "registerScottishPartnership" should {
+    "return Registered" when {
+      "the registration has been successful" in {
+        stubRegisterScottishPartnership(testSautr)(OK, Registered(testSafeId))
+
+        val result = await(registrationConnector.registerScottishPartnership(testSautr))
+
+        result mustBe Registered(testSafeId)
+      }
+    }
+
+    "return RegistrationFailed" when {
+      "the registration has not been successful" in {
+        stubRegisterScottishPartnership(testSautr)(OK, RegistrationFailed)
+
+        val result = await(registrationConnector.registerScottishPartnership(testSautr))
 
         result mustBe RegistrationFailed
       }

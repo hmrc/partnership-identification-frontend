@@ -20,5 +20,6 @@ object PartnershipType {
   sealed trait PartnershipType
 
   case object GeneralPartnership extends PartnershipType
+
   case object ScottishPartnership extends PartnershipType
 }

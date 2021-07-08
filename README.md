@@ -1,4 +1,3 @@
-
 # Partnership Identification Frontend
 
 This is a Scala/Play frontend to allow Partnerships to provide their information to HMRC.

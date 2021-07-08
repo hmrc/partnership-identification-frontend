@@ -31,21 +31,23 @@ class RegistrationConnector @Inject()(httpClient: HttpClient,
                                       appConfig: AppConfig
                                      )(implicit ec: ExecutionContext) {
 
-  def register(sautr: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] = {
+  private def buildRegisterJson(sautr: String): JsObject = Json.obj("sautr" -> sautr)
 
-    val jsonBody = Json.obj(
-      "ordinaryPartnership" -> Json.obj(
-        "sautr" -> sautr
-      )
-    )
-
-    httpClient.POST[JsObject, RegistrationStatus](appConfig.registerUrl, jsonBody)(
+  def registerGeneralPartnership(sautr: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
+    httpClient.POST[JsObject, RegistrationStatus](appConfig.registerGeneralPartnershipUrl, buildRegisterJson(sautr))(
       implicitly[Writes[JsObject]],
       RegistrationHttpReads,
       hc,
       ec
     )
-  }
+
+  def registerScottishPartnership(sautr: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
+    httpClient.POST[JsObject, RegistrationStatus](appConfig.registerScottishPartnershipUrl, buildRegisterJson(sautr))(
+      implicitly[Writes[JsObject]],
+      RegistrationHttpReads,
+      hc,
+      ec
+    )
 
 }
 

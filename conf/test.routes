@@ -1,20 +1,20 @@
-GET        /feature-switches                                                                uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.frontend.controllers.FeatureSwitchFrontendController.show
-POST       /feature-switches                                                                uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.frontend.controllers.FeatureSwitchFrontendController.submit
+GET         /feature-switches                                       uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.frontend.controllers.FeatureSwitchFrontendController.show
+POST        /feature-switches                                       uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.frontend.controllers.FeatureSwitchFrontendController.submit
 
-GET        /api/feature-switches                                                            uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.api.controllers.FeatureSwitchApiController.getFeatureSwitches()
+GET         /api/feature-switches                                   uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.api.controllers.FeatureSwitchApiController.getFeatureSwitches()
 + nocsrf
-POST       /api/feature-switches                                                            uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.api.controllers.FeatureSwitchApiController.updateFeatureSwitches()
+POST        /api/feature-switches                                   uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.api.controllers.FeatureSwitchApiController.updateFeatureSwitches()
 
-GET        /general-partnership/create-journey                                              uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateGeneralPartnershipJourneyController.show
-POST       /general-partnership/create-journey                                              uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateGeneralPartnershipJourneyController.submit
+GET         /general-partnership/create-journey                     uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateGeneralPartnershipJourneyController.show
+POST        /general-partnership/create-journey                     uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateGeneralPartnershipJourneyController.submit
 
-GET        /scottish-partnership/create-journey                                              uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateScottishPartnershipJourneyController.show
-POST       /scottish-partnership/create-journey                                              uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateScottishPartnershipJourneyController.submit
+GET         /scottish-partnership/create-journey                    uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateScottishPartnershipJourneyController.show
+POST        /scottish-partnership/create-journey                    uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateScottishPartnershipJourneyController.submit
 
-GET        /retrieve-journey/:journeyId                                                     uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestRetrieveJourneyDataController.retrievePartnershipDetails(journeyId)
-GET        /retrieve-journey                                                                uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestRetrieveJourneyDataController.retrievePartnershipDetails(journeyId)
+GET         /retrieve-journey/:journeyId                            uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestRetrieveJourneyDataController.retrievePartnershipDetails(journeyId)
+GET         /retrieve-journey                                       uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestRetrieveJourneyDataController.retrievePartnershipDetails(journeyId)
 
 + nocsrf
-POST       /business-verification/journey                                                   uk.gov.hmrc.partnershipidentificationfrontend.testonly.stubs.controllers.BusinessVerificationStubController.createBusinessVerificationJourney
-GET        /business-verification/journey/:journeyId/status                                 uk.gov.hmrc.partnershipidentificationfrontend.testonly.stubs.controllers.BusinessVerificationStubController.retrieveVerificationResult(journeyId)
+POST        /business-verification/journey                          uk.gov.hmrc.partnershipidentificationfrontend.testonly.stubs.controllers.BusinessVerificationStubController.createBusinessVerificationJourney
+GET         /business-verification/journey/:journeyId/status        uk.gov.hmrc.partnershipidentificationfrontend.testonly.stubs.controllers.BusinessVerificationStubController.retrieveVerificationResult(journeyId)
 

@@ -18,6 +18,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.service
 
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.RegistrationConnector
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, PartnershipType, ScottishPartnership}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationPass, RegistrationNotCalled, RegistrationStatus}
 
 import javax.inject.{Inject, Singleton}
@@ -28,17 +29,15 @@ class RegistrationOrchestrationService @Inject()(partnershipIdentificationServic
                                                  registrationConnector: RegistrationConnector
                                                 )(implicit ec: ExecutionContext) {
 
-  def register(journeyId: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] = for {
+  def register(journeyId: String, partnershipType: PartnershipType)(implicit hc: HeaderCarrier): Future[RegistrationStatus] = for {
     registrationStatus <- partnershipIdentificationService.retrieveBusinessVerificationStatus(journeyId).flatMap {
       case Some(BusinessVerificationPass) => for {
         optSautr <- partnershipIdentificationService.retrieveSautr(journeyId)
-        registrationStatus <-
-          optSautr match {
-            case Some(sautr) =>
-              registrationConnector.register(sautr)
-            case _ =>
-              throw new InternalServerException(s"Missing required data for registration in database for $journeyId")
-          }
+        sautr = optSautr.getOrElse(throw new InternalServerException(s"SAUTR for registration cannot be found in the database for $journeyId"))
+        registrationStatus <- partnershipType match {
+          case GeneralPartnership => registrationConnector.registerGeneralPartnership(sautr)
+          case ScottishPartnership => registrationConnector.registerScottishPartnership(sautr)
+        }
       } yield registrationStatus
       case Some(_) =>
         Future.successful(RegistrationNotCalled)

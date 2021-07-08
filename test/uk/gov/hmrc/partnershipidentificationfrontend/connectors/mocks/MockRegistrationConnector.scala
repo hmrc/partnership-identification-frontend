@@ -37,15 +37,28 @@ trait MockRegistrationConnector extends MockitoSugar with BeforeAndAfterEach {
     reset(mockRegistrationConnector)
   }
 
-  def mockRegister(sautr: String)(response: Future[RegistrationStatus]): OngoingStubbing[_] = {
-    when(mockRegistrationConnector.register(
+  def mockRegisterGeneralPartnership(sautr: String)(response: Future[RegistrationStatus]): OngoingStubbing[_] = {
+    when(mockRegistrationConnector.registerGeneralPartnership(
       ArgumentMatchers.eq(sautr)
     )(ArgumentMatchers.any[HeaderCarrier])
     ).thenReturn(response)
   }
 
-  def verifyRegistration(sautr: String): Unit = {
-    verify(mockRegistrationConnector).register(
+  def mockRegisterScottishPartnership(sautr: String)(response: Future[RegistrationStatus]): OngoingStubbing[_] = {
+    when(mockRegistrationConnector.registerScottishPartnership(
+      ArgumentMatchers.eq(sautr)
+    )(ArgumentMatchers.any[HeaderCarrier])
+    ).thenReturn(response)
+  }
+
+  def verifyRegisterGeneralPartnership(sautr: String): Unit = {
+    verify(mockRegistrationConnector).registerGeneralPartnership(
+      ArgumentMatchers.eq(sautr)
+    )(ArgumentMatchers.any[HeaderCarrier])
+  }
+
+  def verifyRegisterScottishPartnership(sautr: String): Unit = {
+    verify(mockRegistrationConnector).registerScottishPartnership(
       ArgumentMatchers.eq(sautr)
     )(ArgumentMatchers.any[HeaderCarrier])
   }

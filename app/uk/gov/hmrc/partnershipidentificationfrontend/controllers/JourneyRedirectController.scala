@@ -38,7 +38,8 @@ class JourneyRedirectController @Inject()(controllerComponents: MessagesControll
           journeyService.getJourneyConfig(journeyId, authInternalId).map {
             journeyConfig => SeeOther(journeyConfig.continueUrl + s"?journeyId=$journeyId")
           }
-        case _ =>throw new InternalServerException("Internal ID could not be retrieved from Auth")
+        case _ =>
+          throw new InternalServerException("Internal ID could not be retrieved from Auth")
       }
   }
 

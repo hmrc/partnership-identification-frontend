@@ -17,35 +17,30 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.stubs
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.libs.json.Json
+import play.api.libs.json.{JsString, Json}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.RegistrationStatus
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.{WiremockHelper, WiremockMethods}
 
 trait RegisterStub extends WiremockMethods {
 
-  def stubRegister(sautr: String)(status: Int, body: RegistrationStatus): StubMapping = {
-
-    val jsonBody = Json.obj("ordinaryPartnership" ->
-      Json.obj(
-        "sautr" -> sautr)
-    )
-
-    when(method = POST, uri = "/partnership-identification/register", jsonBody)
+  def stubRegisterGeneralPartnership(sautr: String)(status: Int, body: RegistrationStatus): StubMapping =
+    when(method = POST, uri = "/partnership-identification/register-general-partnership", Json.obj("sautr" -> sautr))
       .thenReturn(
         status = status,
         body = Json.obj("registration" -> body)
       )
-  }
 
-  def verifyRegister(sautr: String): Unit = {
+  def verifyRegisterGeneralPartnership(sautr: String): Unit =
+    WiremockHelper.verifyPost(uri = "/partnership-identification/register-general-partnership", optBody = Some(Json.obj("sautr" -> sautr).toString))
 
-    val jsonBody = Json.obj(
-      "ordinaryPartnership" -> Json.obj(
-        "sautr" -> sautr
+  def stubRegisterScottishPartnership(sautr: String)(status: Int, body: RegistrationStatus): StubMapping =
+    when(method = POST, uri = "/partnership-identification/register-scottish-partnership", Json.obj("sautr" -> sautr))
+      .thenReturn(
+        status = status,
+        body = Json.obj("registration" -> body)
       )
-    )
 
-    WiremockHelper.verifyPost(uri = "/partnership-identification/register", optBody = Some(jsonBody.toString()))
+  def verifyRegisterScottishPartnership(sautr: String): Unit =
+    WiremockHelper.verifyPost(uri = "/partnership-identification/register-scottish-partnership", optBody = Some(Json.obj("sautr" -> sautr).toString))
 
-  }
 }

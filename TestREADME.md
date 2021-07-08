@@ -7,7 +7,7 @@ Shows all feature switches:
 1. Partnership Identification Frontend
 
     - Use stub for Business Verification flow
-    
+
 2. Partnership Identification
 
     - Use stub for Partnership Known Facts SAUTR call
