@@ -29,9 +29,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class ValidationOrchestrationServiceSpec extends AnyWordSpec
-    with Matchers
-    with MockPartnershipIdentificationService
-    with MockValidatePartnershipInformationService {
+  with Matchers
+  with MockPartnershipIdentificationService
+  with MockValidatePartnershipInformationService {
 
   object TestService extends ValidationOrchestrationService(mockPartnershipIdentificationService, mockValidatePartnershipInformationService)
 

@@ -89,8 +89,8 @@ trait MockPartnershipIdentificationConnector extends MockitoSugar with BeforeAnd
     )(ArgumentMatchers.any[HeaderCarrier])).thenReturn(response)
 
   def verifyRemovePartnershipInformation[T](journeyId: String,
-                                          dataKey: String
-                                         ): Unit =
+                                            dataKey: String
+                                           ): Unit =
     verify(mockPartnershipIdentificationConnector).removePartnershipInformation(
       ArgumentMatchers.eq(journeyId),
       ArgumentMatchers.eq(dataKey)

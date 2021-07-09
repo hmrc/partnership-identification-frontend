@@ -23,13 +23,17 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.mocks.MockRegistrationConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, ScottishPartnership}
 import uk.gov.hmrc.partnershipidentificationfrontend.models._
 import uk.gov.hmrc.partnershipidentificationfrontend.service.mocks.MockPartnershipIdentificationService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class RegistrationOrchestrationServiceSpec extends AnyWordSpec with Matchers with MockPartnershipIdentificationService with MockRegistrationConnector {
+class RegistrationOrchestrationServiceSpec extends AnyWordSpec
+  with Matchers
+  with MockPartnershipIdentificationService
+  with MockRegistrationConnector {
 
   object TestService extends RegistrationOrchestrationService(
     mockPartnershipIdentificationService,
@@ -40,29 +44,51 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec with Matchers wit
 
   "register" should {
     "store the registration response" when {
-      "the business entity is successfully verified and then registered" in {
+      "the General Partnership is successfully verified and then registered" in {
         mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
         mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
-        mockRegister(testSautr)(Future.successful(Registered(testSafeId)))
+        mockRegisterGeneralPartnership(testSautr)(Future.successful(Registered(testSafeId)))
         mockStoreRegistrationResponse(testJourneyId, Registered(testSafeId))(Future.successful(SuccessfullyStored))
 
-        await(TestService.register(testJourneyId)) mustBe {
-          Registered(testSafeId)
-        }
-        verifyRegistration(testSautr)
+        await(TestService.register(testJourneyId, GeneralPartnership)) mustBe Registered(testSafeId)
+
+        verifyRegisterGeneralPartnership(testSautr)
         verifyStoreRegistrationResponse(testJourneyId, Registered(testSafeId))
       }
 
-      "when the business entity is verified but fails to register" in {
+      "when the General Partnership is verified but fails to register" in {
         mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
         mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
-        mockRegister(testSautr)(Future.successful(RegistrationFailed))
+        mockRegisterGeneralPartnership(testSautr)(Future.successful(RegistrationFailed))
         mockStoreRegistrationResponse(testJourneyId, RegistrationFailed)(Future.successful(SuccessfullyStored))
 
-        await(TestService.register(testJourneyId)) mustBe {
-          RegistrationFailed
-        }
-        verifyRegistration(testSautr)
+        await(TestService.register(testJourneyId, GeneralPartnership)) mustBe RegistrationFailed
+
+        verifyRegisterGeneralPartnership(testSautr)
+        verifyStoreRegistrationResponse(testJourneyId, RegistrationFailed)
+      }
+
+      "the Scottish Partnership is successfully verified and then registered" in {
+        mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+        mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
+        mockRegisterScottishPartnership(testSautr)(Future.successful(Registered(testSafeId)))
+        mockStoreRegistrationResponse(testJourneyId, Registered(testSafeId))(Future.successful(SuccessfullyStored))
+
+        await(TestService.register(testJourneyId, ScottishPartnership)) mustBe Registered(testSafeId)
+
+        verifyRegisterScottishPartnership(testSautr)
+        verifyStoreRegistrationResponse(testJourneyId, Registered(testSafeId))
+      }
+
+      "when the Scottish Partnership is verified but fails to register" in {
+        mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+        mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
+        mockRegisterScottishPartnership(testSautr)(Future.successful(RegistrationFailed))
+        mockStoreRegistrationResponse(testJourneyId, RegistrationFailed)(Future.successful(SuccessfullyStored))
+
+        await(TestService.register(testJourneyId, ScottishPartnership)) mustBe RegistrationFailed
+
+        verifyRegisterScottishPartnership(testSautr)
         verifyStoreRegistrationResponse(testJourneyId, RegistrationFailed)
       }
     }
@@ -74,9 +100,8 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec with Matchers wit
       mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationFail)))
       mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
 
-      await(TestService.register(testJourneyId)) mustBe {
-        RegistrationNotCalled
-      }
+      await(TestService.register(testJourneyId, GeneralPartnership)) mustBe RegistrationNotCalled
+
       verifyStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)
     }
 
@@ -85,9 +110,8 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec with Matchers wit
       mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationUnchallenged)))
       mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
 
-      await(TestService.register(testJourneyId)) mustBe {
-        RegistrationNotCalled
-      }
+      await(TestService.register(testJourneyId, GeneralPartnership)) mustBe RegistrationNotCalled
+
       verifyStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)
     }
   }
@@ -98,7 +122,7 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec with Matchers wit
       mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
 
       intercept[InternalServerException](
-        await(TestService.register(testJourneyId))
+        await(TestService.register(testJourneyId, GeneralPartnership))
       )
     }
 
@@ -107,7 +131,7 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec with Matchers wit
       mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(None))
 
       intercept[InternalServerException](
-        await(TestService.register(testJourneyId))
+        await(TestService.register(testJourneyId, GeneralPartnership))
       )
     }
 
@@ -116,7 +140,7 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec with Matchers wit
       mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(None))
 
       intercept[InternalServerException](
-        await(TestService.register(testJourneyId))
+        await(TestService.register(testJourneyId, GeneralPartnership))
       )
     }
   }

@@ -1,6 +1,6 @@
 # Add all the application routes to the app.routes file
-->         /identify-your-partnership       app.Routes
-->         /partnership-identification/api  api.Routes
-->         /                                health.Routes
+->         /identify-your-partnership             app.Routes
+->         /partnership-identification/api        api.Routes
+->         /                                      health.Routes
 
-GET        /admin/metrics             com.kenshoo.play.metrics.MetricsController.metrics
+GET        /admin/metrics                         com.kenshoo.play.metrics.MetricsController.metrics

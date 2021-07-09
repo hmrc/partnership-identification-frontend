@@ -20,6 +20,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.models.BusinessVerificationStatus.format
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.ScottishPartnership
 import uk.gov.hmrc.partnershipidentificationfrontend.models._
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs._
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
@@ -28,33 +29,67 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
   "GET /:journeyId/register" should {
     "redirect to continueUrl" when {
-      "registration is successful and registration status is successfully stored" in {
+      "a General Partnership registration is successful and registration status is successfully stored" in {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
         stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
-        stubRegister(testSautr)(status = OK, body = Registered(testSafeId))
+        stubRegisterGeneralPartnership(testSautr)(status = OK, body = Registered(testSafeId))
         stubStoreRegistrationStatus(testJourneyId, Registered(testSafeId))(status = OK)
 
         val result = get(s"$baseUrl/$testJourneyId/register")
 
         result.status mustBe SEE_OTHER
         result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-        verifyRegister(testSautr)
+        verifyRegisterGeneralPartnership(testSautr)
         verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
       }
 
-      "registration failed and registration status is successfully stored" in {
+      "a General Partnership registration failed and registration status is successfully stored" in {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
         stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
-        stubRegister(testSautr)(status = OK, body = RegistrationFailed)
+        stubRegisterGeneralPartnership(testSautr)(status = OK, body = RegistrationFailed)
         stubStoreRegistrationStatus(testJourneyId, RegistrationFailed)(status = OK)
 
         val result = get(s"$baseUrl/$testJourneyId/register")
 
         result.status mustBe SEE_OTHER
         result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-        verifyRegister(testSautr)
+        verifyRegisterGeneralPartnership(testSautr)
+        verifyStoreRegistrationStatus(testJourneyId, RegistrationFailed)
+      }
+
+      "a Scottish Partnership registration is successful and registration status is successfully stored" in {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig.copy(partnershipType = ScottishPartnership)))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
+        stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
+        stubRegisterScottishPartnership(testSautr)(status = OK, body = Registered(testSafeId))
+        stubStoreRegistrationStatus(testJourneyId, Registered(testSafeId))(status = OK)
+
+        val result = get(s"$baseUrl/$testJourneyId/register")
+
+        result.status mustBe SEE_OTHER
+        result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
+        verifyRegisterScottishPartnership(testSautr)
+        verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
+      }
+
+      "a Scottish Partnership registration failed and registration status is successfully stored" in {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig.copy(partnershipType = ScottishPartnership)))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
+        stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
+        stubRegisterScottishPartnership(testSautr)(status = OK, body = RegistrationFailed)
+        stubStoreRegistrationStatus(testJourneyId, RegistrationFailed)(status = OK)
+
+        val result = get(s"$baseUrl/$testJourneyId/register")
+
+        result.status mustBe SEE_OTHER
+        result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
+        verifyRegisterScottishPartnership(testSautr)
         verifyStoreRegistrationStatus(testJourneyId, RegistrationFailed)
       }
     }
@@ -72,6 +107,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
     "throw an exception" when {
       "business verification is in an invalid state" in {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
         stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationFail))
@@ -82,6 +118,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
       }
 
       "sautr is missing" in {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrieveSautr(testJourneyId)(status = NOT_FOUND)
         stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationFail))
@@ -92,6 +129,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
       }
 
       "business verification status is missing" in {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
         stubRetrieveBusinessVerificationStatus(testJourneyId)(status = NOT_FOUND)
