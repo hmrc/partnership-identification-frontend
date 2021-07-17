@@ -41,6 +41,7 @@ class ValidationOrchestrationService @Inject()(partnershipIdentificationService:
               for {
                 _ <- partnershipIdentificationService.storeIdentifiersMatch(journeyId, identifiersMatch)
                 _ <- partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
+                _ <- partnershipIdentificationService.storeRegistrationStatus(journeyId, RegistrationNotCalled)
               } yield
                 IdentifiersMismatch
             }

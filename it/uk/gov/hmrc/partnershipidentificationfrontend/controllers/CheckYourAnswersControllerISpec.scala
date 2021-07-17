@@ -106,6 +106,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> false))
         stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
         stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)(OK)
+        stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
 
         lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
