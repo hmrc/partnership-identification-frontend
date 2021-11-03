@@ -34,12 +34,12 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
     "signOutUrl" -> testJourneyConfig.pageConfig.signOutUrl
   )
 
-  "POST /api/general-partnership/journey" should {
+  "POST /api/general-partnership-journey" should {
     "return a created journey" in {
       stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
       stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
 
-      lazy val result = post("/partnership-identification/api/general-partnership/journey", testJourneyConfigJson)
+      lazy val result = post("/partnership-identification/api/general-partnership-journey", testJourneyConfigJson)
 
       (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
 
@@ -50,18 +50,18 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
       stubAuthFailure()
       stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
 
-      lazy val result = post("/partnership-identification/api/general-partnership/journey", testJourneyConfigJson)
+      lazy val result = post("/partnership-identification/api/general-partnership-journey", testJourneyConfigJson)
 
       result.status mustBe SEE_OTHER
     }
   }
 
-  "POST /api/scottish-partnership/journey" should {
+  "POST /api/scottish-partnership-journey" should {
     "return a created journey" in {
       stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
       stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
 
-      lazy val result = post("/partnership-identification/api/scottish-partnership/journey", testJourneyConfigJson)
+      lazy val result = post("/partnership-identification/api/scottish-partnership-journey", testJourneyConfigJson)
 
       (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
 
@@ -72,7 +72,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
       stubAuthFailure()
       stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
 
-      lazy val result = post("/partnership-identification/api/scottish-partnership/journey", testJourneyConfigJson)
+      lazy val result = post("/partnership-identification/api/scottish-partnership-journey", testJourneyConfigJson)
 
       result.status mustBe SEE_OTHER
     }

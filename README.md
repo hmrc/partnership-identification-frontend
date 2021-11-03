@@ -20,10 +20,28 @@ See the TestREADME for more information on how to use our stubs for testing
 
 ---
 ## Creating the General Partnership journey
-### POST /general-partnership/journey
+### POST /general-partnership-journey
 
 ---
 Creates a new journey for a General Partnership, storing the journeyConfig against the journeyId.
+#### Request:
+optServiceName will default to `Entity Validation Service` if the field is not provided.
+
+All other fields must be provided.
+
+```
+{
+   "continueUrl" : "/test",
+   "optServiceName" : "Service Name",
+   "deskProServiceId" : "abc",
+   "signOutUrl" : "/sign-out",
+}
+```
+
+### POST /scottish-partnership-journey
+
+---
+Creates a new journey for a Scottish Partnership, storing the journeyConfig against the journeyId.
 #### Request:
 optServiceName will default to `Entity Validation Service` if the field is not provided.
 
@@ -62,12 +80,39 @@ Status:
 | ```OK(200)```                           |  ```JourneyId exists```
 | ```NOT_FOUND(404)```                    | ```JourneyId doesn't exist```
 
-Example response body:
+Example response bodies:
+
+---
+General Partnership:
 ```
 {
    "sautr": "1234567890",
    "postcode": "AA11AA"
-   "identifiersMatch": true
+   "identifiersMatch": true,
+   "businessVerification": {
+        "verificationStatus":"PASS"
+      },
+    "registration": {
+        "registrationStatus":"REGISTERED",
+        "registeredBusinessPartnerId":"X00000123456789"
+      }
+}
+```
+
+---
+Scottish Partnership:
+```
+{
+   "sautr": "1234567890",
+   "postcode": "AA11AA"
+   "identifiersMatch": true,
+   "businessVerification": {
+        "verificationStatus":"PASS"
+      },
+    "registration": {
+        "registrationStatus":"REGISTERED",
+        "registeredBusinessPartnerId":"X00000123456789"
+      }
 }
 ```
    
