@@ -35,6 +35,7 @@ trait BusinessVerificationStub extends WiremockMethods {
           "saUtr" -> sautr
         )
       ),
+      "entityType" -> "PARTNERSHIP",
       "continueUrl" -> routes.BusinessVerificationController.retrieveBusinessVerificationResult(journeyId).url
     )
 
@@ -66,6 +67,7 @@ trait BusinessVerificationStub extends WiremockMethods {
           "saUtr" -> sautr
         )
       ),
+      "entityType" -> "PARTNERSHIP",
       "continueUrl" -> routes.BusinessVerificationController.retrieveBusinessVerificationResult(journeyId).url
     )
 

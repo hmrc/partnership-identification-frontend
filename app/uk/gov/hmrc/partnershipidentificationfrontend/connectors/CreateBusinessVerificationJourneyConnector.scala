@@ -44,6 +44,7 @@ class CreateBusinessVerificationJourneyConnector @Inject()(http: HttpClient,
           Json.obj(
             "saUtr" -> sautr
           )),
+        "entityType" -> "PARTNERSHIP",
         "continueUrl" -> routes.BusinessVerificationController.retrieveBusinessVerificationResult(journeyId).url
       )
 
