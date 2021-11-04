@@ -1,10 +1,13 @@
 + nocsrf
-POST        /general-partnership-journey         uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.JourneyController.createGeneralPartnershipJourney()
+POST        /general-partnership-journey                uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.JourneyController.createGeneralPartnershipJourney()
 
 + nocsrf
-POST        /scottish-partnership-journey        uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.JourneyController.createScottishPartnershipJourney()
+POST        /scottish-partnership-journey               uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.JourneyController.createScottishPartnershipJourney()
 
 +nocsrf
-POST        /scottish-limited-partnership-journey  uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.JourneyController.createScottishLimitedPartnershipJourney()
+POST        /scottish-limited-partnership-journey       uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.JourneyController.createScottishLimitedPartnershipJourney()
 
-GET        /journey/:journeyId                     uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.JourneyController.retrieveJourneyData(journeyId: String)
++ nocsrf
+POST        /limited-partnership-journey                uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.JourneyController.createLimitedPartnershipJourney()
+
+GET        /journey/:journeyId                          uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.JourneyController.retrieveJourneyData(journeyId: String)

@@ -93,18 +93,21 @@ object JourneyConfigRepository {
   val GeneralPartnershipKey = "generalPartnership"
   val ScottishPartnershipKey = "scottishPartnership"
   val ScottishLimitedPartnershipKey = "scottishLimitedPartnership"
+  val LimitedPartnershipKey = "limitedPartnership"
 
   implicit val partnershipTypeMongoFormat: Format[PartnershipType] = new Format[PartnershipType] {
     override def reads(json: JsValue): JsResult[PartnershipType] = json.validate[String].collect(JsonValidationError("Invalid partnership type")) {
       case GeneralPartnershipKey => GeneralPartnership
       case ScottishPartnershipKey => ScottishPartnership
       case ScottishLimitedPartnershipKey => ScottishLimitedPartnership
+      case LimitedPartnershipKey => LimitedPartnership
     }
 
     override def writes(partnershipType: PartnershipType): JsValue = partnershipType match {
       case GeneralPartnership => JsString(GeneralPartnershipKey)
       case ScottishPartnership => JsString(ScottishPartnershipKey)
       case ScottishLimitedPartnership => JsString(ScottishLimitedPartnershipKey)
+      case LimitedPartnership => JsString(LimitedPartnershipKey)
     }
   }
   implicit val journeyConfigMongoFormat: OFormat[JourneyConfig] = Json.format[JourneyConfig]

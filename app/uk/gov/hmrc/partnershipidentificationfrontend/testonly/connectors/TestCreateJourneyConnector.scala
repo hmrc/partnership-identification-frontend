@@ -59,6 +59,15 @@ class TestCreateJourneyConnector @Inject()(httpClient: HttpClient,
         (response.json \ "journeyStartUrl").as[String]
     }
   }
+
+  def createLimitedPartnershipJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier): Future[String] = {
+    val url = appConfig.selfBaseUrl + routes.JourneyController.createLimitedPartnershipJourney().url
+
+    httpClient.POST(url, journeyConfig).map {
+      case response@HttpResponse(CREATED, _, _) =>
+        (response.json \ "journeyStartUrl").as[String]
+    }
+  }
 }
 
 object TestCreateJourneyConnector {

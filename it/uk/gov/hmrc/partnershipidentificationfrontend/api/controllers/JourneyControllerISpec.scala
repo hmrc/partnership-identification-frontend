@@ -104,6 +104,28 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
     }
   }
 
+  "POST /api/limited-partnership-journey" should {
+    "return a created journey" in {
+      stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+      stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
+
+      lazy val result = post("/partnership-identification/api/limited-partnership-journey", testJourneyConfigJson)
+
+      (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
+
+      await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testLimitedPartnershipJourneyConfig)
+    }
+
+    "return See Other" in {
+      stubAuthFailure()
+      stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
+
+      lazy val result = post("/partnership-identification/api/limited-partnership-journey", testJourneyConfigJson)
+
+      result.status mustBe SEE_OTHER
+    }
+  }
+
   "GET /api/journey/:journeyId" should {
     "return captured data" when {
       "the journeyId exists" in {
