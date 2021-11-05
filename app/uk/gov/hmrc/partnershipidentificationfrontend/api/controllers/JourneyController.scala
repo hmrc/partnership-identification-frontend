@@ -45,6 +45,9 @@ class JourneyController @Inject()(controllerComponents: ControllerComponents,
 
   def createScottishPartnershipJourney: Action[JourneyConfig] = createJourney(ScottishPartnership)
 
+  def createScottishLimitedPartnershipJourney: Action[JourneyConfig] = createJourney(ScottishLimitedPartnership)
+
+
   private def createJourney(partnershipType: PartnershipType): Action[JourneyConfig] =
     Action.async(parse.json[JourneyConfig] { json =>
       for {
