@@ -25,7 +25,7 @@ import reactivemongo.play.json.JsObjectDocumentWriter
 import uk.gov.hmrc.mongo.ReactiveRepository
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, PartnershipType, ScottishPartnership}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
 import uk.gov.hmrc.partnershipidentificationfrontend.repositories.JourneyConfigRepository._
 
 import java.time.Instant
@@ -92,16 +92,19 @@ object JourneyConfigRepository {
   val BusinessEntityKey = "businessEntity"
   val GeneralPartnershipKey = "generalPartnership"
   val ScottishPartnershipKey = "scottishPartnership"
+  val ScottishLimitedPartnershipKey = "scottishLimitedPartnership"
 
   implicit val partnershipTypeMongoFormat: Format[PartnershipType] = new Format[PartnershipType] {
     override def reads(json: JsValue): JsResult[PartnershipType] = json.validate[String].collect(JsonValidationError("Invalid partnership type")) {
       case GeneralPartnershipKey => GeneralPartnership
       case ScottishPartnershipKey => ScottishPartnership
+      case ScottishLimitedPartnershipKey => ScottishLimitedPartnership
     }
 
     override def writes(partnershipType: PartnershipType): JsValue = partnershipType match {
       case GeneralPartnership => JsString(GeneralPartnershipKey)
       case ScottishPartnership => JsString(ScottishPartnershipKey)
+      case ScottishLimitedPartnership => JsString(ScottishLimitedPartnershipKey)
     }
   }
   implicit val journeyConfigMongoFormat: OFormat[JourneyConfig] = Json.format[JourneyConfig]

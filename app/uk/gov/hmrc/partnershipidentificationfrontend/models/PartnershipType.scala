@@ -22,4 +22,6 @@ object PartnershipType {
   case object GeneralPartnership extends PartnershipType
 
   case object ScottishPartnership extends PartnershipType
+
+  case object ScottishLimitedPartnership extends PartnershipType
 }

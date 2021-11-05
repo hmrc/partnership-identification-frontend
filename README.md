@@ -65,6 +65,33 @@ Example Response body:
 {“journeyStartUrl” : "/testUrl"}
 ```
 
+### POST /scottish-limited-partnership-journey
+
+---
+Creates a new journey for a Scottish Limited Partnership, storing the journeyConfig against the journeyId.
+#### Request:
+optServiceName will default to `Entity Validation Service` if the field is not provided.
+
+All other fields must be provided.
+
+```
+{
+   "continueUrl" : "/test",
+   "optServiceName" : "Service Name",
+   "deskProServiceId" : "abc",
+   "signOutUrl" : "/sign-out",
+}
+```
+
+#### Response:
+Status: **Created(201)**
+
+Example Response body:
+
+```
+{“journeyStartUrl” : "/testUrl"}
+```
+
 ### GET /journey/:journeyId
 
 ---
@@ -115,7 +142,24 @@ Scottish Partnership:
       }
 }
 ```
-   
+
+---
+Scottish Limited Partnership:
+```
+{
+   "sautr": "1234567890",
+   "postcode": "AA11AA"
+   "identifiersMatch": true,
+   "businessVerification": {
+        "verificationStatus":"PASS"
+      },
+    "registration": {
+        "registrationStatus":"REGISTERED",
+        "registeredBusinessPartnerId":"X00000123456789"
+      }
+}
+```
+
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").

@@ -12,7 +12,7 @@ Shows all feature switches:
 
     - Use stub for Partnership Known Facts SAUTR call
 
-#### GET test-only/general-partnership-journey
+#### GET test-only/create-general-partnership-journey
 
 ---
 This is a test entry point which simulates a service by triggering the initial POST call to set up a journey for General Partnerships.
@@ -36,7 +36,7 @@ This is a test entry point which simulates a service by triggering the initial P
     - Shown in the HMRC header - typically a link to a feedback questionnaire
     - This is currently autofilled but can be changed
 
-#### GET test-only/scottish-partnership-journey
+#### GET test-only/create-scottish-partnership-journey
 
 ---
 This is a test entry point which simulates a service by triggering the initial POST call to set up a journey for Scottish Partnerships.
@@ -59,6 +59,30 @@ This is a test entry point which simulates a service by triggering the initial P
 
    - Shown in the HMRC header - typically a link to a feedback questionnaire
    - This is currently autofilled but can be changed
+
+#### GET test-only/create-scottish-limited-partnership-journey
+
+   ---
+   This is a test entry point which simulates a service by triggering the initial POST call to set up a journey for Scottish Limited Partnerships.
+
+   1. Continue URL (Required)
+
+      - Where to redirect the user after the journey has been completed
+
+   2. Service Name (Optional)
+
+      - Service Name to use throughout the service
+      - Currently, this is empty by default, so the default service name will be used
+
+   3. DeskPro Service ID (Required)
+
+      - Used for the `Get help with this page` link
+      - This is currently autofilled but can be changed
+
+   4. Sign Out URL (Required)
+
+      - Shown in the HMRC header - typically a link to a feedback questionnaire
+      - This is currently autofilled but can be changed
 
 #### GET test-only/retrieve-journey/:journeyId or test-only/retrieve-journey
 
@@ -97,6 +121,23 @@ General Partnership:
 
 ---
 Scottish Partnership:
+```
+{
+   "sautr": "1234567890",
+   "postcode": "AA11AA"
+   "identifiersMatch": true,
+   "businessVerification": {
+        "verificationStatus":"PASS"
+      },
+    "registration": {
+        "registrationStatus":"REGISTERED",
+        "registeredBusinessPartnerId":"X00000123456789"
+      }
+}
+```
+
+---
+Scottish Limited Partnership:
 ```
 {
    "sautr": "1234567890",

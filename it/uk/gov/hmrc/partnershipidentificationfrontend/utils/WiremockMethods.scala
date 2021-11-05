@@ -36,6 +36,8 @@ trait WiremockMethods {
     new Mapping(method, uri, headers, Some(stringBody))
   }
 
+  def verifyPost(count: Int, url: String): Unit = verify(count, postRequestedFor(urlMatching(url)))
+
   class Mapping(method: HTTPMethod, uri: String, headers: Map[String, String], body: Option[String]) {
     private val mapping = {
       val uriMapping = method.wireMockMapping(urlMatching(uri))

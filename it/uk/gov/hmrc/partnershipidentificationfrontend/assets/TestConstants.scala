@@ -17,7 +17,7 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.assets
 
 import play.api.libs.json.{JsObject, Json}
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, ScottishPartnership}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, ScottishLimitedPartnership, ScottishPartnership}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig, PartnershipInformation, SaInformation, _}
 
 import java.util.UUID
@@ -25,6 +25,7 @@ import java.util.UUID
 object TestConstants {
 
   val testJourneyId: String = UUID.randomUUID().toString
+  val testScottishLimitedPartnershipJourneyId: String = UUID.randomUUID().toString
   val testSautr: String = "1234567890"
   val testPostcode: String = "AA11AA"
   val testContinueUrl: String = "/test"
@@ -41,7 +42,10 @@ object TestConstants {
   val testCallingServiceName: String = "Test Service"
 
   val testJourneyConfig: JourneyConfig = JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), GeneralPartnership)
-  val testScottishPartnershipJourneyConfig: JourneyConfig = JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), ScottishPartnership)
+  val testScottishPartnershipJourneyConfig: JourneyConfig =
+    JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), ScottishPartnership)
+  val testScottishLimitedPartnershipJourneyConfig: JourneyConfig =
+    JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), ScottishLimitedPartnership)
 
   val testPartnershipInformationJson: JsObject = {
     Json.obj(
