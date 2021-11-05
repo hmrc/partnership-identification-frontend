@@ -56,6 +56,7 @@ class ValidationOrchestrationServiceSpec extends AnyWordSpec
         mockValidateIdentifiers(testSautr, testPostcode)(Future.successful(false))
         mockStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(Future.successful(SuccessfullyStored))
         mockStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationUnchallenged)(Future.successful(SuccessfullyStored))
+        mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
 
         lazy val result = await(TestService.orchestrate(testJourneyId))
 
