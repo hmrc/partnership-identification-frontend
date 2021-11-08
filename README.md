@@ -56,13 +56,22 @@ All other fields must be provided.
 }
 ```
 
-#### Response:
-Status: **Created(201)**
+### POST /limited-partnership-journey
 
-Example Response body:
+---
+Creates a new journey for a Limited Partnership, storing the journeyConfig against the journeyId.
+#### Request:
+optServiceName will default to `Entity Validation Service` if the field is not provided.
+
+All other fields must be provided.
 
 ```
-{“journeyStartUrl” : "/testUrl"}
+{
+   "continueUrl" : "/test",
+   "optServiceName" : "Service Name",
+   "deskProServiceId" : "abc",
+   "signOutUrl" : "/sign-out",
+}
 ```
 
 ### POST /scottish-limited-partnership-journey
@@ -159,7 +168,22 @@ Scottish Limited Partnership:
       }
 }
 ```
-
+Limited Partnership:
+```
+{
+   "sautr": "1234567890",
+   "postcode": "AA11AA"
+   "identifiersMatch": true,
+   "businessVerification": {
+        "verificationStatus":"PASS"
+      },
+    "registration": {
+        "registrationStatus":"REGISTERED",
+        "registeredBusinessPartnerId":"X00000123456789"
+      }
+}
+```
+   
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
