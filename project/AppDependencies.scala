@@ -22,7 +22,7 @@ object AppDependencies {
     "com.vladsch.flexmark" % "flexmark-all" % "0.36.8" % "test, it",
     "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % "test, it",
     "com.github.tomakehurst" % "wiremock-jre8" % "2.27.2" % IntegrationTest,
-    "org.mockito" % "mockito-core" % "3.10.0" % Test,
+    "org.mockito" %% "mockito-scala-scalatest" % "1.16.46" % Test,
     "org.scalatestplus" %% "mockito-3-4" % "3.2.9.0" % Test
 
   )
