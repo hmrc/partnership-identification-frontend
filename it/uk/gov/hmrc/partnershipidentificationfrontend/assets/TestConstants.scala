@@ -25,7 +25,6 @@ import java.util.UUID
 object TestConstants {
 
   val testJourneyId: String = UUID.randomUUID().toString
-  val testScottishLimitedPartnershipJourneyId: String = UUID.randomUUID().toString
   val testSautr: String = "1234567890"
   val testPostcode: String = "AA11AA"
   val testContinueUrl: String = "/test"
@@ -46,7 +45,10 @@ object TestConstants {
     JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), ScottishPartnership)
   val testScottishLimitedPartnershipJourneyConfig: JourneyConfig =
     JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), ScottishLimitedPartnership)
-  val testLimitedPartnershipJourneyConfig: JourneyConfig = JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), LimitedPartnership)
+  val testLimitedPartnershipJourneyConfig: JourneyConfig =
+    JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), LimitedPartnership)
+  val testLimitedLiabilityPartnershipJourneyConfig: JourneyConfig =
+    JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), LimitedLiabilityPartnership)
 
   val testPartnershipInformationJson: JsObject = {
     Json.obj(

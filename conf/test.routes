@@ -17,6 +17,9 @@ POST        /create-scottish-limited-partnership-journey            uk.gov.hmrc.
 GET         /create-limited-partnership-journey                     uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateLimitedPartnershipJourneyController.show
 POST        /create-limited-partnership-journey                     uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateLimitedPartnershipJourneyController.submit
 
+GET         /create-limited-liability-partnership-journey           uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateLimitedLiabilityPartnershipJourneyController.show
+POST        /create-limited-liability-partnership-journey           uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestCreateLimitedLiabilityPartnershipJourneyController.submit
+
 GET         /retrieve-journey/:journeyId                            uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestRetrieveJourneyDataController.retrievePartnershipDetails(journeyId)
 GET         /retrieve-journey                                       uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers.TestRetrieveJourneyDataController.retrievePartnershipDetails(journeyId)
 
