@@ -44,6 +44,8 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
       (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
 
       await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testJourneyConfig)
+
+      verifyPost(1, "/partnership-identification/journey")
     }
 
     "return See Other" in {
@@ -53,6 +55,8 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
       lazy val result = post("/partnership-identification/api/general-partnership-journey", testJourneyConfigJson)
 
       result.status mustBe SEE_OTHER
+
+      verifyPost(0, "/partnership-identification/journey")
     }
   }
 
@@ -66,6 +70,8 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
       (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
 
       await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testScottishPartnershipJourneyConfig)
+
+      verifyPost(1, "/partnership-identification/journey")
     }
 
     "return See Other" in {
@@ -75,6 +81,8 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
       lazy val result = post("/partnership-identification/api/scottish-partnership-journey", testJourneyConfigJson)
 
       result.status mustBe SEE_OTHER
+
+      verifyPost(0, "/partnership-identification/journey")
     }
   }
 
@@ -102,6 +110,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
       verifyPost(0, "/partnership-identification/journey")
     }
+
   }
 
   "POST /api/limited-partnership-journey" should {
@@ -114,6 +123,8 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
       (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
 
       await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testLimitedPartnershipJourneyConfig)
+
+      verifyPost(1, "/partnership-identification/journey")
     }
 
     "return See Other" in {
@@ -123,7 +134,55 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
       lazy val result = post("/partnership-identification/api/limited-partnership-journey", testJourneyConfigJson)
 
       result.status mustBe SEE_OTHER
+
+      verifyPost(0, "/partnership-identification/journey")
     }
+
+  }
+
+  "POST /api/limited-liability-partnership-journey" should {
+    "return a created journey" in {
+      stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+      stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
+
+      lazy val result = post("/partnership-identification/api/limited-liability-partnership-journey", testJourneyConfigJson)
+
+      (result.json \ "journeyStartUrl" ).as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
+
+      await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testLimitedLiabilityPartnershipJourneyConfig)
+
+      verifyPost(1, "/partnership-identification/journey")
+    }
+
+    "return SEE_OTHER when authentication fails" in {
+      stubAuthFailure()
+      stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
+
+      lazy val result = post("/partnership-identification/api/limited-liability-partnership-journey", testJourneyConfigJson)
+
+      result.status mustBe SEE_OTHER
+
+      verifyPost(0, "/partnership-identification/journey")
+    }
+
+    "return INTERNAL_SERVER_ERROR when journey connector raises an internal server error" in {
+      stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+      stubFailedCreateJourney(INTERNAL_SERVER_ERROR)
+
+      lazy val result = post("/partnership-identification/api/limited-liability-partnership-journey", testJourneyConfigJson)
+
+      result.status mustBe INTERNAL_SERVER_ERROR
+    }
+
+    "return INTERNAL_SERVER_ERROR when invalid json is returned" in {
+      stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+      stubCreateJourney(CREATED, Json.obj())
+
+      lazy val result = post("/partnership-identification/api/limited-liability-partnership-journey", testJourneyConfigJson)
+
+      result.status mustBe INTERNAL_SERVER_ERROR
+    }
+
   }
 
   "GET /api/journey/:journeyId" should {

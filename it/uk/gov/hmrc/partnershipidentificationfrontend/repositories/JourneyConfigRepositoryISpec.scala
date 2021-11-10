@@ -53,8 +53,17 @@ class JourneyConfigRepositoryISpec extends ComponentSpecHelper with AbstractPati
     }
 
     "successfully insert a journeyConfig for a scottish limited partnership" in {
-      await(repo.insertJourneyConfig(testScottishLimitedPartnershipJourneyId, testInternalId, testScottishLimitedPartnershipJourneyConfig))
-      await(repo.findById(testScottishLimitedPartnershipJourneyId)) must contain(testScottishLimitedPartnershipJourneyConfig)
+      await(repo.insertJourneyConfig(testJourneyId, testInternalId, testScottishLimitedPartnershipJourneyConfig))
+      await(repo.findById(testJourneyId)) must contain(testScottishLimitedPartnershipJourneyConfig)
+    }
+
+    "successfully insert a journeyConfig for a limited liability partnership" in {
+      await(repo.insertJourneyConfig(
+        testJourneyId,
+        testInternalId,
+        testLimitedLiabilityPartnershipJourneyConfig
+      ))
+      await(repo.findById(testJourneyId)) must contain(testLimitedLiabilityPartnershipJourneyConfig)
     }
 
     "successfully delete all documents" in {

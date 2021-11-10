@@ -19,7 +19,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.ScottishLimitedPartnership
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.LimitedLiabilityPartnership
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.connectors.TestCreateJourneyConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.forms.TestCreateJourneyForm.form
@@ -30,12 +30,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TestCreateScottishLimitedPartnershipJourneyController @Inject()
-  (messagesControllerComponents: MessagesControllerComponents,
-   testCreateJourneyConnector: TestCreateJourneyConnector,
-   view: test_create_journey,
-   val authConnector: AuthConnector)(implicit ec: ExecutionContext, appConfig: AppConfig)
-  extends FrontendController(messagesControllerComponents) with AuthorisedFunctions {
+class TestCreateLimitedLiabilityPartnershipJourneyController @Inject()(messagesControllerComponents: MessagesControllerComponents,
+                                                                       testCreateJourneyConnector: TestCreateJourneyConnector,
+                                                                       view: test_create_journey,
+                                                                       val authConnector: AuthConnector
+                                                                      )(implicit ec: ExecutionContext,
+                                                                        appConfig: AppConfig) extends FrontendController(messagesControllerComponents) with AuthorisedFunctions {
 
   private val defaultPageConfig = PageConfig(
     optServiceName = None,
@@ -46,34 +46,37 @@ class TestCreateScottishLimitedPartnershipJourneyController @Inject()
   private val defaultJourneyConfig = JourneyConfig(
     continueUrl = s"${appConfig.selfUrl}/identify-your-partnership/test-only/retrieve-journey",
     pageConfig = defaultPageConfig,
-    ScottishLimitedPartnership
+    LimitedLiabilityPartnership
   )
 
   val show: Action[AnyContent] = Action.async {
     implicit request =>
-    authorised(){
-      Future.successful(Ok(view(
-        defaultPageConfig,
-        form(ScottishLimitedPartnership).fill(defaultJourneyConfig),
-        routes.TestCreateScottishLimitedPartnershipJourneyController.submit()
-      )))
+    authorised() {
+      Future.successful(
+        Ok(view(
+          defaultPageConfig,
+          form(LimitedLiabilityPartnership).fill(defaultJourneyConfig),
+          routes.TestCreateLimitedLiabilityPartnershipJourneyController.submit()
+        ))
+      )
     }
   }
 
   val submit: Action[AnyContent] = Action.async {
     implicit request =>
-      authorised() {
-        form(ScottishLimitedPartnership).bindFromRequest().fold(
-          formWithErrors =>
-            Future.successful(
-              BadRequest(view(defaultPageConfig, formWithErrors, routes.TestCreateScottishLimitedPartnershipJourneyController.submit()))
-            ),
-          journeyConfig => {
-            testCreateJourneyConnector.createScottishLimitedPartnershipJourney(journeyConfig)
-              .map(journeyUrl => SeeOther(journeyUrl))
-          }
-        )
-      }
+    authorised() {
+      form(LimitedLiabilityPartnership).bindFromRequest().fold(
+        formWithErrors =>
+        Future.successful(
+          BadRequest(view(defaultPageConfig, formWithErrors,
+            routes.TestCreateLimitedLiabilityPartnershipJourneyController.submit()))
+        ),
+        journeyConfig => {
+          testCreateJourneyConnector.createLimitedLiabilityPartnershipJourney(journeyConfig)
+            .map(journeyUrl => SeeOther(journeyUrl))
+        }
+      )
+    }
   }
 
 }

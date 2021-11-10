@@ -10,4 +10,8 @@ POST        /scottish-limited-partnership-journey       uk.gov.hmrc.partnershipi
 + nocsrf
 POST        /limited-partnership-journey                uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.JourneyController.createLimitedPartnershipJourney()
 
++ nocsrf
+POST        /limited-liability-partnership-journey      uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.JourneyController.createLimitedLiabilityPartnershipJourney()
+
 GET        /journey/:journeyId                          uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.JourneyController.retrieveJourneyData(journeyId: String)
+

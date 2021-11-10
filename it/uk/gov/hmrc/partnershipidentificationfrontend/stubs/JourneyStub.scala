@@ -28,4 +28,7 @@ trait JourneyStub extends WiremockMethods {
         status = status,
         body = body
       )
+
+  def stubFailedCreateJourney(status: Int): StubMapping =
+    when(method = POST, uri = "/partnership-identification/journey").thenReturn(status = status)
 }

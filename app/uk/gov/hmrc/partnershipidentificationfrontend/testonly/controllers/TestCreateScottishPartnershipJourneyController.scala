@@ -26,9 +26,10 @@ import uk.gov.hmrc.partnershipidentificationfrontend.testonly.forms.TestCreateJo
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.views.html.test_create_journey
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class TestCreateScottishPartnershipJourneyController @Inject()(messagesControllerComponents: MessagesControllerComponents,
                                                                testCreateJourneyConnector: TestCreateJourneyConnector,
                                                                view: test_create_journey,
