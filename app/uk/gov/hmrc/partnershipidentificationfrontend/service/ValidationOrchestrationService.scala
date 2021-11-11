@@ -29,24 +29,34 @@ class ValidationOrchestrationService @Inject()(partnershipIdentificationService:
 
   def orchestrate(journeyId: String)(implicit hc: HeaderCarrier): Future[ValidationResponse] =
     partnershipIdentificationService.retrievePartnershipInformation(journeyId).flatMap {
-      case Some(PartnershipInformation(Some(SaInformation(sautr, postcode)))) =>
+      case Some(PartnershipInformation(Some(SaInformation(sautr, postcode)), Some(_))) =>
+        validatePartnershipInformationService.validateIdentifiers(sautr, postcode).flatMap {
+          _ =>
+            for {
+              _ <- partnershipIdentificationService.storeIdentifiersMatch(journeyId, identifiersMatch = false)
+              _ <- partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
+              _ <- partnershipIdentificationService.storeRegistrationStatus(journeyId, RegistrationNotCalled)
+            } yield
+              IdentifiersMismatch
+        }
+      case Some(PartnershipInformation(Some(SaInformation(sautr, postcode)), _)) =>
         validatePartnershipInformationService.validateIdentifiers(sautr, postcode).flatMap {
           identifiersMatch =>
             if (identifiersMatch) {
-              partnershipIdentificationService.storeIdentifiersMatch(journeyId, identifiersMatch).map {
+              partnershipIdentificationService.storeIdentifiersMatch(journeyId, identifiersMatch = true).map {
                 _ => IdentifiersMatched
               }
             }
             else {
               for {
-                _ <- partnershipIdentificationService.storeIdentifiersMatch(journeyId, identifiersMatch)
+                _ <- partnershipIdentificationService.storeIdentifiersMatch(journeyId, identifiersMatch = false)
                 _ <- partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
                 _ <- partnershipIdentificationService.storeRegistrationStatus(journeyId, RegistrationNotCalled)
               } yield
                 IdentifiersMismatch
             }
         }
-      case Some(PartnershipInformation(None)) =>
+      case Some(PartnershipInformation(None, _)) =>
         for {
           _ <- partnershipIdentificationService.storeIdentifiersMatch(journeyId, identifiersMatch = false)
           _ <- partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)

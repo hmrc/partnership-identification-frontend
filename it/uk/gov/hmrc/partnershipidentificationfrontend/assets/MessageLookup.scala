@@ -24,6 +24,7 @@ object MessageLookup {
     val saveAndContinue = "Save and continue"
     val saveAndComeBack = "Save and come back later"
     val getHelp = "Is this page not working properly?"
+    val back = "Back"
 
     object Error {
       val title = "There is a problem"
@@ -38,6 +39,26 @@ object MessageLookup {
 
   object BetaBanner {
     val title = "This is a new service - your feedback (opens in new tab) will help us to improve it."
+  }
+
+  object CaptureCompanyNumber {
+    val title = "What is the partnership’s company number?"
+    val heading = "What is the partnership’s company number?"
+    val line_1 = "You can search Companies House for the company registration number (opens in new tab)."
+    val link = "https://beta.companieshouse.gov.uk/"
+    val hint = "For example, 01234567"
+
+    object Error {
+      val noCompanyNumber = "Enter the partnership’s company registration number"
+      val invalidLengthCompanyNumber = "Enter the partnership’s company registration number using 8 characters or fewer"
+      val invalidCompanyNumber = "Enter the partnership’s company registration number in the correct format"
+    }
+  }
+
+  object ConfirmPartnershipName {
+    val title = "Confirm the partnership name"
+    val heading = "Confirm the partnership name"
+    val change_company_link = "Change company"
   }
 
   object CaptureSautr {

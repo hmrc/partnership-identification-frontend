@@ -53,7 +53,7 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
 
       "store a verification state of UNCHALLENGED and redirect to the registration controller" when {
         "business verification does not have enough information to create a verification journey" in {
-          await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+          await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
           enable(BusinessVerificationStub)
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(OK, testSautr)
@@ -72,7 +72,7 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
 
       "store a verification state of FAIL and redirect to the registration controller" when {
         "business verification reports the user is locked out" in {
-          await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+          await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
           enable(BusinessVerificationStub)
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(OK, testSautr)
@@ -108,7 +108,7 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
 
       "store a verification state of UNCHALLENGED and redirect to the registration controller" when {
         "business verification does not have enough information to create a verification journey" in {
-          await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+          await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(OK, testSautr)
           stubCreateBusinessVerificationJourney(testSautr, testJourneyId)(NOT_FOUND)
@@ -126,7 +126,7 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
 
       "store a verification state of FAIL and redirect to the registration controller" when {
         "business verification reports the user is locked out" in {
-          await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+          await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(OK, testSautr)
           stubCreateBusinessVerificationJourney(testSautr, testJourneyId)(FORBIDDEN)
@@ -147,7 +147,7 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
   "GET /business-verification-result" when {
     s"the $BusinessVerificationStub feature switch is enabled" should {
       "redirect to the continueUrl if BV status is stored successfully" in {
-        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
         enable(BusinessVerificationStub)
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrieveBusinessVerificationResultFromStub(testBusinessVerificationJourneyId)(OK, Json.obj("verificationStatus" -> "PASS"))
@@ -166,7 +166,7 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
         enable(BusinessVerificationStub)
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrieveBusinessVerificationResultFromStub(testBusinessVerificationJourneyId)(OK, Json.obj("verificationStatus" -> "PASS"))
-        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
 
         lazy val result = get(s"$baseUrl/$testJourneyId/business-verification-result")
 
@@ -176,7 +176,7 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
 
     s"the $BusinessVerificationStub feature switch is disabled" should {
       "redirect to the continueUrl if BV status is stored successfully" in {
-        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrieveBusinessVerificationResult(testBusinessVerificationJourneyId)(OK, Json.obj("verificationStatus" -> "PASS"))
         stubStoreBusinessVerificationStatus(journeyId = testJourneyId, businessVerificationStatus = BusinessVerificationPass)(status = OK)

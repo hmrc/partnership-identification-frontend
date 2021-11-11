@@ -32,7 +32,7 @@ class CapturePostCodeControllerISpec extends ComponentSpecHelper
 
   "GET /self-assessment-postcode" should {
     lazy val result = {
-      await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+      await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
       stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
       get(s"$baseUrl/$testJourneyId/self-assessment-postcode")
     }
@@ -48,7 +48,7 @@ class CapturePostCodeControllerISpec extends ComponentSpecHelper
 
       "there is a serviceName passed in the journeyConfig" should {
         lazy val result = {
-          val config = testJourneyConfig.copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl))
+          val config = testGeneralPartnershipJourneyConfig.copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl))
           await(insertJourneyConfig(testJourneyId, testInternalId, config))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           get(s"$baseUrl/$testJourneyId/self-assessment-postcode")
@@ -88,7 +88,7 @@ class CapturePostCodeControllerISpec extends ComponentSpecHelper
     "a valid postcode is submitted" should {
       "store the postcode and redirect to the Check Your Answers page" in {
         lazy val result: WSResponse = {
-          await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+          await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubStorePostCode(testJourneyId, testPostcode)(OK)
           post(s"$baseUrl/$testJourneyId/self-assessment-postcode")("postcode" -> testPostcode)
@@ -103,7 +103,7 @@ class CapturePostCodeControllerISpec extends ComponentSpecHelper
 
     "no postcode is submitted" should {
       lazy val result: WSResponse = {
-        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         post(s"$baseUrl/$testJourneyId/self-assessment-postcode")("postcode" -> "")
       }
@@ -117,7 +117,7 @@ class CapturePostCodeControllerISpec extends ComponentSpecHelper
 
     "an invalid postcode is submitted" should {
       lazy val result: WSResponse = {
-        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         post(s"$baseUrl/$testJourneyId/self-assessment-postcode")("postcode" -> "AAA1 1AA")
       }

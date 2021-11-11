@@ -35,7 +35,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
   "GET /check-your-answers-business" when {
     "the applicant has an sautr and a postcode" should {
       lazy val result = {
-        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJson)
         get(s"$baseUrl/$testJourneyId/check-your-answers-business")
@@ -52,7 +52,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
 
     "the applicant does not have an SAUTR" should {
       lazy val result = {
-        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationNoSautrJson)
         get(s"$baseUrl/$testJourneyId/check-your-answers-business")
@@ -81,7 +81,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
   "POST /check-your-answers-business" should {
     "redirect to the Business Verification Journey" when {
       "the applicant's known facts successfully match" in {
-        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJson)
         stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> true))
@@ -100,7 +100,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
 
     "redirect to the continueUrl" when {
       "the applicant's known facts do not match" in {
-        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJson)
         stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> false))
@@ -119,9 +119,28 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
       }
 
       "the applicant does not have a sautr" in {
-        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationNoSautrJson)
+        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
+        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)(OK)
+        stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
+
+        lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
+
+        result must have {
+          httpStatus(SEE_OTHER)
+          redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
+        }
+
+        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
+      }
+
+      "the business entity has a Company Profile stored" in {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testLimitedPartnershipJourneyConfig))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationWithCompanyProfile)
+        stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> true))
         stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
         stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)(OK)
         stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
@@ -139,7 +158,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
 
     "throw an internal server error" when {
       "no data is stored for the applicant's journeyId" in {
-        await(insertJourneyConfig(testJourneyId, testInternalId, testJourneyConfig))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(NOT_FOUND)
 

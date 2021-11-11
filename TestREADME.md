@@ -1,5 +1,21 @@
 # Partnership Identification Frontend Test End-Points
 
+## Testing
+
+---
+
+1. [Setting up the Feature Switches](TestREADME.md#get-test-onlyfeature-switches)
+2. [Setting up a General Partnership Journey](TestREADME.md#get-test-onlycreate-general-partnership-journey)
+3. [Setting up a Scottish Partnership Journey](TestREADME.md#get-test-onlycreate-scottish-partnership-journey)
+4. [Setting up a Limited Partnership Journey](TestREADME.md#get-test-onlycreate-limited-partnership-journey)
+5. [Setting up a Scottish Limited Partnership Journey](TestREADME.md#get-test-onlycreate-scottish-limited-partnership-journey)
+6. [Setting up a Limited Liability Partnership Journey](TestREADME.md#get-test-onlycreate-limited-liability-partnership-journey)
+7. [Retrieving Journey Data](TestREADME.md#get-test-onlyretrieve-journeyjourneyid-or-test-onlyretrieve-journey)
+8. Business Verification Stub
+   1. [Creating a Business Verification journey](TestREADME.md#post-test-onlyverification-questionjourney)
+   2. [Retrieving Business Verification result](TestREADME.md#get--test-onlyverification-questionjourneyjourneyidstatus)
+9. [Companies House Stub](TestREADME.md#get-test-onlycompanynumberincorporated-company-profile)
+
 #### GET test-only/feature-switches
 
 ---
@@ -7,6 +23,7 @@ Shows all feature switches:
 1. Partnership Identification Frontend
 
     - Use stub for Business Verification flow
+    - Use stub for Companies House API
 
 2. Partnership Identification
 
@@ -36,7 +53,6 @@ This is a test entry point which simulates a service by triggering the initial P
     - Shown in the HMRC header - typically a link to a feedback questionnaire
     - This is currently autofilled but can be changed
 
-
 #### GET test-only/create-scottish-partnership-journey
 
 ---
@@ -60,7 +76,6 @@ This is a test entry point which simulates a service by triggering the initial P
 
    - Shown in the HMRC header - typically a link to a feedback questionnaire
    - This is currently autofilled but can be changed
-
 
 #### GET test-only/create-limited-partnership-journey
 
@@ -86,7 +101,6 @@ This is a test entry point which simulates a service by triggering the initial P
       - Shown in the HMRC header - typically a link to a feedback questionnaire
       - This is currently autofilled but can be changed
 
-
 #### GET test-only/create-scottish-limited-partnership-journey
 
    ---
@@ -111,7 +125,6 @@ This is a test entry point which simulates a service by triggering the initial P
       - Shown in the HMRC header - typically a link to a feedback questionnaire
       - This is currently autofilled but can be changed
 
-
 #### GET test-only/create-limited-liability-partnership-journey
 
 ---
@@ -135,7 +148,6 @@ This is a test entry point which simulates a service by triggering the initial P
 
    - Shown in the HMRC header - typically a link to a feedback questionnaire
    - This is currently autofilled but can be changed
-
 
 #### GET test-only/retrieve-journey/:journeyId or test-only/retrieve-journey
 
@@ -278,5 +290,43 @@ Response body:
     "saUtr" -> "1234567890"
   },
   "verificationStatus" -> "PASS"
+}
+```
+
+### GET test-only/:companyNumber/incorporated-company-profile
+
+---
+Stubs retrieving the Company Profile from Companies House. The Companies House API stub feature switch will need to be enabled.
+
+##### Request:
+A valid company Number must be sent in the URI
+
+##### Response:
+Status:
+
+| Expected Response                       | Reason                              | Example
+|-----------------------------------------|-------------------------------------|-------------------------------------
+| ```OK(200)```                           |  ```Company Number exists```        | ```Any other valid Company Number```
+| ```NOT_FOUND(404)```                    | ```Company Number doesn't exist```  | ```"00000001"```
+
+Example response body:
+```
+{
+  "companyProfile": {
+    "companyName":"TestCompanyLtd”,
+    “companyNumber":"01234567",
+    "dateOfIncorporation":"2020-01-01",
+    "unsanitisedCHROAddress": {
+      "address_line_1":"testLine1",
+      "address_line_2":"test town",
+      "care_of":"test name",
+      "country":"United Kingdom",
+      "locality":"test city",
+      "po_box":"123",
+      "postal_code":"AA11AA",
+      "premises":"1",
+      "region":"test region"
+    }
+  }
 }
 ```

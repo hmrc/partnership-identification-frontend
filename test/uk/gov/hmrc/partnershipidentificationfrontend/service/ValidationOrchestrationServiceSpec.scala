@@ -62,11 +62,22 @@ class ValidationOrchestrationServiceSpec extends AnyWordSpec
 
         result mustBe IdentifiersMismatch
       }
+      "there is a company profile stored" in {
+        mockRetrievePartnershipInformation(testJourneyId)(Future.successful(Some(testPartnershipInformationWithCompanyProfile)))
+        mockValidateIdentifiers(testSautr, testPostcode)(Future.successful(false))
+        mockStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(Future.successful(SuccessfullyStored))
+        mockStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationUnchallenged)(Future.successful(SuccessfullyStored))
+        mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
+
+        lazy val result = await(TestService.orchestrate(testJourneyId))
+
+        result mustBe IdentifiersMismatch
+      }
     }
 
     "return NoSautrProvided" when {
-      "the provided details are successfully matched" in {
-        mockRetrievePartnershipInformation(testJourneyId)(Future.successful(Some(PartnershipInformation(None))))
+      "no Sautr is provided" in {
+        mockRetrievePartnershipInformation(testJourneyId)(Future.successful(Some(PartnershipInformation(None, None))))
         mockStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(Future.successful(SuccessfullyStored))
         mockStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationUnchallenged)(Future.successful(SuccessfullyStored))
         mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))

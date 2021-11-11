@@ -30,7 +30,7 @@ trait CompaniesHouseApiStub extends WiremockMethods {
       )
 
   def stubRetrieveCompanyProfileFromStub(companyNumber: String)(status: Int, body: JsObject = Json.obj()): StubMapping =
-    when(method = GET, uri = s"/identify-your-incorporated-business/test-only/$companyNumber/incorporated-company-profile")
+    when(method = GET, uri = s"/identify-your-partnership/test-only/$companyNumber/incorporated-company-profile")
       .thenReturn(
         status = status,
         body = body

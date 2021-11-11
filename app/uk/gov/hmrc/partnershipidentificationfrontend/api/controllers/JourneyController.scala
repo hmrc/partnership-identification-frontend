@@ -65,9 +65,16 @@ class JourneyController @Inject()(controllerComponents: ControllerComponents,
           case Some(authInternalId) =>
             journeyService.createJourney(req.body, authInternalId).map {
               journeyId =>
-                Created(Json.obj(
-                  "journeyStartUrl" -> s"${appConfig.selfUrl}${controllerRoutes.CaptureSautrController.show(journeyId).url}"
-                ))
+                partnershipType match {
+                  case GeneralPartnership | ScottishPartnership =>
+                    Created(Json.obj(
+                      "journeyStartUrl" -> s"${appConfig.selfUrl}${controllerRoutes.CaptureSautrController.show(journeyId).url}"
+                    ))
+                  case _ =>
+                    Created(Json.obj(
+                      "journeyStartUrl" -> s"${appConfig.selfUrl}${controllerRoutes.CaptureCompanyNumberController.show(journeyId).url}"
+                    ))
+                }
             }
           case _ =>
             throw new InternalServerException("Internal ID could not be retrieved from Auth")

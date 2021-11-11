@@ -20,7 +20,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.PartnershipIdentificationConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.RemovePartnershipDetailsHttpParser.SuccessfullyRemoved
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, PartnershipFullJourneyData, PartnershipInformation, RegistrationStatus}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, CompanyProfile, PartnershipFullJourneyData, PartnershipInformation, RegistrationStatus}
 import uk.gov.hmrc.partnershipidentificationfrontend.service.PartnershipIdentificationService._
 
 import javax.inject.{Inject, Singleton}
@@ -75,6 +75,9 @@ class PartnershipIdentificationService @Inject()(connector: PartnershipIdentific
                                         )(implicit hc: HeaderCarrier): Future[Option[BusinessVerificationStatus]] =
     connector.retrievePartnershipInformation[BusinessVerificationStatus](journeyId, VerificationStatusKey)
 
+  def retrieveCompanyProfile(journeyId: String)(implicit hc: HeaderCarrier): Future[Option[CompanyProfile]] =
+    connector.retrievePartnershipInformation[CompanyProfile](journeyId, CompanyProfileKey)
+
 }
 
 object PartnershipIdentificationService {
@@ -83,4 +86,5 @@ object PartnershipIdentificationService {
   val VerificationStatusKey: String = "businessVerification"
   val IdentifiersMatchKey: String = "identifiersMatch"
   val RegistrationKey: String = "registration"
+  val CompanyProfileKey: String = "companyProfile"
 }

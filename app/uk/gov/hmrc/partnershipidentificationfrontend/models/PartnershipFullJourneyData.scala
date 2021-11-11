@@ -21,6 +21,7 @@ import play.api.libs.json._
 
 case class PartnershipFullJourneyData(optPostcode: Option[String],
                                       optSautr: Option[String],
+                                      companyProfile: Option[CompanyProfile],
                                       identifiersMatch: Boolean,
                                       businessVerification: BusinessVerificationStatus,
                                       registrationStatus: RegistrationStatus
@@ -33,10 +34,12 @@ object PartnershipFullJourneyData {
   private val IdentifiersMatchKey = "identifiersMatch"
   private val BusinessVerificationKey = "businessVerification"
   private val RegistrationStatusKey = "registration"
+  private val CompanyProfileKey = "companyProfile"
 
   val reads: Reads[PartnershipFullJourneyData] = (
     (JsPath \ PostcodeKey).readNullable[String] and
       (JsPath \ SautrKey).readNullable[String] and
+      (JsPath \ CompanyProfileKey).readNullable[CompanyProfile] and
       (JsPath \ IdentifiersMatchKey).read[Boolean] and
       (JsPath \ BusinessVerificationKey).read[BusinessVerificationStatus] and
       (JsPath \ RegistrationStatusKey).read[RegistrationStatus]
@@ -45,6 +48,7 @@ object PartnershipFullJourneyData {
   val writes: OWrites[PartnershipFullJourneyData] = (
     (JsPath \ PostcodeKey).writeNullable[String] and
       (JsPath \ SautrKey).writeNullable[String] and
+      (JsPath \ CompanyProfileKey).writeNullable[CompanyProfile] and
       (JsPath \ IdentifiersMatchKey).write[Boolean] and
       (JsPath \ BusinessVerificationKey).write[BusinessVerificationStatus] and
       (JsPath \ RegistrationStatusKey).write[RegistrationStatus]
