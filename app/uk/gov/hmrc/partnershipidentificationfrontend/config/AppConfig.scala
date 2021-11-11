@@ -17,7 +17,7 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.config
 
 import play.api.Configuration
-import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.{BusinessVerificationStub, FeatureSwitching}
+import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.{BusinessVerificationStub, CompaniesHouseStub, FeatureSwitching}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
@@ -87,5 +87,14 @@ class AppConfig @Inject()(config: Configuration,
 
   lazy val registerGeneralPartnershipUrl: String = s"$backendUrl/partnership-identification/register-general-partnership"
   lazy val registerScottishPartnershipUrl: String = s"$backendUrl/partnership-identification/register-scottish-partnership"
+
+  private lazy val incorporationInformationUrl = servicesConfig.baseUrl("incorporation-information")
+
+  def getCompanyProfileUrl(companyNumber: String): String = {
+    if (isEnabled(CompaniesHouseStub))
+      s"$selfBaseUrl/identify-your-incorporated-business/test-only/$companyNumber/incorporated-company-profile"
+    else
+      s"$incorporationInformationUrl/incorporation-information/$companyNumber/incorporated-company-profile"
+  }
 
 }

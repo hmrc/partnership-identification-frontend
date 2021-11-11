@@ -20,6 +20,7 @@ import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig, PartnershipInformation, SaInformation, _}
 
+import java.time.LocalDate
 import java.util.UUID
 
 object TestConstants {
@@ -34,6 +35,22 @@ object TestConstants {
   val testInternalId: String = UUID.randomUUID().toString
   val testBusinessVerificationJourneyId: String = UUID.randomUUID().toString
   val testSafeId: String = UUID.randomUUID().toString
+  val testCompanyNumber: String = "testCompanyNumber"
+  val testCompanyName: String = "Test Company Ltd"
+  val testCtutr: String = "1234567890"
+  val testDateOfIncorporation: String = LocalDate.of(2000, 1, 1).toString
+  val testAddress: JsObject = Json.obj(
+    "address_line_1" -> "testLine1",
+    "address_line_2" -> "test town",
+    "care_of" -> "test name",
+    "country" -> "United Kingdom",
+    "locality" -> "test city",
+    "po_box" -> "123",
+    "postal_code" -> "AA11AA",
+    "premises" -> "1",
+    "region" -> "test region"
+  )
+  val testCompanyProfile: CompanyProfile = CompanyProfile(testCompanyName, testCompanyNumber, testDateOfIncorporation, testAddress)
 
   val testDeskProServiceId: String = "vrs"
   val testSignOutUrl: String = "Sign out"

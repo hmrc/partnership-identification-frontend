@@ -16,8 +16,10 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.helpers
 
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{PartnershipInformation, SaInformation}
+import play.api.libs.json.{JsObject, Json}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{CompanyProfile, PartnershipInformation, SaInformation}
 
+import java.time.LocalDate
 import java.util.UUID
 
 object TestConstants {
@@ -30,6 +32,22 @@ object TestConstants {
   val testSignOutUrl = "/signOutUrl"
 
   val testSautr: String = "1234567890"
+  val testCompanyNumber: String = "12345678"
+  val testDateOfIncorporation: String = LocalDate.of(2000, 1, 1).toString
+  val testCompanyName: String = "ABC Limited"
+  val testIdentifiersMatch: Boolean = true
+  val testAddress: JsObject = Json.obj(
+    "address_line_1" -> "testLine1",
+    "address_line_2" -> "test town",
+    "care_of" -> "test name",
+    "country" -> "United Kingdom",
+    "locality" -> "test city",
+    "po_box" -> "123",
+    "postal_code" -> "AA11AA",
+    "premises" -> "1",
+    "region" -> "test region"
+  )
+  val testCompanyProfile: CompanyProfile = CompanyProfile(testCompanyName, testCompanyNumber, testDateOfIncorporation, testAddress)
 
   val testPartnershipInformation: PartnershipInformation = PartnershipInformation(Some(SaInformation(testSautr, testPostcode)))
 
