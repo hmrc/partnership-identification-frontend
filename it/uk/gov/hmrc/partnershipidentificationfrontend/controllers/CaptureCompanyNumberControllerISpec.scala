@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
-import play.api.test.Helpers.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER, NOT_IMPLEMENTED, await, defaultAwaitTimeout}
+import play.api.test.Helpers.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER, await, defaultAwaitTimeout}
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.{CompaniesHouseStub, FeatureSwitching}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PageConfig
@@ -229,7 +229,7 @@ class CaptureCompanyNumberControllerISpec extends ComponentSpecHelper
             post(s"$baseUrl/$testJourneyId/company-registration-number")(companyNumberKey -> testCompanyNumber)
           }
 
-          result.status mustBe NOT_IMPLEMENTED //TODO Update with new error page
+          result.status mustBe SEE_OTHER
         }
       }
     }
@@ -263,7 +263,7 @@ class CaptureCompanyNumberControllerISpec extends ComponentSpecHelper
             post(s"$baseUrl/$testJourneyId/company-registration-number")(companyNumberKey -> testCompanyNumber)
           }
 
-          result.status mustBe NOT_IMPLEMENTED //TODO Update with new error page
+          result.status mustBe SEE_OTHER
         }
       }
     }

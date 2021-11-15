@@ -25,6 +25,7 @@ object MessageLookup {
     val saveAndComeBack = "Save and come back later"
     val getHelp = "Is this page not working properly?"
     val back = "Back"
+    val tryAgain = "Try again"
 
     object Error {
       val title = "There is a problem"
@@ -59,6 +60,12 @@ object MessageLookup {
     val title = "Confirm the partnership name"
     val heading = "Confirm the partnership name"
     val change_company_link = "Change company"
+  }
+
+  object CompanyNumberNotFound {
+    val title = "We could not confirm your Partnership's company number"
+    val heading = "We could not confirm your Partnership's company number"
+    val paragraph = "The company number is not in our system."
   }
 
   object CaptureSautr {

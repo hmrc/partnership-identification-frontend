@@ -16,6 +16,7 @@ base.save_and_continue                                      = Save and continue
 base.getpagehelp.linkText                                   = Is this page not working properly?
 base.confirm_and_continue                                   = Confirm and continue
 base.change                                                 = Change
+base.try-again                                              = Try again
 
 error.summary.title                                         = There is a problem
 error.title-prefix                                          = 'Error: '
@@ -58,3 +59,8 @@ check-your-answers.heading                                  = Check your answers
 check-your-answers.sautr                                    = Unique Taxpayers Reference
 check-your-answers.postcode                                 = Postcode
 check-your-answers.no-sautr                                 = The business does not have a UTR
+
+## Partnership's company number not found
+company-number-not-found.title                              = We could not confirm your Partnership''s company number
+company-number-not-found.heading                            = We could not confirm your Partnership''s company number
+company-number-not-found.paragraph                          = The company number is not in our system.

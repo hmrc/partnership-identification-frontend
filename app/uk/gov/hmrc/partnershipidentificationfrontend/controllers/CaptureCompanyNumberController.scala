@@ -21,6 +21,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
+import uk.gov.hmrc.partnershipidentificationfrontend.controllers.errorpages.{routes => errorRoutes}
 import uk.gov.hmrc.partnershipidentificationfrontend.forms.CaptureCompanyNumberForm
 import uk.gov.hmrc.partnershipidentificationfrontend.service.{CompanyProfileService, JourneyService}
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.capture_company_number_page
@@ -67,7 +68,7 @@ class CaptureCompanyNumberController @Inject()(mcc: MessagesControllerComponents
                 case Some(_) =>
                   Redirect(routes.ConfirmPartnershipNameController.show(journeyId))
                 case None =>
-                  NotImplemented //TODO Redirect to error page
+                  Redirect(errorRoutes.CompanyNumberNotFoundController.show(journeyId))
               }
           )
         case None =>
