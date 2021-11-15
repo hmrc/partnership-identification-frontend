@@ -10,12 +10,10 @@ object AppDependencies {
     "uk.gov.hmrc" %% "play-frontend-govuk" % "0.71.0-play-28",
     "uk.gov.hmrc" %% "simple-reactivemongo" % "8.0.0-play-28",
     "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.12.3"
-
   )
 
   val test = Seq(
     "uk.gov.hmrc" %% "bootstrap-test-play-28" % "5.3.0" % Test,
-
     "org.scalatest" %% "scalatest" % "3.2.5" % Test,
     "org.jsoup" % "jsoup" % "1.13.1" % Test,
     "com.typesafe.play" %% "play-test" % PlayVersion.current % Test,
@@ -24,6 +22,5 @@ object AppDependencies {
     "com.github.tomakehurst" % "wiremock-jre8" % "2.27.2" % IntegrationTest,
     "org.mockito" %% "mockito-scala-scalatest" % "1.16.46" % Test,
     "org.scalatestplus" %% "mockito-3-4" % "3.2.9.0" % Test
-
   )
 }

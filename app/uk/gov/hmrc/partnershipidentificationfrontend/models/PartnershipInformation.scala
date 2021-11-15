@@ -18,7 +18,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.models
 
 import play.api.libs.json._
 
-case class PartnershipInformation(optSaInformation: Option[SaInformation])
+case class PartnershipInformation(optSaInformation: Option[SaInformation], optCompanyProfile: Option[CompanyProfile])
 
 case class SaInformation(sautr: String, postcode: String)
 
@@ -26,6 +26,7 @@ object PartnershipInformation {
 
   private val SautrKey = "sautr"
   private val PostcodeKey = "postcode"
+  private val CompanyProfileKey = "companyProfile"
 
   implicit val format: OFormat[PartnershipInformation] = new OFormat[PartnershipInformation] {
     override def writes(partnershipInformation: PartnershipInformation): JsObject =
@@ -34,21 +35,32 @@ object PartnershipInformation {
           Json.obj(
             SautrKey -> sautr,
             PostcodeKey -> postcode
-          )
+          ) ++ {
+            partnershipInformation.optCompanyProfile match {
+              case Some(companyProfile) => Json.obj(CompanyProfileKey -> Json.toJsObject(companyProfile))
+              case _ => Json.obj()
+            }
+          }
         case None =>
-          Json.obj()
+          Json.obj() ++ {
+            partnershipInformation.optCompanyProfile match {
+              case Some(companyProfile) => Json.obj(CompanyProfileKey -> Json.toJsObject(companyProfile))
+              case _ => Json.obj()
+            }
+          }
       }
 
     override def reads(json: JsValue): JsResult[PartnershipInformation] = for {
       optSautr <- (json \ SautrKey).validateOpt[String]
       optPostcode <- (json \ PostcodeKey).validateOpt[String]
+      optCompanyProfile <- (json \ CompanyProfileKey).validateOpt[CompanyProfile]
     } yield {
       val saInformation = for {
         sautr <- optSautr
         postcode <- optPostcode
       } yield SaInformation(sautr, postcode)
 
-      PartnershipInformation(saInformation)
+      PartnershipInformation(saInformation, optCompanyProfile)
     }
   }
 }

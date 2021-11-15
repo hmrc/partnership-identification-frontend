@@ -25,13 +25,12 @@ import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-
 class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with AuthStub with PartnershipIdentificationStub {
 
   val testJourneyConfigJson: JsObject = Json.obj(
-    "continueUrl" -> testJourneyConfig.continueUrl,
-    "deskProServiceId" -> testJourneyConfig.pageConfig.deskProServiceId,
-    "signOutUrl" -> testJourneyConfig.pageConfig.signOutUrl
+    "continueUrl" -> testContinueUrl,
+    "deskProServiceId" -> testDeskProServiceId,
+    "signOutUrl" -> testSignOutUrl
   )
 
   "POST /api/general-partnership-journey" should {
@@ -43,20 +42,18 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
       (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
 
-      await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testJourneyConfig)
-
-      verifyPost(1, "/partnership-identification/journey")
+      await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testGeneralPartnershipJourneyConfig)
     }
 
-    "return See Other" in {
+    "redirect to the Sign In page when the user is not logged in" in {
       stubAuthFailure()
       stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
 
       lazy val result = post("/partnership-identification/api/general-partnership-journey", testJourneyConfigJson)
 
       result.status mustBe SEE_OTHER
-
-      verifyPost(0, "/partnership-identification/journey")
+      result.header(LOCATION) mustBe
+        Some(s"/bas-gateway/sign-in?continue_url=%2Fpartnership-identification%2Fapi%2Fgeneral-partnership-journey&origin=partnership-identification-frontend")
     }
   }
 
@@ -70,19 +67,17 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
       (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
 
       await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testScottishPartnershipJourneyConfig)
-
-      verifyPost(1, "/partnership-identification/journey")
     }
 
-    "return See Other" in {
+    "redirect to the Sign In page when the user is not logged in" in {
       stubAuthFailure()
       stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
 
       lazy val result = post("/partnership-identification/api/scottish-partnership-journey", testJourneyConfigJson)
 
       result.status mustBe SEE_OTHER
-
-      verifyPost(0, "/partnership-identification/journey")
+      result.header(LOCATION) mustBe
+        Some(s"/bas-gateway/sign-in?continue_url=%2Fpartnership-identification%2Fapi%2Fscottish-partnership-journey&origin=partnership-identification-frontend")
     }
   }
 
@@ -93,14 +88,14 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
       lazy val result = post("/partnership-identification/api/scottish-limited-partnership-journey", testJourneyConfigJson)
 
-      (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
+      (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureCompanyNumberController.show(testJourneyId).url)
 
       await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testScottishLimitedPartnershipJourneyConfig)
 
       verifyPost(1, "/partnership-identification/journey")
     }
 
-    "return See Other when authentication fails" in {
+    "redirect to the Sign In page when the user is not logged in" in {
       stubAuthFailure()
       stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
 
@@ -108,9 +103,9 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
       result.status mustBe SEE_OTHER
 
-      verifyPost(0, "/partnership-identification/journey")
+      result.header(LOCATION) mustBe
+        Some(s"/bas-gateway/sign-in?continue_url=%2Fpartnership-identification%2Fapi%2Fscottish-limited-partnership-journey&origin=partnership-identification-frontend")
     }
-
   }
 
   "POST /api/limited-partnership-journey" should {
@@ -120,24 +115,21 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
       lazy val result = post("/partnership-identification/api/limited-partnership-journey", testJourneyConfigJson)
 
-      (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
+      (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureCompanyNumberController.show(testJourneyId).url)
 
       await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testLimitedPartnershipJourneyConfig)
-
-      verifyPost(1, "/partnership-identification/journey")
     }
 
-    "return See Other" in {
+    "redirect to the Sign In page when the user is not logged in" in {
       stubAuthFailure()
       stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
 
       lazy val result = post("/partnership-identification/api/limited-partnership-journey", testJourneyConfigJson)
 
       result.status mustBe SEE_OTHER
-
-      verifyPost(0, "/partnership-identification/journey")
+      result.header(LOCATION) mustBe
+        Some(s"/bas-gateway/sign-in?continue_url=%2Fpartnership-identification%2Fapi%2Flimited-partnership-journey&origin=partnership-identification-frontend")
     }
-
   }
 
   "POST /api/limited-liability-partnership-journey" should {
@@ -147,7 +139,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
       lazy val result = post("/partnership-identification/api/limited-liability-partnership-journey", testJourneyConfigJson)
 
-      (result.json \ "journeyStartUrl" ).as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
+      (result.json \ "journeyStartUrl" ).as[String] must include(appRoutes.CaptureCompanyNumberController.show(testJourneyId).url)
 
       await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testLimitedLiabilityPartnershipJourneyConfig)
 
@@ -187,7 +179,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
   "GET /api/journey/:journeyId" should {
     "return captured data" when {
-      "the journeyId exists" in {
+      "the no Company Profile exists" in {
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(
           status = OK,
@@ -198,6 +190,18 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
         result.status mustBe OK
         result.json mustBe Json.toJsObject(testPartnershipFullJourneyData)
+      }
+      "the Company Profile exists" in {
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrievePartnershipDetails(testJourneyId)(
+          status = OK,
+          body = testPartnershipFullJourneyDataJsonWithCompanyProfile
+        )
+
+        lazy val result = get(s"/partnership-identification/api/journey/$testJourneyId")
+
+        result.status mustBe OK
+        result.json mustBe Json.toJsObject(testPartnershipFullJourneyDataWithCompanyProfile(Some(testCompanyProfile), identifiersMatch = false))
       }
     }
 

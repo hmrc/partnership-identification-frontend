@@ -92,7 +92,7 @@ class AppConfig @Inject()(config: Configuration,
 
   def getCompanyProfileUrl(companyNumber: String): String = {
     if (isEnabled(CompaniesHouseStub))
-      s"$selfBaseUrl/identify-your-incorporated-business/test-only/$companyNumber/incorporated-company-profile"
+      s"$selfBaseUrl/identify-your-partnership/test-only/$companyNumber/incorporated-company-profile"
     else
       s"$incorporationInformationUrl/incorporation-information/$companyNumber/incorporated-company-profile"
   }

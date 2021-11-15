@@ -22,7 +22,6 @@ import play.api.data.validation.Constraint
 import uk.gov.hmrc.partnershipidentificationfrontend.forms.utils.ConstraintUtil._
 import uk.gov.hmrc.partnershipidentificationfrontend.forms.utils.ValidationHelper._
 
-
 object CapturePostCodeForm {
 
   val postCode = "postcode"

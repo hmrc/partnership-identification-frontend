@@ -18,7 +18,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.assets
 
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig, PartnershipInformation, SaInformation, _}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{PartnershipType => _, _}
 
 import java.time.LocalDate
 import java.util.UUID
@@ -35,7 +35,7 @@ object TestConstants {
   val testInternalId: String = UUID.randomUUID().toString
   val testBusinessVerificationJourneyId: String = UUID.randomUUID().toString
   val testSafeId: String = UUID.randomUUID().toString
-  val testCompanyNumber: String = "testCompanyNumber"
+  val testCompanyNumber: String = "12345678"
   val testCompanyName: String = "Test Company Ltd"
   val testCtutr: String = "1234567890"
   val testDateOfIncorporation: String = LocalDate.of(2000, 1, 1).toString
@@ -57,15 +57,14 @@ object TestConstants {
   val testDefaultServiceName: String = "Entity Validation Service"
   val testCallingServiceName: String = "Test Service"
 
-  val testJourneyConfig: JourneyConfig = JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), GeneralPartnership)
-  val testScottishPartnershipJourneyConfig: JourneyConfig =
-    JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), ScottishPartnership)
-  val testScottishLimitedPartnershipJourneyConfig: JourneyConfig =
-    JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), ScottishLimitedPartnership)
-  val testLimitedPartnershipJourneyConfig: JourneyConfig =
-    JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), LimitedPartnership)
-  val testLimitedLiabilityPartnershipJourneyConfig: JourneyConfig =
-    JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), LimitedLiabilityPartnership)
+  def testJourneyConfig(partnershipType: PartnershipType): JourneyConfig =
+    JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), partnershipType)
+
+  val testGeneralPartnershipJourneyConfig: JourneyConfig = testJourneyConfig(GeneralPartnership)
+  val testScottishPartnershipJourneyConfig: JourneyConfig = testJourneyConfig(ScottishPartnership)
+  val testScottishLimitedPartnershipJourneyConfig: JourneyConfig = testJourneyConfig(ScottishLimitedPartnership)
+  val testLimitedPartnershipJourneyConfig: JourneyConfig = testJourneyConfig(LimitedPartnership)
+  val testLimitedLiabilityPartnershipJourneyConfig: JourneyConfig = testJourneyConfig(LimitedLiabilityPartnership)
 
   val testPartnershipInformationJson: JsObject = {
     Json.obj(
@@ -73,6 +72,30 @@ object TestConstants {
       "postcode" -> testPostcode
     )
   }
+
+  val testPartnershipInformationNoSautrJson: JsObject = Json.obj()
+
+  val testPartnershipInformationWithCompanyProfile: JsObject =
+    Json.obj(
+      "sautr" -> testSautr,
+      "postcode" -> testPostcode,
+      "companyProfile" -> Json.obj(
+        "companyName" -> "Test Company Ltd",
+        "companyNumber" -> "01234567",
+        "dateOfIncorporation" -> "2020-01-01",
+        "unsanitisedCHROAddress" -> Json.obj(
+          "address_line_1" -> "testLine1",
+          "address_line_2" -> "test town",
+          "care_of" -> "test name",
+          "country" -> "United Kingdom",
+          "locality" -> "test city",
+          "po_box" -> "123",
+          "postal_code" -> "AA11AA",
+          "premises" -> "1",
+          "region" -> "test region"
+        )
+      )
+    )
 
   val testPartnershipFullJourneyDataJson: JsObject = {
     Json.obj(
@@ -89,9 +112,56 @@ object TestConstants {
     )
   }
 
-  val testPartnershipInformationNoSautrJson: JsObject = Json.obj()
+  val testPartnershipFullJourneyDataJsonWithCompanyProfile: JsObject = {
+    Json.obj(
+      "sautr" -> testSautr,
+      "postcode" -> testPostcode,
+      "identifiersMatch" -> false,
+      "businessVerification" -> Json.obj(
+        "verificationStatus" -> "UNCHALLENGED"
+      ),
+      "registration" -> Json.obj(
+        "registrationStatus" -> "REGISTRATION_NOT_CALLED"
+      ),
+      "companyProfile" -> Json.obj(
+        "companyName" -> testCompanyName,
+        "companyNumber" -> testCompanyNumber,
+        "dateOfIncorporation" -> testDateOfIncorporation,
+        "unsanitisedCHROAddress" -> Json.obj(
+          "address_line_1" -> "testLine1",
+          "address_line_2" -> "test town",
+          "care_of" -> "test name",
+          "country" -> "United Kingdom",
+          "locality" -> "test city",
+          "po_box" -> "123",
+          "postal_code" -> "AA11AA",
+          "premises" -> "1",
+          "region" -> "test region"
+        )
+      )
+    )
+  }
 
-  val testPartnershipInformation: PartnershipInformation = PartnershipInformation(Some(SaInformation(testSautr, testPostcode)))
-  val testPartnershipFullJourneyData: PartnershipFullJourneyData = PartnershipFullJourneyData(Some(testPostcode), Some(testSautr), identifiersMatch = true, BusinessVerificationPass, Registered(testSafeId))
+  val testPartnershipInformation: PartnershipInformation = PartnershipInformation(Some(SaInformation(testSautr, testPostcode)), None)
+
+  val testPartnershipFullJourneyData: PartnershipFullJourneyData =
+    PartnershipFullJourneyData(
+      Some(testPostcode),
+      Some(testSautr),
+      None,
+      identifiersMatch = true,
+      BusinessVerificationPass,
+      Registered(testSafeId))
+
+  def testPartnershipFullJourneyDataWithCompanyProfile(companyProfile: Option[CompanyProfile] = None,
+                                                       identifiersMatch: Boolean = true): PartnershipFullJourneyData =
+    PartnershipFullJourneyData(
+      Some(testPostcode),
+      Some(testSautr),
+      companyProfile,
+      identifiersMatch,
+      BusinessVerificationUnchallenged,
+      RegistrationNotCalled
+    )
 
 }

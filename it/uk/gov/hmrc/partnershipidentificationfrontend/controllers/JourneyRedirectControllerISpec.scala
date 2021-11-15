@@ -29,7 +29,7 @@ class JourneyRedirectControllerISpec extends ComponentSpecHelper with AuthStub {
       await(journeyConfigRepository.insertJourneyConfig(
         testJourneyId,
         testInternalId,
-        testJourneyConfig
+        testGeneralPartnershipJourneyConfig
       ))
 
       lazy val result = get(s"$baseUrl/journey/redirect/$testJourneyId")

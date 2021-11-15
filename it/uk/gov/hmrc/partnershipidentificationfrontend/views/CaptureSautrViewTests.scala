@@ -29,7 +29,6 @@ import uk.gov.hmrc.partnershipidentificationfrontend.utils.ViewSpecHelper.Elemen
 trait CaptureSautrViewTests {
   this: ComponentSpecHelper =>
 
-
   def testCaptureSautrView(result: => WSResponse, serviceName: String = testDefaultServiceName, hasErrors: Boolean = false): Unit = {
 
     lazy val doc = Jsoup.parse(result.body)

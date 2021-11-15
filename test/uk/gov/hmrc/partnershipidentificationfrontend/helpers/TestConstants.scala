@@ -24,13 +24,12 @@ import java.util.UUID
 
 object TestConstants {
 
-  val testContinueUrl = "/test"
+  val testContinueUrl: String = "/test"
   val testJourneyId: String = UUID.randomUUID().toString
   val testInternalId: String = UUID.randomUUID().toString
   val testSafeId: String = UUID.randomUUID().toString
   val testPostcode: String = "AA11AA"
-  val testSignOutUrl = "/signOutUrl"
-
+  val testSignOutUrl: String = "/signOutUrl"
   val testSautr: String = "1234567890"
   val testCompanyNumber: String = "12345678"
   val testDateOfIncorporation: String = LocalDate.of(2000, 1, 1).toString
@@ -49,6 +48,8 @@ object TestConstants {
   )
   val testCompanyProfile: CompanyProfile = CompanyProfile(testCompanyName, testCompanyNumber, testDateOfIncorporation, testAddress)
 
-  val testPartnershipInformation: PartnershipInformation = PartnershipInformation(Some(SaInformation(testSautr, testPostcode)))
+  val testPartnershipInformation: PartnershipInformation = PartnershipInformation(Some(SaInformation(testSautr, testPostcode)), None)
+  val testPartnershipInformationWithCompanyProfile: PartnershipInformation =
+    PartnershipInformation(Some(SaInformation(testSautr, testPostcode)), Some(testCompanyProfile))
 
 }
