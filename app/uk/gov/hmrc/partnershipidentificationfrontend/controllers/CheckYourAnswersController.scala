@@ -16,13 +16,14 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{IdentifiersMatched, IdentifiersMismatch, NoSautrProvided}
 import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipIdentificationService, ValidationOrchestrationService}
+import uk.gov.hmrc.partnershipidentificationfrontend.views.helpers.CheckYourAnswersListBuilder
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.check_your_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -35,7 +36,8 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
                                            val authConnector: AuthConnector,
                                            journeyService: JourneyService,
                                            partnershipIdentificationService: PartnershipIdentificationService,
-                                           validationOrchestrationService: ValidationOrchestrationService
+                                           validationOrchestrationService: ValidationOrchestrationService,
+                                           checkYourAnswersListBuilder: CheckYourAnswersListBuilder
                                           )(implicit val config: AppConfig,
                                             executionContext: ExecutionContext) extends FrontendController(mcc) with AuthorisedFunctions {
 
@@ -51,7 +53,7 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
                     journeyId,
                     journeyConfig.pageConfig,
                     routes.CheckYourAnswersController.submit(journeyId),
-                    partnershipInformation
+                    checkYourAnswersListBuilder.build(journeyId, partnershipInformation)
                   ))
                 case _ =>
                   throw new InternalServerException(s"No data stored for journeyId: $journeyId")

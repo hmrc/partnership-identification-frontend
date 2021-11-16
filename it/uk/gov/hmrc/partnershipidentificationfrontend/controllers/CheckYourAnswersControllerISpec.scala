@@ -20,7 +20,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.FeatureSwitching
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationUnchallenged, RegistrationNotCalled, SaInformation}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationUnchallenged, RegistrationNotCalled}
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuthStub, PartnershipIdentificationStub, ValidatePartnershipInformationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.views.CheckYourAnswersViewTests
@@ -33,11 +33,11 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
   with ValidatePartnershipInformationStub {
 
   "GET /check-your-answers-business" when {
-    "the applicant has an sautr and a postcode" should {
+    "the applicant has a company number a sautr and postcode" should {
       lazy val result = {
         await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJson)
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationWithCompanyProfile)
         get(s"$baseUrl/$testJourneyId/check-your-answers-business")
       }
 
@@ -46,11 +46,11 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
       }
 
       "return a view which" should {
-        testCheckYourAnswersView(result, testJourneyId, Some(SaInformation(testSautr, testPostcode)))
+        testCheckYourAnswersView(result, testJourneyId, (Some((testSautr, testPostcode)), Some(testCompanyNumber)))
       }
     }
 
-    "the applicant does not have an SAUTR" should {
+    "the applicant does not have a SAUTR and does not have a company number" should {
       lazy val result = {
         await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
@@ -63,7 +63,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
       }
 
       "return a view which" should {
-        testCheckYourAnswersView(result, testJourneyId, optSaInformation = None)
+        testCheckYourAnswersView(result, testJourneyId, expectedData = (None, None))
       }
     }
 

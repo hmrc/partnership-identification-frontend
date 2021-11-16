@@ -102,6 +102,7 @@ object MessageLookup {
     val sautr = "Unique Taxpayers Reference"
     val postCode = "Postcode"
     val noSautr = "The business does not have a UTR"
+    val companyNumber = "Company number"
   }
 
 }

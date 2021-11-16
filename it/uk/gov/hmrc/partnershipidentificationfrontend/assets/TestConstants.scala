@@ -56,10 +56,6 @@ object TestConstants {
   val testSignOutUrl: String = "Sign out"
   val testDefaultServiceName: String = "Entity Validation Service"
   val testCallingServiceName: String = "Test Service"
-
-  def testJourneyConfig(partnershipType: PartnershipType): JourneyConfig =
-    JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), partnershipType)
-
   val testGeneralPartnershipJourneyConfig: JourneyConfig = testJourneyConfig(GeneralPartnership)
   val testScottishPartnershipJourneyConfig: JourneyConfig = testJourneyConfig(ScottishPartnership)
   val testScottishLimitedPartnershipJourneyConfig: JourneyConfig = testJourneyConfig(ScottishLimitedPartnership)
@@ -81,7 +77,7 @@ object TestConstants {
       "postcode" -> testPostcode,
       "companyProfile" -> Json.obj(
         "companyName" -> "Test Company Ltd",
-        "companyNumber" -> "01234567",
+        "companyNumber" -> testCompanyNumber,
         "dateOfIncorporation" -> "2020-01-01",
         "unsanitisedCHROAddress" -> Json.obj(
           "address_line_1" -> "testLine1",
@@ -152,6 +148,9 @@ object TestConstants {
       identifiersMatch = true,
       BusinessVerificationPass,
       Registered(testSafeId))
+
+  def testJourneyConfig(partnershipType: PartnershipType): JourneyConfig =
+    JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), partnershipType)
 
   def testPartnershipFullJourneyDataWithCompanyProfile(companyProfile: Option[CompanyProfile] = None,
                                                        identifiersMatch: Boolean = true): PartnershipFullJourneyData =

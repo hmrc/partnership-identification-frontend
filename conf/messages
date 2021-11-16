@@ -59,6 +59,7 @@ check-your-answers.heading                                  = Check your answers
 check-your-answers.sautr                                    = Unique Taxpayers Reference
 check-your-answers.postcode                                 = Postcode
 check-your-answers.no-sautr                                 = The business does not have a UTR
+check-your-answers.companyNumber                            = Company number
 
 ## Partnership's company number not found
 company-number-not-found.title                              = We could not confirm your Partnership''s company number

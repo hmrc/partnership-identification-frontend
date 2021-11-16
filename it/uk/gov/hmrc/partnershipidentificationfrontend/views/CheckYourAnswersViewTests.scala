@@ -23,7 +23,6 @@ import uk.gov.hmrc.partnershipidentificationfrontend.assets.MessageLookup.{Base,
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.controllers.routes
-import uk.gov.hmrc.partnershipidentificationfrontend.models.SaInformation
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ViewSpecHelper.ElementExtensions
 
@@ -33,7 +32,7 @@ import scala.collection.JavaConverters._
 trait CheckYourAnswersViewTests {
   this: ComponentSpecHelper =>
 
-  def testCheckYourAnswersView(result: => WSResponse, journeyId: String, optSaInformation: Option[SaInformation]): Unit = {
+  def testCheckYourAnswersView(result: => WSResponse, journeyId: String, expectedData: Tuple2[Option[(String, String)], Option[String]]): Unit = {
     lazy val doc: Document = Jsoup.parse(result.body)
     lazy val config = app.injector.instanceOf[AppConfig]
 
@@ -64,14 +63,22 @@ trait CheckYourAnswersViewTests {
     "have a summary list which" should {
       lazy val summaryListRows = doc.getSummaryListRows.iterator().asScala.toList
 
+      expectedData match {
+        case (Some((testSautr, testPostcode)), Some(testCompanyNumber)) =>
+          "have a company number row" in {
+            val companyNumberRow = summaryListRows.head
 
-      optSaInformation match {
-        case Some(saInformation) =>
+            companyNumberRow.getSummaryListQuestion mustBe messages.companyNumber
+            companyNumberRow.getSummaryListAnswer mustBe testCompanyNumber
+            companyNumberRow.getSummaryListChangeLink mustBe routes.CaptureCompanyNumberController.show(journeyId).url
+            companyNumberRow.getSummaryListChangeText mustBe s"${Base.change} ${messages.companyNumber}"
+          }
+
           "have an sautr row" in {
-            val sautrRow = summaryListRows.head
+            val sautrRow = summaryListRows.tail.head
 
             sautrRow.getSummaryListQuestion mustBe messages.sautr
-            sautrRow.getSummaryListAnswer mustBe saInformation.sautr
+            sautrRow.getSummaryListAnswer mustBe testSautr
             sautrRow.getSummaryListChangeLink mustBe routes.CaptureSautrController.show(journeyId).url
             sautrRow.getSummaryListChangeText mustBe s"${Base.change} ${messages.sautr}"
           }
@@ -80,17 +87,26 @@ trait CheckYourAnswersViewTests {
             val postcodeRow = summaryListRows.last
 
             postcodeRow.getSummaryListQuestion mustBe messages.postCode
-            postcodeRow.getSummaryListAnswer mustBe saInformation.postcode
+            postcodeRow.getSummaryListAnswer mustBe testPostcode
             postcodeRow.getSummaryListChangeLink mustBe routes.CapturePostCodeController.show(journeyId).url
             postcodeRow.getSummaryListChangeText mustBe s"${Base.change} ${messages.postCode}"
           }
 
-          "have 2 rows" in {
-            summaryListRows.size mustBe 2
+          "have 3 rows" in {
+            summaryListRows.size mustBe 3
           }
-        case None =>
-          "have an sautr row" in {
-            val sautrRow = summaryListRows.head
+        case (None, Some(testCompanyNumber)) =>
+          "have a company number row" in {
+            val companyNumberRow = summaryListRows.head
+
+            companyNumberRow.getSummaryListQuestion mustBe messages.companyNumber
+            companyNumberRow.getSummaryListAnswer mustBe testCompanyNumber
+            companyNumberRow.getSummaryListChangeLink mustBe routes.CaptureCompanyNumberController.show(journeyId).url
+            companyNumberRow.getSummaryListChangeText mustBe s"${Base.change} ${messages.companyNumber}"
+          }
+
+          "have a noSautr row" in {
+            val sautrRow = summaryListRows.last
 
             sautrRow.getSummaryListQuestion mustBe messages.sautr
             sautrRow.getSummaryListAnswer mustBe messages.noSautr
@@ -98,9 +114,23 @@ trait CheckYourAnswersViewTests {
             sautrRow.getSummaryListChangeText mustBe s"${Base.change} ${messages.sautr}"
           }
 
-          "have 1 row" in {
+          "have 2 rows" in {
+            summaryListRows.size mustBe 2
+          }
+        case (None, None) =>
+          "have a noSautr row" in {
+            val sautrRow = summaryListRows.last
+
+            sautrRow.getSummaryListQuestion mustBe messages.sautr
+            sautrRow.getSummaryListAnswer mustBe messages.noSautr
+            sautrRow.getSummaryListChangeLink mustBe routes.CaptureSautrController.show(journeyId).url
+            sautrRow.getSummaryListChangeText mustBe s"${Base.change} ${messages.sautr}"
+          }
+
+          "have 1 rows" in {
             summaryListRows.size mustBe 1
           }
+        case _ => throw new IllegalStateException(s"Sorry no scenario for $expectedData")
       }
 
       "have a continue and confirm button" in {
