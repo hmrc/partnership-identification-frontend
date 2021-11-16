@@ -1,0 +1,74 @@
+/*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package uk.gov.hmrc.partnershipidentificationfrontend.views.errorpages
+
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import play.api.libs.ws.WSResponse
+import uk.gov.hmrc.partnershipidentificationfrontend.assets.MessageLookup.{Base, BetaBanner, Header, CompanyNumberNotFound => messages}
+import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.testDefaultServiceName
+import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
+import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
+import uk.gov.hmrc.partnershipidentificationfrontend.utils.ViewSpecHelper.ElementExtensions
+
+trait CompanyNumberNotFoundViewTests {
+  this: ComponentSpecHelper =>
+
+  def testCompanyNumberNotFoundView(result: => WSResponse, serviceName: String = testDefaultServiceName): Unit = {
+
+    lazy val doc: Document = Jsoup.parse(result.body)
+
+    lazy val appConfig: AppConfig = app.injector.instanceOf[AppConfig]
+
+    "have a sign out link in the header" in {
+      doc.getSignOutText mustBe Header.signOut
+    }
+
+    "have a sign out link that redirects the user to the Vat feedback link" in {
+        doc.getSignOutLink mustBe appConfig.vatRegFeedbackUrl
+    }
+
+    "have the correct beta banner" in {
+      doc.getBanner.text mustBe BetaBanner.title
+    }
+
+    "have a banner link that redirects to beta feedback" in {
+      doc.getBannerLink mustBe appConfig.betaFeedbackUrl("vrs")
+    }
+
+    "correctly display the service name" in {
+      doc.getServiceName.text mustBe serviceName
+    }
+
+    "have the correct title" in {
+      doc.title mustBe messages.title
+    }
+
+    "have the correct heading" in {
+      doc.getH1Elements.text mustBe messages.heading
+    }
+
+    "have the correct paragraph" in {
+      doc.getParagraphs.eq(1).text mustBe messages.paragraph
+    }
+
+    "have a try again button" in {
+      doc.getSubmitButton.first.text mustBe Base.tryAgain
+    }
+  }
+
+}

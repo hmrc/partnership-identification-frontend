@@ -9,6 +9,9 @@ POST        /:journeyId/company-registration-number         uk.gov.hmrc.partners
 GET         /:journeyId/confirm-company-name                uk.gov.hmrc.partnershipidentificationfrontend.controllers.ConfirmPartnershipNameController.show(journeyId)
 POST        /:journeyId/confirm-company-name                uk.gov.hmrc.partnershipidentificationfrontend.controllers.ConfirmPartnershipNameController.submit(journeyId)
 
+GET         /:journeyId/company-number-not-found            uk.gov.hmrc.partnershipidentificationfrontend.controllers.errorpages.CompanyNumberNotFoundController.show(journeyId: String)
+POST        /:journeyId/company-number-not-found            uk.gov.hmrc.partnershipidentificationfrontend.controllers.errorpages.CompanyNumberNotFoundController.submit(journeyId: String)
+
 GET         /:journeyId/sa-utr                              uk.gov.hmrc.partnershipidentificationfrontend.controllers.CaptureSautrController.show(journeyId)
 POST        /:journeyId/sa-utr                              uk.gov.hmrc.partnershipidentificationfrontend.controllers.CaptureSautrController.submit(journeyId)
 GET         /:journeyId/no-sa-utr                           uk.gov.hmrc.partnershipidentificationfrontend.controllers.CaptureSautrController.noSautr(journeyId: String)
