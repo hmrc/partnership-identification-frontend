@@ -13,10 +13,8 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *@
-
 @import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
-@import uk.gov.hmrc.partnershipidentificationfrontend.controllers.{routes => Routes}
-@import uk.gov.hmrc.partnershipidentificationfrontend.models.{PageConfig, PartnershipInformation, SaInformation}
+@import uk.gov.hmrc.partnershipidentificationfrontend.models.PageConfig
 @import uk.gov.hmrc.partnershipidentificationfrontend.views.html.templates.govuk_template
 
 @this(layout: govuk_template,
@@ -26,7 +24,7 @@
         govukSummaryList: GovukSummaryList,
         formWithCSRF: FormWithCSRF)
 
-@(journeyId: String, pageConfig: PageConfig, formAction: Call, partnershipInformation: PartnershipInformation)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(journeyId: String, pageConfig: PageConfig, formAction: Call, checkYourAnswersList: Seq[SummaryListRow])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @layout(pageConfig, title = messages("check-your-answers.title")) {
 
@@ -40,51 +38,8 @@
     ))
 }
 @html = {
-@govukSummaryList(SummaryList(
-    classes = "govuk-!-margin-bottom-9",
-    rows = partnershipInformation.optSaInformation match {
-        case Some(SaInformation(sautr, postcode)) =>
-            Seq(
-                SummaryListRow(
-                    key = Key(content = Text(messages("check-your-answers.sautr"))),
-                    value = Value(content = Text(sautr)),
-                    actions = Some(Actions(items = Seq(
-                        ActionItem(
-                            href = Routes.CaptureSautrController.show(journeyId).url,
-                            content = Text(messages("base.change")),
-                            visuallyHiddenText = Some(messages("check-your-answers.sautr"))
-                        )
-                    )))
-                ),
-                SummaryListRow(
-                    key = Key(content = Text(messages("check-your-answers.postcode"))),
-                    value = Value(content = Text(postcode)),
-                    actions = Some(Actions(items = Seq(
-                        ActionItem(
-                            href = Routes.CapturePostCodeController.show(journeyId).url,
-                            content = Text(messages("base.change")),
-                            visuallyHiddenText = Some(messages("check-your-answers.postcode"))
-                        )
-                    )))
-                )
-            )
-        case None =>
-            Seq(
-                SummaryListRow(
-                    key = Key(content = Text(messages("check-your-answers.sautr"))),
-                    value = Value(content = Text(messages("check-your-answers.no-sautr"))),
-                    actions = Some(Actions(items = Seq(
-                        ActionItem(
-                            href = Routes.CaptureSautrController.show(journeyId).url,
-                            content = Text(messages("base.change")),
-                            visuallyHiddenText = Some(messages("check-your-answers.sautr"))
-                        )
-                    )))
-                )
-            )
-        }
-    )
-)
+
+@govukSummaryList(SummaryList(classes = "govuk-!-margin-bottom-9", rows = checkYourAnswersList))
 
 @formWithCSRF(action = formAction) {
     @govukButton(Button(
