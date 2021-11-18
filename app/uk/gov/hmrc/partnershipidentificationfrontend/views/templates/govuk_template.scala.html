@@ -18,6 +18,8 @@
 @import uk.gov.hmrc.partnershipidentificationfrontend.models.PageConfig
 @import uk.gov.hmrc.partnershipidentificationfrontend.views.helpers.FooterLinks
 @import uk.gov.hmrc.partnershipidentificationfrontend.views.html.helpers.phaseBanner
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTrackingConsentSnippet
+@import views.html.helper.CSPNonce
 
 @this(govukLayout: GovukLayout,
         hmrcHeader: HmrcHeader,
@@ -26,16 +28,17 @@
         footerLinks: FooterLinks,
         footer: govukFooter,
         hmrcTimeoutDialog: HmrcTimeoutDialog,
-        govukBackLink: GovukBackLink
+        govukBackLink: GovukBackLink,
+        hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet
 )
 
-@(pageConfig: PageConfig, title: String, timeout: Boolean = true, showBackLink: Boolean = true)(contentBlock: Html)(implicit messages: Messages, appConfig: AppConfig)
+@(pageConfig: PageConfig, title: String, timeout: Boolean = true, showBackLink: Boolean = true)(contentBlock: Html)(implicit messages: Messages, appConfig: AppConfig, request: RequestHeader)
 
 @head = {
-    <script src='@controllers.routes.Assets.versioned("javascripts/gtm.js")'></script>
-        <!--[if lte IE 8]><link href=' @controllers.routes.Assets.versioned("stylesheets/application-ie-8.css")' rel="stylesheet" type="text/css" /><![endif]-->
+        <!--[if lte IE 8]><link href='@controllers.routes.Assets.versioned("stylesheets/application-ie-8.css")' rel="stylesheet" type="text/css" /><![endif]-->
         <!--[if gt IE 8]><!--> <link href='@controllers.routes.Assets.versioned("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css" />
         <!--<![endif]-->
+    @hmrcTrackingConsentSnippet(CSPNonce.get)
     @if(timeout) {
         @hmrcTimeoutDialog(TimeoutDialog(
             language = Some(messages.lang.code),
@@ -47,19 +50,19 @@
     }
 }
 
-@headerBlock = {
+ @headerBlock = {
     @hmrcHeader(Header(
         serviceName = Some(pageConfig.optServiceName.getOrElse(appConfig.defaultServiceName)),
         signOutHref = Some(appConfig.vatRegFeedbackUrl)
     ))
-}
+ }
 
-@beforeContentBlock = {
+ @beforeContentBlock = {
     @phaseBanner("beta", pageConfig)
     @if(showBackLink) {
         @govukBackLink(BackLink(href = "#", content = Text(messages("base.back")), attributes = Map("id" -> "back-link")))
     }
-}
+ }
 
 @content = {
     <div class="govuk-!-margin-bottom-6">
@@ -78,15 +81,14 @@
 }
 
 @scripts = {
-    <script src='@controllers.routes.Assets.versioned("lib/govuk-frontend/govuk/all.js")'></script>
-    <script src='@controllers.routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
-    <script>window.GOVUKFrontend.initAll();</script>
-    <script>window.HMRCFrontend.initAll();</script>
-    <script src='@controllers.routes.Assets.versioned("javascripts/backLink.js")'></script>
-
+    <script @{CSPNonce.attr} src='@controllers.routes.Assets.versioned("lib/govuk-frontend/govuk/all.js")'></script>
+    <script @{CSPNonce.attr} src='@controllers.routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
+    <script @{CSPNonce.attr}>window.GOVUKFrontend.initAll();</script>
+    <script @{CSPNonce.attr}>window.HMRCFrontend.initAll();</script>
+    <script @{CSPNonce.attr} src='@controllers.routes.Assets.versioned("javascripts/backLink.js")'></script>
 }
 
-@govukLayout(
+ @govukLayout(
     pageTitle = Some(title),
     headBlock = Some(head),
     beforeContentBlock = Some(beforeContentBlock),
