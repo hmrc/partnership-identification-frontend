@@ -30,56 +30,87 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
   with PartnershipIdentificationStub
   with AuthStub {
 
-  "GET /sa-utr" should {
-    lazy val result = {
-      await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
-      stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-      get(s"$baseUrl/$testJourneyId/sa-utr")
-    }
-
-    "return OK" in {
-      result.status mustBe OK
-    }
-
-    "return a view" when {
-      "there is no serviceName passed in the journeyConfig" should {
-        testCaptureSautrView(result)
+  "GET /sa-utr" when {
+    "the partnership type is General or Scottish Partnership" should {
+      lazy val result = {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        get(s"$baseUrl/$testJourneyId/sa-utr")
       }
 
-      "there is a serviceName passed in the journeyConfig" should {
-        lazy val result = {
-          val config = testGeneralPartnershipJourneyConfig.copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl))
-          await(insertJourneyConfig(testJourneyId, testInternalId, config))
-          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-          get(s"$baseUrl/$testJourneyId/sa-utr")
+      "return OK" in {
+        result.status mustBe OK
+      }
+
+      "return a view" when {
+        "there is no serviceName passed in the journeyConfig" should {
+          testCaptureOptionalSautrView(result)
         }
 
-        testCaptureSautrView(result, testCallingServiceName)
+        "there is a serviceName passed in the journeyConfig" should {
+          lazy val result = {
+            val config = testGeneralPartnershipJourneyConfig.copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl))
+            await(insertJourneyConfig(testJourneyId, testInternalId, config))
+            stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+            get(s"$baseUrl/$testJourneyId/sa-utr")
+          }
+
+          testCaptureOptionalSautrView(result, testCallingServiceName)
+        }
+      }
+
+      "redirect to sign in page" when {
+        "the user is not logged in" in {
+          lazy val result = {
+            stubAuthFailure()
+            get(s"$baseUrl/$testJourneyId/sa-utr")
+          }
+
+          result must have {
+            httpStatus(SEE_OTHER)
+            redirectUri(s"/bas-gateway/sign-in?continue_url=%2Fidentify-your-partnership%2F$testJourneyId%2Fsa-utr&origin=partnership-identification-frontend")
+          }
+        }
+      }
+
+      "throw an InternalServerException" when {
+        "an internal id cannot be retrieved from auth" in {
+          lazy val result = {
+            stubAuth(OK, successfulAuthResponse(None))
+            get(s"$baseUrl/$testJourneyId/sa-utr")
+          }
+
+          result.status mustBe INTERNAL_SERVER_ERROR
+        }
       }
     }
 
-    "redirect to sign in page" when {
-      "the user is not logged in" in {
-        lazy val result = {
-          stubAuthFailure()
-          get(s"$baseUrl/$testJourneyId/sa-utr")
-        }
-
-        result must have {
-          httpStatus(SEE_OTHER)
-          redirectUri(s"/bas-gateway/sign-in?continue_url=%2Fidentify-your-partnership%2F$testJourneyId%2Fsa-utr&origin=partnership-identification-frontend")
-        }
+    "the partnership type is Limited, Scottish Limited, or Limited Liability Partnership " should {
+      lazy val result = {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testScottishLimitedPartnershipJourneyConfig))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        get(s"$baseUrl/$testJourneyId/sa-utr")
       }
-    }
 
-    "throw an InternalServerException" when {
-      "an internal id cannot be retrieved from auth" in {
-        lazy val result = {
-          stubAuth(OK, successfulAuthResponse(None))
-          get(s"$baseUrl/$testJourneyId/sa-utr")
+      "return OK" in {
+        result.status mustBe OK
+      }
+
+      "return a view" when {
+        "there is no serviceName passed in the journeyConfig" should {
+          testCaptureSautrView(result)
         }
 
-        result.status mustBe INTERNAL_SERVER_ERROR
+        "there is a serviceName passed in the journeyConfig" should {
+          lazy val result = {
+            val config = testScottishLimitedPartnershipJourneyConfig.copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl))
+            await(insertJourneyConfig(testJourneyId, testInternalId, config))
+            stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+            get(s"$baseUrl/$testJourneyId/sa-utr")
+          }
+
+          testCaptureSautrView(result, testCallingServiceName)
+        }
       }
     }
   }

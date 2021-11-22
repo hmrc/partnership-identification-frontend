@@ -70,6 +70,57 @@ trait CaptureSautrViewTests {
       doc.getParagraphs.get(1).text mustBe messages.line_1
     }
 
+    "have a correct link" in {
+      doc.getLink("cannot-find-utr").text mustBe messages.link_1
+    }
+
+    "have a save and continue button" in {
+      doc.getSubmitButton.first.text mustBe Base.saveAndContinue
+    }
+
+  }
+
+  def testCaptureOptionalSautrView(result: => WSResponse, serviceName: String = testDefaultServiceName, hasErrors: Boolean = false): Unit = {
+
+    lazy val doc = Jsoup.parse(result.body)
+
+    lazy val config = app.injector.instanceOf[AppConfig]
+
+    "have a sign out link in the header" in {
+      doc.getSignOutText mustBe Header.signOut
+    }
+
+    "have sign out link redirecting to signOutUrl from journey config" in {
+      doc.getSignOutText mustBe testSignOutUrl
+    }
+
+    "have the correct beta banner" in {
+      doc.getBanner.text mustBe BetaBanner.title
+    }
+
+    "have a banner link that redirects to beta feedback" in {
+      doc.getBannerLink mustBe config.betaFeedbackUrl("vrs")
+    }
+
+    "correctly display the service name" in {
+      doc.getServiceName.text mustBe serviceName
+    }
+
+    "have the correct title" in {
+      if (hasErrors)
+        doc.title mustBe Base.Error.error + messages.title
+      else
+        doc.title mustBe messages.title
+    }
+
+    "have the correct heading" in {
+      doc.getH1Elements.text mustBe messages.heading
+    }
+
+    "have the correct first line" in {
+      doc.getParagraphs.get(1).text mustBe messages.line_1
+    }
+
     "have a correct details element" in {
       doc.getSpan("details-summary-text").text mustBe messages.line_2
       doc.getParagraphs.get(2).text mustBe messages.details_line_1
@@ -85,7 +136,7 @@ trait CaptureSautrViewTests {
 
   def testCaptureSautrViewWithErrorMessages(result: => WSResponse): Unit = {
 
-    testCaptureSautrView(result, hasErrors = true)
+    testCaptureOptionalSautrView(result, hasErrors = true)
 
     lazy val doc: Document = Jsoup.parse(result.body)
 

@@ -69,13 +69,14 @@ object MessageLookup {
   }
 
   object CaptureSautr {
-    val title = "What is your Unique Taxpayer Reference?"
-    val heading = "What is your Unique Taxpayer Reference?"
-    val line_1 = "This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about Self Assessment. It may be called ‘reference’, ‘UTR’ or ‘official use’. You can find a lost UTR number."
+    val title = "What is the partnership’s Unique Taxpayer Reference?"
+    val heading = "What is the partnership’s Unique Taxpayer Reference?"
+    val line_1 = "This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about Self Assessment. It may be called ‘reference’, ‘UTR’ or ‘official use’."
     val line_2 = "I do not have a Unique Taxpayer Reference"
     val details_line_1 = "Your UTR helps us identify your partnership."
     val details_line_2 = "I cannot find my UTR"
     val details_line_3 = "My partnership does not have a UTR"
+    val link_1 = "I cannot find my UTR"
 
     object Error {
       val invalidSautrEntered = "Enter a Unique Taxpayer Reference in the correct format"
