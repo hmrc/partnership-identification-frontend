@@ -25,14 +25,13 @@
 @this(layout: govuk_template,
         govukFieldset: GovukFieldset,
         govukInput: GovukInput,
-        govukDetails: GovukDetails,
         govukButton: GovukButton,
         formWithCSRF: FormWithCSRF,
         inputText: inputText,
         errorSummary: errorSummary
 )
 
-@(journeyId: String, pageConfig: PageConfig, formAction: Call, form: Form[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+@(journeyId: String, pageConfig: PageConfig, formAction: Call, form: Form[String], displaySkipSautrLink: Boolean)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @layout(pageConfig, title = title(messages("capture-sa-utr.title"), form)) {
 
@@ -49,6 +48,7 @@
             classes = "govuk-input--width-20"
         )
 
+    @if(displaySkipSautrLink) {
         <details class="govuk-details">
             <summary class="govuk-details__summary">
                 <span class="govuk-details__summary-text" id="details-summary-text">@messages("capture-sa-utr.line_2")</span>
@@ -56,13 +56,19 @@
             <div class="govuk-details__text">
                 <p>@messages("capture-sa-utr.details.line_1")</p>
                 <p>
-                    <a class="govuk-link" id="cannot-find-utr" href="https://www.tax.service.gov.uk/ask-for-copy-of-your-corporation-tax-utr" target="_blank">@messages("capture-sa-utr.details.line_2")</a>
+                    <a class="govuk-link" id="cannot-find-utr" href="https://www.gov.uk/find-lost-utr-number">@messages("capture-sa-utr.details.line_2")</a>
                 </p>
                 <p>
                     <a class="govuk-link" id="no-sautr" href="@routes.CaptureSautrController.noSautr(journeyId)">@messages("capture-sa-utr.details.line_3")</a>
                 </p>
             </div>
         </details>
+    } else {
+        <div class="govuk-body">
+            <a class="govuk-link" id="cannot-find-utr" href="https://www.gov.uk/find-lost-utr-number">@messages("capture-sa-utr.link_1")</a>
+        </div>
+    }
+
 
         @govukButton(Button(
             attributes = Map("id" -> "save-and-continue"),

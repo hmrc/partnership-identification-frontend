@@ -22,21 +22,23 @@ import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.forms.CaptureSautrForm
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
 import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipIdentificationService}
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.capture_sautr_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class CaptureSautrController @Inject()(mcc: MessagesControllerComponents,
-                                       view: capture_sautr_page,
+                                       sautr_view: capture_sautr_page,
                                        partnershipIdentificationService: PartnershipIdentificationService,
                                        journeyService: JourneyService,
                                        val authConnector: AuthConnector
                                       )(implicit val config: AppConfig,
                                         executionContext: ExecutionContext) extends FrontendController(mcc) with AuthorisedFunctions {
+
 
   def show(journeyId: String): Action[AnyContent] = Action.async {
     implicit request =>
@@ -44,7 +46,14 @@ class CaptureSautrController @Inject()(mcc: MessagesControllerComponents,
         case Some(authInternalId) =>
           journeyService.getJourneyConfig(journeyId, authInternalId).map {
             journeyConfig =>
-              Ok(view(journeyId, journeyConfig.pageConfig, routes.CaptureSautrController.submit(journeyId), CaptureSautrForm.form))
+              journeyConfig.partnershipType match {
+                case GeneralPartnership | ScottishPartnership =>
+                  Ok(sautr_view(journeyId, journeyConfig.pageConfig, routes.CaptureSautrController.submit(journeyId), CaptureSautrForm.form, displaySkipSautrLink = true))
+                case ScottishLimitedPartnership | LimitedPartnership | LimitedLiabilityPartnership =>
+                  Ok(sautr_view(journeyId, journeyConfig.pageConfig, routes.CaptureSautrController.submit(journeyId), CaptureSautrForm.form, displaySkipSautrLink = false))
+                case invalidType =>
+                  throw new InternalServerException(s"Invalid Partnership Type: $invalidType on SAUTR page")
+              }
           }
         case _ =>
           throw new InternalServerException("Internal ID could not be retrieved from Auth")
@@ -55,20 +64,25 @@ class CaptureSautrController @Inject()(mcc: MessagesControllerComponents,
     implicit request =>
       authorised().retrieve(internalId) {
         case Some(authInternalId) =>
-          journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
-            journeyConfig =>
-              CaptureSautrForm.form.bindFromRequest().fold(
-                formWithErrors => {
-                  Future.successful(
-                    BadRequest(view(journeyId, journeyConfig.pageConfig, routes.CaptureSautrController.submit(journeyId), formWithErrors))
-                  )
-                },
-                sautr =>
-                  partnershipIdentificationService.storeSautr(journeyId, sautr).map {
-                    _ => Redirect(routes.CapturePostCodeController.show(journeyId))
+          CaptureSautrForm.form.bindFromRequest().fold(
+            formWithErrors => {
+              journeyService.getJourneyConfig(journeyId, authInternalId).map {
+                journeyConfig =>
+                  journeyConfig.partnershipType match {
+                    case GeneralPartnership | ScottishPartnership =>
+                      BadRequest(sautr_view(journeyId, journeyConfig.pageConfig, routes.CaptureSautrController.submit(journeyId), formWithErrors, displaySkipSautrLink = true))
+                    case ScottishLimitedPartnership | LimitedPartnership | LimitedLiabilityPartnership =>
+                      BadRequest(sautr_view(journeyId, journeyConfig.pageConfig, routes.CaptureSautrController.submit(journeyId), formWithErrors, displaySkipSautrLink = false))
+                    case invalidType =>
+                      throw new InternalServerException(s"Invalid Partnership Type: $invalidType on SAUTR page")
                   }
-              )
-          }
+              }
+            },
+            sautr =>
+              partnershipIdentificationService.storeSautr(journeyId, sautr).map {
+                _ => Redirect(routes.CapturePostCodeController.show(journeyId))
+              }
+          )
         case _ =>
           throw new InternalServerException("Internal ID could not be retrieved from Auth")
       }

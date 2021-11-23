@@ -37,7 +37,7 @@ object CapturePostCodeForm {
 
   val postCodeInvalid: Constraint[String] = Constraint("postcode.invalid-format")(
     postCode => validateNot(
-      constraint = postCode matches postCodeRegex,
+      constraint = postCode.toUpperCase matches postCodeRegex,
       errMsg = "capture-postcode.error.invalid_format"
     )
   )

@@ -36,13 +36,14 @@ confirm-partnership.heading                                 = Confirm the partne
 confirm-partnership.change_company                          = Change company
 
 ## Capture SA-UTR Page
-capture-sa-utr.title                                        = What is your Unique Taxpayer Reference?
-capture-sa-utr.heading                                      = What is your Unique Taxpayer Reference?
-capture-sa-utr.line_1                                       = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about Self Assessment. It may be called ‘reference’, ‘UTR’ or ‘official use’. You can <a href="https://www.gov.uk/find-lost-utr-number">find a lost UTR number.</a>
+capture-sa-utr.title                                        = What is the partnership’s Unique Taxpayer Reference?
+capture-sa-utr.heading                                      = What is the partnership’s Unique Taxpayer Reference?
+capture-sa-utr.line_1                                       = This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about Self Assessment. It may be called ‘reference’, ‘UTR’ or ‘official use’.
 capture-sa-utr.line_2                                       = I do not have a Unique Taxpayer Reference
 capture-sa-utr.details.line_1                               = Your UTR helps us identify your partnership.
 capture-sa-utr.details.line_2                               = I cannot find my UTR
 capture-sa-utr.details.line_3                               = My partnership does not have a UTR
+capture-sa-utr.link_1                                       = I cannot find my UTR
 capture-sa-utr.error                                        = Enter a Unique Taxpayer Reference in the correct format
 
 ## Capture PostCode Page
