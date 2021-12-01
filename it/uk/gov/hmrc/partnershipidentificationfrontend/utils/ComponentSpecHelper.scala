@@ -61,8 +61,10 @@ trait ComponentSpecHelper extends AnyWordSpec with Matchers
     "microservice.services.business-verification.url" -> s"$mockUrl/business-verification"
   )
 
+  def extraConfig: Map[String, String] = Map.empty
+
   override lazy val app: Application = new GuiceApplicationBuilder()
-    .configure(config)
+    .configure(config ++ extraConfig)
     .build
 
   implicit val ws: WSClient = app.injector.instanceOf[WSClient]

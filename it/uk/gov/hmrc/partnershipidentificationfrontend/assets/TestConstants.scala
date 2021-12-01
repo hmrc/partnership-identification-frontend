@@ -108,6 +108,21 @@ object TestConstants {
     )
   }
 
+  val testPartnershipFullJourneyDataUnmatchedJson: JsObject = {
+    Json.obj(
+      "sautr" -> testSautr,
+      "postcode" -> testPostcode,
+      "identifiersMatch" -> false,
+      "businessVerification" -> Json.obj(
+        "verificationStatus" -> "PASS"
+      ),
+      "registration" -> Json.obj(
+        "registrationStatus" -> "REGISTERED",
+        "registeredBusinessPartnerId" -> testSafeId
+      )
+    )
+  }
+
   val testPartnershipFullJourneyDataJsonWithCompanyProfile: JsObject = {
     Json.obj(
       "sautr" -> testSautr,
@@ -149,8 +164,8 @@ object TestConstants {
       BusinessVerificationPass,
       Registered(testSafeId))
 
-  def testJourneyConfig(partnershipType: PartnershipType): JourneyConfig =
-    JourneyConfig(testContinueUrl, PageConfig(None, testDeskProServiceId, testSignOutUrl), partnershipType)
+  def testJourneyConfig(partnershipType: PartnershipType, serviceName: Option[String] = None): JourneyConfig =
+    JourneyConfig(testContinueUrl, PageConfig(serviceName, testDeskProServiceId, testSignOutUrl), partnershipType)
 
   def testPartnershipFullJourneyDataWithCompanyProfile(companyProfile: Option[CompanyProfile] = None,
                                                        identifiersMatch: Boolean = true): PartnershipFullJourneyData =

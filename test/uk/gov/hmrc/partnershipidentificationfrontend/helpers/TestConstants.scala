@@ -52,4 +52,9 @@ object TestConstants {
   val testPartnershipInformationWithCompanyProfile: PartnershipInformation =
     PartnershipInformation(Some(SaInformation(testSautr, testPostcode)), Some(testCompanyProfile))
 
+  val testServiceName = "testServiceName"
+  val testDeskProServiceId = "testDeskProServiceId"
+  val testBusinessPartnerId = "testBusinessPartnerId"
+
+
 }

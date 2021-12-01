@@ -18,7 +18,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.models
 
 import play.api.libs.json._
 
-sealed trait BusinessVerificationStatus
+sealed trait  BusinessVerificationStatus
 
 case object BusinessVerificationPass extends BusinessVerificationStatus
 
