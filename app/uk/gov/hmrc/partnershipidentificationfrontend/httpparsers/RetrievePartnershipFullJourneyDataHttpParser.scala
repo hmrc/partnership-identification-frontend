@@ -30,7 +30,7 @@ object RetrievePartnershipFullJourneyDataHttpParser {
           response.json.validate[PartnershipFullJourneyData] match {
             case JsSuccess(partnershipDetails, _) => Some(partnershipDetails)
             case JsError(errors) =>
-              throw new InternalServerException(s"`Failed to read Partnerhsip Journey Data with the following error/s: $errors")
+              throw new InternalServerException(s"`Failed to read Partnership Journey Data with the following error/s: $errors")
           }
         case NOT_FOUND =>
           None

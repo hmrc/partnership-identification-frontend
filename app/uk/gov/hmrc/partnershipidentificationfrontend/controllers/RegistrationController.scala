@@ -20,7 +20,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
-import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, RegistrationOrchestrationService}
+import uk.gov.hmrc.partnershipidentificationfrontend.service.{AuditService, JourneyService, RegistrationOrchestrationService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -30,19 +30,18 @@ import scala.concurrent.ExecutionContext
 class RegistrationController @Inject()(journeyService: JourneyService,
                                        registrationOrchestrationService: RegistrationOrchestrationService,
                                        messagesControllerComponents: MessagesControllerComponents,
+                                       auditService: AuditService,
                                        val authConnector: AuthConnector)
                                       (implicit ec: ExecutionContext) extends FrontendController(messagesControllerComponents) with AuthorisedFunctions {
 
   def register(journeyId: String): Action[AnyContent] = Action.async {
     implicit request =>
       authorised().retrieve(internalId) {
-        case Some(authInternalId) =>
-          journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
-            journeyConfig =>
-              registrationOrchestrationService.register(journeyId, journeyConfig.partnershipType).map {
-                _ => Redirect(routes.JourneyRedirectController.redirectToContinueUrl(journeyId))
-              }
-          }
+        case Some(authInternalId) => for {
+          journeyConfig <- journeyService.getJourneyConfig(journeyId, authInternalId)
+          _ <- registrationOrchestrationService.register(journeyId, journeyConfig.partnershipType)
+          _ <- auditService.auditPartnershipInformation(journeyId, journeyConfig)
+        } yield Redirect(routes.JourneyRedirectController.redirectToContinueUrl(journeyId))
         case _ =>
           throw new InternalServerException("Internal ID could not be retrieved from Auth")
       }

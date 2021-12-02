@@ -22,13 +22,13 @@ import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{IdentifiersMatched, IdentifiersMismatch, NoSautrProvided}
-import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipIdentificationService, ValidationOrchestrationService}
+import uk.gov.hmrc.partnershipidentificationfrontend.service.{AuditService, JourneyService, PartnershipIdentificationService, ValidationOrchestrationService}
 import uk.gov.hmrc.partnershipidentificationfrontend.views.helpers.CheckYourAnswersListBuilder
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.check_your_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
@@ -37,7 +37,8 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
                                            journeyService: JourneyService,
                                            partnershipIdentificationService: PartnershipIdentificationService,
                                            validationOrchestrationService: ValidationOrchestrationService,
-                                           checkYourAnswersListBuilder: CheckYourAnswersListBuilder
+                                           checkYourAnswersListBuilder: CheckYourAnswersListBuilder,
+                                           auditService: AuditService
                                           )(implicit val config: AppConfig,
                                             executionContext: ExecutionContext) extends FrontendController(mcc) with AuthorisedFunctions {
 
@@ -69,12 +70,14 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
       authorised().retrieve(internalId) {
         case Some(authInternalId) =>
           journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
-            _ =>
-              validationOrchestrationService.orchestrate(journeyId).map {
+            journeyConfig =>
+              validationOrchestrationService.orchestrate(journeyId).flatMap {
                 case IdentifiersMatched =>
-                  Redirect(routes.BusinessVerificationController.startBusinessVerificationJourney(journeyId))
+                  Future.successful(Redirect(routes.BusinessVerificationController.startBusinessVerificationJourney(journeyId)))
                 case NoSautrProvided | IdentifiersMismatch =>
-                  Redirect(routes.JourneyRedirectController.redirectToContinueUrl(journeyId))
+                  auditService.auditPartnershipInformation(journeyId, journeyConfig).map {
+                    _ => Redirect(routes.JourneyRedirectController.redirectToContinueUrl(journeyId))
+                  }
               }
           }
         case _ =>
