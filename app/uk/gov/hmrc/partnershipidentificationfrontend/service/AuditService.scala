@@ -16,10 +16,11 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.service
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationFail, BusinessVerificationPass, BusinessVerificationUnchallenged, JourneyConfig, PartnershipFullJourneyData, Registered, RegistrationFailed, RegistrationNotCalled}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, PartnershipType, ScottishPartnership}
+import uk.gov.hmrc.partnershipidentificationfrontend.models._
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
 import javax.inject.Inject
@@ -33,61 +34,80 @@ class AuditService @Inject()(auditConnector: AuditConnector,
       partnershipData <- partnershipIdentificationService.retrievePartnershipFullJourneyData(journeyId)
     } yield partnershipData match {
       case Some(PartnershipFullJourneyData(optPostcode, optSautr, _, identifiersMatch, businessVerification, registrationStatus)) =>
-        val sautrJson = optSautr match {
-          case Some(sautr) => Json.obj(
-            "SAUTR" -> sautr
-          )
-          case None => Json.obj()
-        }
-        val postcodeJson = optPostcode match {
-          case Some(postcode) => Json.obj(
-            "SApostcode" -> postcode
-          )
-          case None => Json.obj()
-        }
-        val identifiersMatchJson = Json.obj {
-          "isMatch" -> identifiersMatch
-        }
-        val businessTypeJson = Json.obj(
-          "businessType" -> "General Partnership" //TODO - Update to be dynamic for different business types
-        )
-        val verificationStatusJson = Json.obj(
-          "VerificationStatus" -> (businessVerification match {
-            case BusinessVerificationPass =>
-              "success"
-            case BusinessVerificationFail =>
-              "fail"
-            case BusinessVerificationUnchallenged =>
-              "Not Enough Information to challenge"
-          })
-        )
-        val registerApiStatusJson = Json.obj(
-          "RegisterApiStatus" -> (registrationStatus match {
-            case Registered(_) =>
-              "success"
-            case RegistrationFailed =>
-              "fail"
-            case RegistrationNotCalled =>
-              "not called"
-          })
-        )
-        val serviceName = journeyConfig.pageConfig.optServiceName.getOrElse(appConfig.defaultServiceName)
-        val callingServiceJson = Json.obj(
-          "callingService" -> serviceName
-        )
+        val auditJson = (sautrJson(optSautr)
+          ++ postcodeJson(optPostcode)
+          ++ identifiersMatchJson(identifiersMatch)
+          ++ businessTypeJson(journeyConfig.partnershipType)
+          ++ verificationStatusJson(businessVerification)
+          ++ registerApiStatusJson(registrationStatus)
+          ++ callingServiceJson(journeyConfig.pageConfig.optServiceName))
 
-        val auditType = "GeneralPartnershipEntityRegistration" //TODO - Update to be dynamic for different business types
-
-        val auditJson = (sautrJson
-          ++ postcodeJson
-          ++ identifiersMatchJson
-          ++ businessTypeJson
-          ++ verificationStatusJson
-          ++ registerApiStatusJson
-          ++ callingServiceJson)
-
-        auditConnector.sendExplicitAudit(auditType, auditJson)
+        auditConnector.sendExplicitAudit(auditType(journeyConfig.partnershipType), auditJson)
       case None =>
     }
+  }
+
+  private def auditType(partnershipType: PartnershipType): String = partnershipType match {
+    case GeneralPartnership => "GeneralPartnershipEntityRegistration"
+    case ScottishPartnership => "ScottishPartnershipEntityRegistration"
+    case _ => ""
+  }
+
+  private def sautrJson(optSautr: Option[String]): JsObject = optSautr match {
+    case Some(sautr) => Json.obj(
+      "SAUTR" -> sautr
+    )
+    case None => Json.obj()
+  }
+
+  private def postcodeJson(optPostcode: Option[String]): JsObject = optPostcode match {
+    case Some(postcode) => Json.obj(
+      "SApostcode" -> postcode
+    )
+    case None => Json.obj()
+  }
+
+  private def businessTypeJson(partnershipType: PartnershipType): JsObject = {
+    val businessType = partnershipType match {
+      case GeneralPartnership => "General Partnership"
+      case ScottishPartnership => "Scottish Partnership"
+      case _ => ""
+    }
+    Json.obj(
+      "businessType" -> businessType
+    )
+  }
+
+  private def verificationStatusJson(businessVerification: BusinessVerificationStatus): JsObject = Json.obj(
+    "VerificationStatus" -> (businessVerification match {
+      case BusinessVerificationPass =>
+        "success"
+      case BusinessVerificationFail =>
+        "fail"
+      case BusinessVerificationUnchallenged =>
+        "Not Enough Information to challenge"
+    })
+  )
+
+  private def registerApiStatusJson(registrationStatus: RegistrationStatus): JsObject = Json.obj(
+    "RegisterApiStatus" -> (registrationStatus match {
+      case Registered(_) =>
+        "success"
+      case RegistrationFailed =>
+        "fail"
+      case RegistrationNotCalled =>
+        "not called"
+    })
+  )
+
+  private def callingServiceJson(optServiceName: Option[String]): JsObject = {
+    val serviceName = optServiceName.getOrElse(appConfig.defaultServiceName)
+    Json.obj(
+      "callingService" -> serviceName
+    )
+  }
+
+  private def identifiersMatchJson(identifiersMatch: Boolean): JsObject = Json.obj {
+    "isMatch" -> identifiersMatch
   }
 }

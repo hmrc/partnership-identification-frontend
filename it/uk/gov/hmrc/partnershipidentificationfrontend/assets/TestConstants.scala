@@ -108,17 +108,16 @@ object TestConstants {
     )
   }
 
-  val testPartnershipFullJourneyDataUnmatchedJson: JsObject = {
+  val testPartnershipFullJourneyDataJsonRegistrationFailed: JsObject = {
     Json.obj(
       "sautr" -> testSautr,
       "postcode" -> testPostcode,
-      "identifiersMatch" -> false,
+      "identifiersMatch" -> true,
       "businessVerification" -> Json.obj(
         "verificationStatus" -> "PASS"
       ),
       "registration" -> Json.obj(
-        "registrationStatus" -> "REGISTERED",
-        "registeredBusinessPartnerId" -> testSafeId
+        "registrationStatus" -> "REGISTRATION_FAILED"
       )
     )
   }
