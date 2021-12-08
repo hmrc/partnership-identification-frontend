@@ -53,6 +53,12 @@ This is a test entry point which simulates a service by triggering the initial P
     - Shown in the HMRC header - typically a link to a feedback questionnaire
     - This is currently autofilled but can be changed
 
+5. Business verification checkbox
+
+    - Used for skipping further verification checks carried out currently by Business Verification (SI)
+    - This is currently autofilled but can be changed
+
+
 #### GET test-only/create-scottish-partnership-journey
 
 ---
@@ -77,29 +83,40 @@ This is a test entry point which simulates a service by triggering the initial P
    - Shown in the HMRC header - typically a link to a feedback questionnaire
    - This is currently autofilled but can be changed
 
+5. Business verification checkbox
+
+    - Used for skipping further verification checks carried out currently by Business Verification (SI)
+    - This is currently autofilled but can be changed
+
+
 #### GET test-only/create-limited-partnership-journey
 
-   ---
-   This is a test entry point which simulates a service by triggering the initial POST call to set up a journey for Limited Partnership.
+---
+This is a test entry point which simulates a service by triggering the initial POST call to set up a journey for Limited Partnership.
 
-   1. Continue URL (Required)
+1. Continue URL (Required)
 
-      - Where to redirect the user after the journey has been completed
+    - Where to redirect the user after the journey has been completed
 
-   2. Service Name (Optional)
+2. Service Name (Optional)
 
-      - Service Name to use throughout the service
-      - Currently, this is empty by default, so the default service name will be used
+    - Service Name to use throughout the service
+    - Currently, this is empty by default, so the default service name will be used
 
-   3. DeskPro Service ID (Required)
+3. DeskPro Service ID (Required)
 
-      - Used for the `Get help with this page` link
-      - This is currently autofilled but can be changed
+    - Used for the `Get help with this page` link
+    - This is currently autofilled but can be changed
 
-   4. Sign Out URL (Required)
+4. Sign Out URL (Required)
 
-      - Shown in the HMRC header - typically a link to a feedback questionnaire
-      - This is currently autofilled but can be changed
+    - Shown in the HMRC header - typically a link to a feedback questionnaire
+    - This is currently autofilled but can be changed
+
+5. Business verification checkbox
+
+    - The value of this input field has no effect because identifiersMatch defaults to false for incorporated partnerships and as such business verification and registration are not performed
+
 
 #### GET test-only/create-scottish-limited-partnership-journey
 
@@ -125,6 +142,10 @@ This is a test entry point which simulates a service by triggering the initial P
       - Shown in the HMRC header - typically a link to a feedback questionnaire
       - This is currently autofilled but can be changed
 
+   5. Business verification checkbox
+
+      - The value of this input field has no effect because identifiersMatch defaults to false for incorporated partnerships and as such business verification and registration are not performed
+
 #### GET test-only/create-limited-liability-partnership-journey
 
 ---
@@ -148,6 +169,10 @@ This is a test entry point which simulates a service by triggering the initial P
 
    - Shown in the HMRC header - typically a link to a feedback questionnaire
    - This is currently autofilled but can be changed
+
+5. Business verification checkbox
+
+   - This value has no effect because identifiersMatch defaults to false for incorporated partnerships and as such business verification and registration are not performed
 
 #### GET test-only/retrieve-journey/:journeyId or test-only/retrieve-journey
 
@@ -330,3 +355,7 @@ Example response body:
   }
 }
 ```
+
+### License
+
+This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
