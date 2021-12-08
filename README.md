@@ -140,16 +140,16 @@ Example response bodies:
 General Partnership:
 ```
 {
-   "sautr": "1234567890",
-   "postcode": "AA11AA"
-   "identifiersMatch": true,
-   "businessVerification": {
-        "verificationStatus":"PASS"
-      },
-    "registration": {
-        "registrationStatus":"REGISTERED",
-        "registeredBusinessPartnerId":"X00000123456789"
-      }
+  "sautr": "1234567890",
+  "postcode": "AA11AA",
+  "identifiersMatch": true,
+  "businessVerification": {
+    "verificationStatus": "PASS"
+  },
+  "registration": {
+    "registrationStatus": "REGISTERED",
+    "registeredBusinessPartnerId": "X00000123456789"
+  }
 }
 ```
 
@@ -157,16 +157,16 @@ General Partnership:
 Scottish Partnership:
 ```
 {
-   "sautr": "1234567890",
-   "postcode": "AA11AA"
-   "identifiersMatch": true,
-   "businessVerification": {
-        "verificationStatus":"PASS"
-      },
-    "registration": {
-        "registrationStatus":"REGISTERED",
-        "registeredBusinessPartnerId":"X00000123456789"
-      }
+  "sautr": "1234567890",
+  "postcode": "AA11AA",
+  "identifiersMatch": true,
+  "businessVerification": {
+    "verificationStatus": "PASS"
+  },
+  "registration": {
+    "registrationStatus": "REGISTERED",
+    "registeredBusinessPartnerId": "X00000123456789"
+  }
 }
 ```
 
@@ -174,16 +174,32 @@ Scottish Partnership:
 Limited Partnership:
 ```
 {
-   "sautr": "1234567890",
-   "postcode": "AA11AA"
-   "identifiersMatch": true,
-   "businessVerification": {
-        "verificationStatus":"PASS"
-      },
-    "registration": {
-        "registrationStatus":"REGISTERED",
-        "registeredBusinessPartnerId":"X00000123456789"
-      }
+  "sautr": "1234567890",
+  "postcode": "AA11AA",
+  "identifiersMatch": true,
+  "businessVerification": {
+    "verificationStatus": "PASS"
+  },
+  "registration": {
+    "registrationStatus": "REGISTERED",
+    "registeredBusinessPartnerId": "X00000123456789"
+  },
+  "companyProfile": {
+    "companyName": "TestPartnership",
+    "companyNumber": "01234567",
+    "dateOfIncorporation": "2020-01-01",
+    "unsanitisedCHROAddress": {
+      "address_line_1": "testLine1",
+      "address_line_2": "test town",
+      "care_of": "test name",
+      "country": "United Kingdom",
+      "locality": "test city",
+      "po_box": "123",
+      "postal_code": "AA11AA",
+      "premises": "1",
+      "region": "test region"
+    }
+  }
 }
 ```
 
@@ -191,16 +207,32 @@ Limited Partnership:
 Scottish Limited Partnership:
 ```
 {
-   "sautr": "1234567890",
-   "postcode": "AA11AA"
-   "identifiersMatch": true,
-   "businessVerification": {
-        "verificationStatus":"PASS"
-      },
-    "registration": {
-        "registrationStatus":"REGISTERED",
-        "registeredBusinessPartnerId":"X00000123456789"
-      }
+  "sautr": "1234567890",
+  "postcode": "AA11AA",
+  "identifiersMatch": true,
+  "businessVerification": {
+    "verificationStatus": "PASS"
+  },
+  "registration": {
+    "registrationStatus": "REGISTERED",
+    "registeredBusinessPartnerId": "X00000123456789"
+  },
+  "companyProfile": {
+    "companyName": "TestPartnership",
+    "companyNumber": "01234567",
+    "dateOfIncorporation": "2020-01-01",
+    "unsanitisedCHROAddress": {
+      "address_line_1": "testLine1",
+      "address_line_2": "test town",
+      "care_of": "test name",
+      "country": "United Kingdom",
+      "locality": "test city",
+      "po_box": "123",
+      "postal_code": "AA11AA",
+      "premises": "1",
+      "region": "test region"
+    }
+  }
 }
 ```
 
@@ -208,16 +240,32 @@ Scottish Limited Partnership:
 Limited Liability Partnerships
 ```
 {
-   "sautr": "1234567890",
-   "postcode": "AA11AA"
-   "identifiersMatch": true,
-   "businessVerification": {
-        "verificationStatus":"PASS"
-      },
-    "registration": {
-        "registrationStatus":"REGISTERED",
-        "registeredBusinessPartnerId":"X00000123456789"
-      }
+  "sautr": "1234567890",
+  "postcode": "AA11AA",
+  "identifiersMatch": true,
+  "businessVerification": {
+    "verificationStatus": "PASS"
+  },
+  "registration": {
+    "registrationStatus": "REGISTERED",
+    "registeredBusinessPartnerId": "X00000123456789"
+  },
+  "companyProfile": {
+    "companyName": "TestPartnership",
+    "companyNumber": "01234567",
+    "dateOfIncorporation": "2020-01-01",
+    "unsanitisedCHROAddress": {
+      "address_line_1": "testLine1",
+      "address_line_2": "test town",
+      "care_of": "test name",
+      "country": "United Kingdom",
+      "locality": "test city",
+      "po_box": "123",
+      "postal_code": "AA11AA",
+      "premises": "1",
+      "region": "test region"
+    }
+  }
 }
 ```
 
