@@ -20,12 +20,11 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.ScottishLimitedPartnership
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.connectors.TestCreateJourneyConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.forms.TestCreateJourneyForm.form
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.views.html.test_create_journey
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
+import uk.gov.hmrc.partnershipidentificationfrontend.testonly.Utils
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,17 +36,9 @@ class TestCreateScottishLimitedPartnershipJourneyController @Inject()
    val authConnector: AuthConnector)(implicit ec: ExecutionContext, appConfig: AppConfig)
   extends FrontendController(messagesControllerComponents) with AuthorisedFunctions {
 
-  private val defaultPageConfig = PageConfig(
-    optServiceName = None,
-    deskProServiceId = "vrs",
-    signOutUrl = appConfig.vatRegFeedbackUrl
-  )
+  private val defaultPageConfig = Utils.defaultPageConfig(appConfig)
 
-  private val defaultJourneyConfig = JourneyConfig(
-    continueUrl = s"${appConfig.selfUrl}/identify-your-partnership/test-only/retrieve-journey",
-    pageConfig = defaultPageConfig,
-    ScottishLimitedPartnership
-  )
+  private val defaultJourneyConfig = Utils.defaultJourneyConfigFor(appConfig, defaultPageConfig, ScottishLimitedPartnership)
 
   val show: Action[AnyContent] = Action.async {
     implicit request =>

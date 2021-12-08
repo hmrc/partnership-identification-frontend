@@ -26,8 +26,8 @@ import play.api.libs.json.{JsValue, Writes}
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.test.Helpers._
 import reactivemongo.api.commands.WriteResult
+import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.JourneyConfigData
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.PartnershipType
 import uk.gov.hmrc.partnershipidentificationfrontend.repositories.JourneyConfigRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -126,14 +126,15 @@ trait ComponentSpecHelper extends AnyWordSpec with Matchers
                           journeyConfig: JourneyConfig): Future[WriteResult] =
     journeyConfigRepository.insertJourneyConfig(journeyId, authInternalId, journeyConfig)
 
-  def insertJourneyConfig(journeyId: String,
-                          authInternalId: String,
-                          continueUrl: String,
-                          optServiceName: Option[String],
-                          deskProServiceId: String,
-                          signOutUrl: String,
-                          partnershipType: PartnershipType): Future[WriteResult] =
+  def insertJourneyConfig(journeyConfigData: JourneyConfigData): Future[WriteResult] =
     journeyConfigRepository.insertJourneyConfig(
-      journeyId, authInternalId, JourneyConfig(continueUrl, PageConfig(optServiceName, deskProServiceId, signOutUrl), partnershipType)
+      journeyConfigData.journeyId,
+      journeyConfigData.internalId,
+      JourneyConfig(
+        journeyConfigData.continueUrl,
+        journeyConfigData.businessVerificationCheck,
+        PageConfig(journeyConfigData.optServiceName, journeyConfigData.deskProServiceId, journeyConfigData.signOutUrl),
+        journeyConfigData.partnershipType)
     )
+
 }

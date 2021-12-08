@@ -24,7 +24,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants._
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, ScottishPartnership}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.ScottishPartnership
 import uk.gov.hmrc.partnershipidentificationfrontend.models._
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
@@ -34,6 +34,7 @@ import scala.concurrent.Future
 class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
 
   trait Setup {
+    val defaultScottishPartnershipJourneyConfig: JourneyConfig = testDefaultGeneralPartnershipJourneyConfig.copy(partnershipType = ScottishPartnership)
     val mockAuditConnector: AuditConnector = mock[AuditConnector]
     val mockPartnershipIdentificationService: PartnershipIdentificationService = mock[PartnershipIdentificationService]
     val mockAppConfig: AppConfig = mock[AppConfig]
@@ -78,15 +79,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
 
           await(TestAuditService.auditPartnershipInformation(
             testJourneyId,
-            JourneyConfig(
-              continueUrl = testContinueUrl,
-              pageConfig = PageConfig(
-                Some(testServiceName),
-                testDeskProServiceId,
-                testSignOutUrl
-              ),
-              partnershipType = GeneralPartnership
-            )
+            testDefaultGeneralPartnershipJourneyConfig,
           ))
 
           mockAuditConnector.sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel) was called
@@ -109,15 +102,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
 
           await(TestAuditService.auditPartnershipInformation(
             testJourneyId,
-            JourneyConfig(
-              continueUrl = testContinueUrl,
-              pageConfig = PageConfig(
-                Some(testServiceName),
-                testDeskProServiceId,
-                testSignOutUrl
-              ),
-              partnershipType = GeneralPartnership
-            )
+            testDefaultGeneralPartnershipJourneyConfig
           ))
           mockAuditConnector.sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel) was called
         }
@@ -139,15 +124,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
 
           await(TestAuditService.auditPartnershipInformation(
             testJourneyId,
-            JourneyConfig(
-              continueUrl = testContinueUrl,
-              pageConfig = PageConfig(
-                Some(testServiceName),
-                testDeskProServiceId,
-                testSignOutUrl
-              ),
-              partnershipType = GeneralPartnership
-            )
+            testDefaultGeneralPartnershipJourneyConfig
           ))
           mockAuditConnector.sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel) was called
         }
@@ -177,15 +154,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
 
         await(TestAuditService.auditPartnershipInformation(
           testJourneyId,
-          JourneyConfig(
-            continueUrl = testContinueUrl,
-            pageConfig = PageConfig(
-              None,
-              testDeskProServiceId,
-              testSignOutUrl
-            ),
-            partnershipType = GeneralPartnership
-          )
+          testDefaultGeneralPartnershipJourneyConfig.copy(pageConfig = testDefaultPageConfig.copy(optServiceName = None))
         ))
         mockAuditConnector.sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel) was called
       }
@@ -208,15 +177,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
 
           await(TestAuditService.auditPartnershipInformation(
             testJourneyId,
-            JourneyConfig(
-              continueUrl = testContinueUrl,
-              pageConfig = PageConfig(
-                Some(testServiceName),
-                testDeskProServiceId,
-                testSignOutUrl
-              ),
-              partnershipType = ScottishPartnership
-            )
+            testDefaultGeneralPartnershipJourneyConfig.copy(partnershipType = ScottishPartnership)
           ))
 
           mockAuditConnector.sendExplicitAudit("ScottishPartnershipEntityRegistration", expectedAuditModel) was called
@@ -239,15 +200,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
 
           await(TestAuditService.auditPartnershipInformation(
             testJourneyId,
-            JourneyConfig(
-              continueUrl = testContinueUrl,
-              pageConfig = PageConfig(
-                Some(testServiceName),
-                testDeskProServiceId,
-                testSignOutUrl
-              ),
-              partnershipType = ScottishPartnership
-            )
+            defaultScottishPartnershipJourneyConfig
           ))
           mockAuditConnector.sendExplicitAudit("ScottishPartnershipEntityRegistration", expectedAuditModel) was called
         }
@@ -269,15 +222,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
 
           await(TestAuditService.auditPartnershipInformation(
             testJourneyId,
-            JourneyConfig(
-              continueUrl = testContinueUrl,
-              pageConfig = PageConfig(
-                Some(testServiceName),
-                testDeskProServiceId,
-                testSignOutUrl
-              ),
-              partnershipType = ScottishPartnership
-            )
+            defaultScottishPartnershipJourneyConfig,
           ))
           mockAuditConnector.sendExplicitAudit("ScottishPartnershipEntityRegistration", expectedAuditModel) was called
         }
@@ -307,15 +252,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
 
         await(TestAuditService.auditPartnershipInformation(
           testJourneyId,
-          JourneyConfig(
-            continueUrl = testContinueUrl,
-            pageConfig = PageConfig(
-              None,
-              testDeskProServiceId,
-              testSignOutUrl
-            ),
-            partnershipType = ScottishPartnership
-          )
+          defaultScottishPartnershipJourneyConfig.copy(pageConfig = testDefaultPageConfig.copy(optServiceName = None))
         ))
         mockAuditConnector.sendExplicitAudit("ScottishPartnershipEntityRegistration", expectedAuditModel) was called
       }

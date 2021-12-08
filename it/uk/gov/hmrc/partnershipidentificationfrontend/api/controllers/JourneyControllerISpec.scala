@@ -17,9 +17,11 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.api.controllers
 
 import play.api.libs.json.{JsObject, Json}
+import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.controllers.{routes => appRoutes}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuthStub, JourneyStub, PartnershipIdentificationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 
@@ -28,10 +30,152 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with AuthStub with PartnershipIdentificationStub {
 
   val testJourneyConfigJson: JsObject = Json.obj(
-    "continueUrl" -> testContinueUrl,
-    "deskProServiceId" -> testDeskProServiceId,
-    "signOutUrl" -> testSignOutUrl
+    JourneyController.continueUrlKey -> testContinueUrl,
+    JourneyController.deskProServiceIdKey -> testDeskProServiceId,
+    JourneyController.signOutUrlKey -> testSignOutUrl
   )
+
+  val expectedBusinessVerificationCheckJsonKey = "businessVerificationCheck"
+
+  "businessVerificationCheck field in the incoming json: POST to /api/<url suffix PartnershipType specific>" should {
+    "return (for all PartnershipType) a created journey with businessVerificationCheck true" when {
+      "the incoming json DOES NOT have a businessVerificationCheck field" in {
+        def assertTheCreatedJourneyConfigHasBVCTrueFor(postToApiUrlSuffix: String,
+                                                       expectedJourneyConfigPartnershipType: PartnershipType,
+                                                       expectedJourneyStartUrl: Call): Unit = {
+          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+          stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
+
+          lazy val result = post(s"/partnership-identification/api/$postToApiUrlSuffix", testJourneyConfigJson - expectedBusinessVerificationCheckJsonKey)
+
+          (result.json \ "journeyStartUrl").as[String] must include(expectedJourneyStartUrl.url)
+
+          await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testJourneyConfig(expectedJourneyConfigPartnershipType))
+          await(journeyConfigRepository.drop)
+        }
+
+        assertTheCreatedJourneyConfigHasBVCTrueFor(
+          postToApiUrlSuffix = "general-partnership-journey",
+          expectedJourneyConfigPartnershipType = GeneralPartnership,
+          expectedJourneyStartUrl = appRoutes.CaptureSautrController.show(testJourneyId)
+        )
+        assertTheCreatedJourneyConfigHasBVCTrueFor(
+          postToApiUrlSuffix = "scottish-partnership-journey",
+          expectedJourneyConfigPartnershipType = ScottishPartnership,
+          expectedJourneyStartUrl = appRoutes.CaptureSautrController.show(testJourneyId)
+        )
+        assertTheCreatedJourneyConfigHasBVCTrueFor(
+          postToApiUrlSuffix = "scottish-limited-partnership-journey",
+          expectedJourneyConfigPartnershipType = ScottishLimitedPartnership,
+          expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
+        )
+        assertTheCreatedJourneyConfigHasBVCTrueFor(
+          postToApiUrlSuffix = "limited-partnership-journey",
+          expectedJourneyConfigPartnershipType = LimitedPartnership,
+          expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
+        )
+        assertTheCreatedJourneyConfigHasBVCTrueFor(
+          postToApiUrlSuffix = "limited-liability-partnership-journey",
+          expectedJourneyConfigPartnershipType = LimitedLiabilityPartnership,
+          expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
+        )
+      }
+    }
+      "return (for all PartnershipType) a created journey with businessVerificationCheck false" when {
+        "the incoming json has a businessVerificationCheck field set to false" in {
+          def assertTheCreatedJourneyConfigHasBVCFalseFor(postToApiUrlSuffix: String,
+                                                          expectedJourneyConfigPartnershipType: PartnershipType,
+                                                          expectedJourneyStartUrl: Call): Unit = {
+            stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+            stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
+
+            val incomingJson = testJourneyConfigJson ++ Json.obj(expectedBusinessVerificationCheckJsonKey -> false)
+
+            lazy val result = post(s"/partnership-identification/api/$postToApiUrlSuffix", incomingJson)
+
+            (result.json \ "journeyStartUrl").as[String] must include(expectedJourneyStartUrl.url)
+
+            val expectedJourneyConfig = testJourneyConfig(expectedJourneyConfigPartnershipType).copy(businessVerificationCheck = false)
+
+            await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(expectedJourneyConfig)
+            await(journeyConfigRepository.drop)
+
+          }
+
+          assertTheCreatedJourneyConfigHasBVCFalseFor(
+            postToApiUrlSuffix = "general-partnership-journey",
+            expectedJourneyConfigPartnershipType = GeneralPartnership,
+            expectedJourneyStartUrl = appRoutes.CaptureSautrController.show(testJourneyId)
+          )
+          assertTheCreatedJourneyConfigHasBVCFalseFor(
+            postToApiUrlSuffix = "scottish-partnership-journey",
+            expectedJourneyConfigPartnershipType = ScottishPartnership,
+            expectedJourneyStartUrl = appRoutes.CaptureSautrController.show(testJourneyId)
+          )
+          assertTheCreatedJourneyConfigHasBVCFalseFor(
+            postToApiUrlSuffix = "scottish-limited-partnership-journey",
+            expectedJourneyConfigPartnershipType = ScottishLimitedPartnership,
+            expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
+          )
+          assertTheCreatedJourneyConfigHasBVCFalseFor(
+            postToApiUrlSuffix = "limited-partnership-journey",
+            expectedJourneyConfigPartnershipType = LimitedPartnership,
+            expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
+          )
+          assertTheCreatedJourneyConfigHasBVCFalseFor(
+            postToApiUrlSuffix = "limited-liability-partnership-journey",
+            expectedJourneyConfigPartnershipType = LimitedLiabilityPartnership,
+            expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
+          )
+
+        }
+      }
+      "return (for all PartnershipType) a created journey with businessVerificationCheck true" when {
+        "the incoming json has a businessVerificationCheck field set to true" in {
+          def assertTheCreatedJourneyConfigHasBVCTrueFor(postToApiUrlSuffix: String,
+                                                         expectedJourneyConfigPartnershipType: PartnershipType,
+                                                         expectedJourneyStartUrl: Call): Unit = {
+            stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+            stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
+
+            val incomingJson = testJourneyConfigJson ++ Json.obj(expectedBusinessVerificationCheckJsonKey -> true)
+
+            lazy val result = post(s"/partnership-identification/api/$postToApiUrlSuffix", incomingJson)
+
+            (result.json \ "journeyStartUrl").as[String] must include(expectedJourneyStartUrl.url)
+
+            await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testJourneyConfig(expectedJourneyConfigPartnershipType))
+            await(journeyConfigRepository.drop)
+          }
+
+          assertTheCreatedJourneyConfigHasBVCTrueFor(
+            postToApiUrlSuffix = "general-partnership-journey",
+            expectedJourneyConfigPartnershipType = GeneralPartnership,
+            expectedJourneyStartUrl = appRoutes.CaptureSautrController.show(testJourneyId)
+          )
+          assertTheCreatedJourneyConfigHasBVCTrueFor(
+            postToApiUrlSuffix = "scottish-partnership-journey",
+            expectedJourneyConfigPartnershipType = ScottishPartnership,
+            expectedJourneyStartUrl = appRoutes.CaptureSautrController.show(testJourneyId)
+          )
+          assertTheCreatedJourneyConfigHasBVCTrueFor(
+            postToApiUrlSuffix = "scottish-limited-partnership-journey",
+            expectedJourneyConfigPartnershipType = ScottishLimitedPartnership,
+            expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
+          )
+          assertTheCreatedJourneyConfigHasBVCTrueFor(
+            postToApiUrlSuffix = "limited-partnership-journey",
+            expectedJourneyConfigPartnershipType = LimitedPartnership,
+            expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
+          )
+          assertTheCreatedJourneyConfigHasBVCTrueFor(
+            postToApiUrlSuffix = "limited-liability-partnership-journey",
+            expectedJourneyConfigPartnershipType = LimitedLiabilityPartnership,
+            expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
+          )
+        }
+      }
+  }
 
   "POST /api/general-partnership-journey" should {
     "return a created journey" in {
@@ -139,7 +283,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
       lazy val result = post("/partnership-identification/api/limited-liability-partnership-journey", testJourneyConfigJson)
 
-      (result.json \ "journeyStartUrl" ).as[String] must include(appRoutes.CaptureCompanyNumberController.show(testJourneyId).url)
+      (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureCompanyNumberController.show(testJourneyId).url)
 
       await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testLimitedLiabilityPartnershipJourneyConfig)
 
@@ -232,5 +376,4 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
       }
     }
   }
-
 }

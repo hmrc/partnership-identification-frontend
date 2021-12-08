@@ -17,7 +17,7 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.testonly.forms
 
 import play.api.data.Form
-import play.api.data.Forms.{mapping, text}
+import play.api.data.Forms.{boolean, mapping, text}
 import play.api.data.validation.Constraint
 import uk.gov.hmrc.partnershipidentificationfrontend.forms.utils.MappingUtil.optText
 import uk.gov.hmrc.partnershipidentificationfrontend.forms.utils.ValidationHelper.validate
@@ -27,11 +27,35 @@ import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, Page
 
 object TestCreateJourneyForm {
 
+  val businessVerificationCheck = "businessVerificationCheck"
   val continueUrl = "continueUrl"
   val serviceName = "serviceName"
   val deskProServiceId = "deskProServiceId"
   val alphanumericRegex = "^[A-Z0-9]*$"
   val signOutUrl = "signOutUrl"
+
+  def form(partnershipType: PartnershipType): Form[JourneyConfig] = {
+    Form(mapping(
+      continueUrl -> text.verifying(continueUrlEmpty),
+      serviceName -> optText,
+      businessVerificationCheck -> boolean,
+      deskProServiceId -> text.verifying(deskProServiceIdEmpty),
+      signOutUrl -> text.verifying(signOutUrlEmpty)
+    )((continueUrl, serviceName, businessVerificationCheck, deskProServiceId, signOutUrl) =>
+      JourneyConfig(
+        continueUrl,
+        businessVerificationCheck,
+        pageConfig = PageConfig(serviceName, deskProServiceId, signOutUrl),
+        partnershipType = partnershipType
+      ))(journeyConfig =>
+      Some(
+        journeyConfig.continueUrl,
+        journeyConfig.pageConfig.optServiceName,
+        journeyConfig.businessVerificationCheck,
+        journeyConfig.pageConfig.deskProServiceId,
+        journeyConfig.pageConfig.signOutUrl
+      )))
+  }
 
   def continueUrlEmpty: Constraint[String] = Constraint("continue_url.not_entered")(
     continueUrl => validate(
@@ -53,19 +77,5 @@ object TestCreateJourneyForm {
       errMsg = "Sign Out Url is not entered"
     )
   )
-
-  def form(partnershipType: PartnershipType): Form[JourneyConfig] = {
-    Form(mapping(
-      continueUrl -> text.verifying(continueUrlEmpty),
-      serviceName -> optText,
-      deskProServiceId -> text.verifying(deskProServiceIdEmpty),
-      signOutUrl -> text.verifying(signOutUrlEmpty)
-    )((continueUrl, serviceName, deskProServiceId, signOutUrl) =>
-      JourneyConfig.apply(continueUrl, PageConfig(serviceName, deskProServiceId, signOutUrl), partnershipType)
-    )(journeyConfig =>
-      Some(journeyConfig.continueUrl, journeyConfig.pageConfig.optServiceName,
-        journeyConfig.pageConfig.deskProServiceId, journeyConfig.pageConfig.signOutUrl)
-    ))
-  }
 
 }
