@@ -27,16 +27,33 @@ Creates a new journey for a General Partnership, storing the journeyConfig again
 #### Request:
 optServiceName will default to `Entity Validation Service` if the field is not provided.
 
+If the user provides a SA UTR during the journey and the UTR passes the matching check, by default a
+business verification check will be performed before registration. This check can be disabled by submitting
+the field businessVerificationCheck with a value of false. If not provided, a default value of true is set
+for the field.
+
 All other fields must be provided.
 
 ```
 {
    "continueUrl" : "/test",
+   "businessVerificationCheck": false,
    "optServiceName" : "Service Name",
    "deskProServiceId" : "abc",
    "signOutUrl" : "/sign-out",
 }
 ```
+
+#### Response:
+Status: **Created(201)**
+
+Example Response body:
+
+```
+{“journeyStartUrl” : "<protocol>://<host>:<port number>/identify-your-partnership/<journey id>/sa-utr"}
+```
+
+where protocol, host and port number are set to the values for the appropriate environment and journey id is used to identify the specific user journey.
 
 ### POST /scottish-partnership-journey
 
@@ -45,16 +62,35 @@ Creates a new journey for a Scottish Partnership, storing the journeyConfig agai
 #### Request:
 optServiceName will default to `Entity Validation Service` if the field is not provided.
 
+If the user provides a SA UTR during the journey and the UTR passes the matching check, by default a
+business verification check will be performed before registration. This check can be disabled by submitting
+the field businessVerificationCheck with a value of false. If not provided, a default value of true is set
+for the field.
+
+
 All other fields must be provided.
 
 ```
 {
    "continueUrl" : "/test",
+   "businessVerificationCheck": false,
    "optServiceName" : "Service Name",
    "deskProServiceId" : "abc",
    "signOutUrl" : "/sign-out",
 }
 ```
+
+### Response:
+Status: **Created(201)**
+
+Example Response body:
+
+```
+{“journeyStartUrl” : "<protocol>://<host>:<port number>/identify-your-partnership/<journey id>/sa-utr"}
+```
+
+where protocol, host and port number are set to the values for the appropriate environment and journey id is used to identify the specific user journey.
+
 
 ### POST /limited-partnership-journey
 
@@ -63,6 +99,8 @@ Creates a new journey for a Limited Partnership, storing the journeyConfig again
 #### Request:
 optServiceName will default to `Entity Validation Service` if the field is not provided.
 
+For incorporated partnerships the matching check result is "false" and consequently business verification and registration are not performed. As such the business verification flag has no effect and can be omitted.
+
 All other fields must be provided.
 
 ```
@@ -72,6 +110,15 @@ All other fields must be provided.
    "deskProServiceId" : "abc",
    "signOutUrl" : "/sign-out",
 }
+```
+
+### Response:
+Status: **Created(201)**
+
+Example Response body:
+
+```
+{“journeyStartUrl” : "<protocol>://<host>:<port number>/identify-your-partnership/<journey id>/company-registration-number"}
 ```
 
 ### POST /scottish-limited-partnership-journey
@@ -81,6 +128,8 @@ Creates a new journey for a Scottish Limited Partnership, storing the journeyCon
 #### Request:
 optServiceName will default to `Entity Validation Service` if the field is not provided.
 
+For incorporated partnerships the matching check result is "false" and consequently business verification and registration are not performed. As such the business verification flag has no effect and can be omitted.
+
 All other fields must be provided.
 
 ```
@@ -92,12 +141,26 @@ All other fields must be provided.
 }
 ```
 
+### Response:
+Status: **Created(201)**
+
+Example Response body:
+
+```
+{“journeyStartUrl” : "<protocol>://<host>:<port number>/identify-your-partnership/<journey id>/company-registration-number"}
+```
+
+where protocol, host and port number are set to the values for the appropriate environment and journey id is used to identify the specific user journey.
+
+
 ### POST /limited-liability-partnership-journey
 
 ---
 Creates a new journey for a Limited Liability Partnership, storing the journeyConfig against the journeyId.
 #### Request:
 optServiceName will default to `Entity Validation Service` if the field is not provided.
+
+For incorporated partnerships the matching check result is "false" and consequently business verification and registration are not performed. As such the business verification flag has no effect and can be omitted.
 
 All other fields must be provided.
 
@@ -116,7 +179,7 @@ Status: **Created(201)**
 Example Response body:
 
 ```
-{“journeyStartUrl” : "/testUrl"}
+{“journeyStartUrl” : "<protocol>://<host>:<port number>/identify-your-partnership/<journey id>/company-registration-number"}
 ```
 
 ### GET /journey/:journeyId
