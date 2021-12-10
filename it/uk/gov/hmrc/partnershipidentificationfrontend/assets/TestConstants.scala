@@ -164,7 +164,7 @@ object TestConstants {
       Registered(testSafeId))
 
   def testJourneyConfig(partnershipType: PartnershipType, serviceName: Option[String] = None): JourneyConfig =
-    JourneyConfig(testContinueUrl, PageConfig(serviceName, testDeskProServiceId, testSignOutUrl), partnershipType)
+    JourneyConfig(testContinueUrl, businessVerificationCheck = true, PageConfig(serviceName, testDeskProServiceId, testSignOutUrl), partnershipType)
 
   def testPartnershipFullJourneyDataWithCompanyProfile(companyProfile: Option[CompanyProfile] = None,
                                                        identifiersMatch: Boolean = true): PartnershipFullJourneyData =
@@ -176,5 +176,25 @@ object TestConstants {
       BusinessVerificationUnchallenged,
       RegistrationNotCalled
     )
+
+  val testDefaultJourneyConfig: JourneyConfigData = JourneyConfigData(
+    journeyId = testJourneyId,
+    internalId = testInternalId,
+    continueUrl = testContinueUrl,
+    businessVerificationCheck = true,
+    optServiceName = Some(testCallingServiceName),
+    deskProServiceId = testDeskProServiceId,
+    signOutUrl = testSignOutUrl,
+    partnershipType = GeneralPartnership
+  )
+
+  final case class JourneyConfigData(journeyId: String,
+                                     internalId: String,
+                                     continueUrl: String,
+                                     businessVerificationCheck: Boolean,
+                                     optServiceName: Option[String],
+                                     deskProServiceId: String,
+                                     signOutUrl: String,
+                                     partnershipType: PartnershipType)
 
 }

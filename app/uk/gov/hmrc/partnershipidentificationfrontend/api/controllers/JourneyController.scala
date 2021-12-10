@@ -40,7 +40,6 @@ class JourneyController @Inject()(controllerComponents: ControllerComponents,
                                   partnershipIdentificationService: PartnershipIdentificationService
                                  )(implicit ec: ExecutionContext) extends BackendController(controllerComponents) with AuthorisedFunctions {
 
-
   def createGeneralPartnershipJourney: Action[JourneyConfig] = createJourney(GeneralPartnership)
 
   def createScottishPartnershipJourney: Action[JourneyConfig] = createJourney(ScottishPartnership)
@@ -54,11 +53,17 @@ class JourneyController @Inject()(controllerComponents: ControllerComponents,
   private def createJourney(partnershipType: PartnershipType): Action[JourneyConfig] =
     Action.async(parse.json[JourneyConfig] { json =>
       for {
+        businessVerificationCheck <- (json \ businessVerificationCheckKey).validateOpt[Boolean]
         continueUrl <- (json \ continueUrlKey).validate[String]
         optServiceName <- (json \ optServiceNameKey).validateOpt[String]
         deskProServiceId <- (json \ deskProServiceIdKey).validate[String]
         signOutUrl <- (json \ signOutUrlKey).validate[String]
-      } yield JourneyConfig(continueUrl, PageConfig(optServiceName, deskProServiceId, signOutUrl), partnershipType)
+      } yield JourneyConfig(
+        continueUrl,
+        businessVerificationCheck.getOrElse(true),
+        PageConfig(optServiceName, deskProServiceId, signOutUrl),
+        partnershipType
+      )
     }) {
       implicit req =>
         authorised().retrieve(internalId) {
@@ -96,9 +101,11 @@ class JourneyController @Inject()(controllerComponents: ControllerComponents,
 }
 
 object JourneyController {
+  val businessVerificationCheckKey = "businessVerificationCheck"
   val continueUrlKey = "continueUrl"
   val optServiceNameKey = "optServiceName"
   val deskProServiceIdKey = "deskProServiceId"
   val signOutUrlKey = "signOutUrl"
 }
+
 

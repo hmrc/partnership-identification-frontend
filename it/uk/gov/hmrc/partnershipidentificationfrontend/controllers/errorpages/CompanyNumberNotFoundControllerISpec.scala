@@ -61,14 +61,7 @@ class CompanyNumberNotFoundControllerISpec extends ComponentSpecHelper
       "service name is passed in by the journey config" should {
 
         lazy val result: WSResponse = {
-          await(insertJourneyConfig(testJourneyId,
-                                    testInternalId,
-                                    testContinueUrl,
-                                    Some(testCallingServiceName),
-                                    testDeskProServiceId,
-                                    testSignOutUrl,
-                                    LimitedPartnership)
-          )
+          await(insertJourneyConfig(testDefaultJourneyConfig.copy(partnershipType = LimitedPartnership)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           get(controllerUrl)
         }

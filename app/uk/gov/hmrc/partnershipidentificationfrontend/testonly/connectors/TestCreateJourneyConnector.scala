@@ -18,9 +18,9 @@ package uk.gov.hmrc.partnershipidentificationfrontend.testonly.connectors
 
 import play.api.http.Status.CREATED
 import play.api.libs.json.{Json, Writes}
+import play.api.mvc.Call
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-import uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.JourneyController._
-import uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.routes
+import uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.{JourneyController, routes}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.connectors.TestCreateJourneyConnector.journeyConfigWriter
@@ -33,44 +33,23 @@ class TestCreateJourneyConnector @Inject()(httpClient: HttpClient,
                                            appConfig: AppConfig
                                           )(implicit ec: ExecutionContext) {
 
-  def createGeneralPartnershipJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier): Future[String] = {
-    val url = appConfig.selfBaseUrl + routes.JourneyController.createGeneralPartnershipJourney().url
+  def createGeneralPartnershipJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier): Future[String] =
+    postTo(destination = routes.JourneyController.createGeneralPartnershipJourney(), journeyConfig = journeyConfig)
 
-    httpClient.POST(url, journeyConfig).map {
-      case response@HttpResponse(CREATED, _, _) =>
-        (response.json \ "journeyStartUrl").as[String]
-    }
-  }
+  def createScottishPartnershipJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier): Future[String] =
+    postTo(destination = routes.JourneyController.createScottishPartnershipJourney(), journeyConfig = journeyConfig)
 
-  def createScottishPartnershipJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier): Future[String] = {
-    val url = appConfig.selfBaseUrl + routes.JourneyController.createScottishPartnershipJourney().url
+  def createScottishLimitedPartnershipJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier): Future[String] =
+    postTo(destination = routes.JourneyController.createScottishLimitedPartnershipJourney(), journeyConfig = journeyConfig)
 
-    httpClient.POST(url, journeyConfig).map {
-      case response@HttpResponse(CREATED, _, _) =>
-        (response.json \ "journeyStartUrl").as[String]
-    }
-  }
+  def createLimitedPartnershipJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier): Future[String] =
+    postTo(destination = routes.JourneyController.createLimitedPartnershipJourney(), journeyConfig = journeyConfig)
 
-  def createScottishLimitedPartnershipJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier): Future[String] = {
-    val url = appConfig.selfBaseUrl + routes.JourneyController.createScottishLimitedPartnershipJourney().url
+  def createLimitedLiabilityPartnershipJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier): Future[String] =
+    postTo(destination = routes.JourneyController.createLimitedLiabilityPartnershipJourney(), journeyConfig = journeyConfig)
 
-    httpClient.POST(url, journeyConfig).map {
-      case response@HttpResponse(CREATED, _, _) =>
-        (response.json \ "journeyStartUrl").as[String]
-    }
-  }
-
-  def createLimitedPartnershipJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier): Future[String] = {
-    val url = appConfig.selfBaseUrl + routes.JourneyController.createLimitedPartnershipJourney().url
-
-    httpClient.POST(url, journeyConfig).map {
-      case response@HttpResponse(CREATED, _, _) =>
-        (response.json \ "journeyStartUrl").as[String]
-    }
-  }
-
-  def createLimitedLiabilityPartnershipJourney(journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier): Future[String] = {
-    val url = appConfig.selfBaseUrl + routes.JourneyController.createLimitedLiabilityPartnershipJourney().url
+  private def postTo(destination: Call, journeyConfig: JourneyConfig)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[String] = {
+    val url = appConfig.selfBaseUrl + destination.url
 
     httpClient.POST(url, journeyConfig).map {
       case response@HttpResponse(CREATED, _, _) =>
@@ -82,9 +61,10 @@ class TestCreateJourneyConnector @Inject()(httpClient: HttpClient,
 
 object TestCreateJourneyConnector {
   implicit val journeyConfigWriter: Writes[JourneyConfig] = (journeyConfig: JourneyConfig) => Json.obj(
-    continueUrlKey -> journeyConfig.continueUrl,
-    optServiceNameKey -> journeyConfig.pageConfig.optServiceName,
-    deskProServiceIdKey -> journeyConfig.pageConfig.deskProServiceId,
-    signOutUrlKey -> journeyConfig.pageConfig.signOutUrl
+    JourneyController.continueUrlKey -> journeyConfig.continueUrl,
+    JourneyController.businessVerificationCheckKey -> journeyConfig.businessVerificationCheck,
+    JourneyController.optServiceNameKey -> journeyConfig.pageConfig.optServiceName,
+    JourneyController.deskProServiceIdKey -> journeyConfig.pageConfig.deskProServiceId,
+    JourneyController.signOutUrlKey -> journeyConfig.pageConfig.signOutUrl
   )
 }

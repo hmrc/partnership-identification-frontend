@@ -17,7 +17,8 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.helpers
 
 import play.api.libs.json.{JsObject, Json}
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{CompanyProfile, PartnershipInformation, SaInformation}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.GeneralPartnership
+import uk.gov.hmrc.partnershipidentificationfrontend.models._
 
 import java.time.LocalDate
 import java.util.UUID
@@ -55,6 +56,13 @@ object TestConstants {
   val testServiceName = "testServiceName"
   val testDeskProServiceId = "testDeskProServiceId"
   val testBusinessPartnerId = "testBusinessPartnerId"
+  val testDefaultPageConfig: PageConfig = PageConfig(Some(testServiceName), testDeskProServiceId, testSignOutUrl)
+  val testDefaultGeneralPartnershipJourneyConfig: JourneyConfig = JourneyConfig(
+    testContinueUrl,
+    businessVerificationCheck = true,
+    pageConfig = testDefaultPageConfig,
+    partnershipType = GeneralPartnership
+  )
 
 
 }

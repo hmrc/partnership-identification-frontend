@@ -22,7 +22,8 @@
         govukFieldset: GovukFieldset,
         govukButton: GovukButton,
         inputText: inputText,
-        formWithCSRF: FormWithCSRF
+        formWithCSRF: FormWithCSRF,
+        govukCheckboxes: GovukCheckboxes
 )
 
 @(pageConfig: PageConfig, form: Form[JourneyConfig], formAction: Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
@@ -82,6 +83,25 @@
             hasFieldTitle = true,
             classes = "govuk-input--width-20"
         )
+
+        @govukCheckboxes(Checkboxes(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text("Business verification check"),
+                    classes = "govuk-fieldset__legend--m",
+                    isPageHeading = false
+                ))
+            )),
+            name = "Business verification check",
+            items = Seq(
+                CheckboxItem(
+                    id = Some("businessVerificationCheck"),
+                    name = Some("businessVerificationCheck"),
+                    content = Text("Enable business verification"),
+                    checked = form("businessVerificationCheck").value.contains("true"),
+                    value = "true"
+                ))
+        ))
 
         @govukButton(Button(
             attributes = Map("id" -> "save-and-continue"),

@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.repositories
 
+import org.scalatest.Assertion
 import org.scalatest.concurrent.{AbstractPatienceConfiguration, Eventually}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
@@ -77,6 +78,19 @@ class JourneyConfigRepositoryISpec extends ComponentSpecHelper with AbstractPati
       await(repo.insertJourneyConfig(testJourneyId + 1, testInternalId, testGeneralPartnershipJourneyConfig))
       await(repo.removeById(testJourneyId + 1))
       await(repo.count) mustBe 1
+    }
+
+    "successfully insert a journeyConfig with businessVerificationCheck field true" in {
+      successfulInsertAJourneyConfigWith(businessVerificationCheck = true)
+    }
+
+    "successfully insert a journeyConfig with businessVerificationCheck field false" in {
+      successfulInsertAJourneyConfigWith(businessVerificationCheck = false)
+    }
+
+    def successfulInsertAJourneyConfigWith(businessVerificationCheck: Boolean): Assertion = {
+      await(repo.insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig.copy(businessVerificationCheck = businessVerificationCheck)))
+      await(repo.findById(testJourneyId)) must contain(testGeneralPartnershipJourneyConfig.copy(businessVerificationCheck = businessVerificationCheck))
     }
 
   }
