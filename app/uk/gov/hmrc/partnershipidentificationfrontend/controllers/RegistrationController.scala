@@ -39,7 +39,7 @@ class RegistrationController @Inject()(journeyService: JourneyService,
       authorised().retrieve(internalId) {
         case Some(authInternalId) => for {
           journeyConfig <- journeyService.getJourneyConfig(journeyId, authInternalId)
-          _ <- registrationOrchestrationService.register(journeyId, journeyConfig.partnershipType)
+          _ <- registrationOrchestrationService.register(journeyId, journeyConfig.partnershipType, journeyConfig.businessVerificationCheck)
           _ <- auditService.auditPartnershipInformation(journeyId, journeyConfig)
         } yield Redirect(routes.JourneyRedirectController.redirectToContinueUrl(journeyId))
         case _ =>

@@ -70,7 +70,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               optSautr = Some(testSautr),
               companyProfile = None,
               identifiersMatch = true,
-              businessVerification = BusinessVerificationPass,
+              businessVerification = Some(BusinessVerificationPass),
               registrationStatus = Registered(testBusinessPartnerId)
             )
           ))
@@ -93,7 +93,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               optSautr = Some(testSautr),
               companyProfile = None,
               identifiersMatch = true,
-              businessVerification = BusinessVerificationFail,
+              businessVerification = Some(BusinessVerificationFail),
               registrationStatus = RegistrationNotCalled
             )
           ))
@@ -115,12 +115,34 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               optSautr = Some(testSautr),
               companyProfile = None,
               identifiersMatch = true,
-              businessVerification = BusinessVerificationPass,
+              businessVerification = Some(BusinessVerificationPass),
               registrationStatus = RegistrationFailed
             )
           ))
 
           val expectedAuditModel: JsObject = expectedAuditJson("General Partnership", "success", "fail")
+
+          await(TestAuditService.auditPartnershipInformation(
+            testJourneyId,
+            testDefaultGeneralPartnershipJourneyConfig
+          ))
+          mockAuditConnector.sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel) was called
+        }
+      }
+      "there is no business verification status" should {
+        "audit the correct information" in new Setup {
+          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+            PartnershipFullJourneyData(
+              optPostcode = Some(testPostcode),
+              optSautr = Some(testSautr),
+              companyProfile = None,
+              identifiersMatch = true,
+              businessVerification = None,
+              registrationStatus = RegistrationFailed
+            )
+          ))
+
+          val expectedAuditModel: JsObject = expectedAuditJson("General Partnership","not requested", "fail")
 
           await(TestAuditService.auditPartnershipInformation(
             testJourneyId,
@@ -138,7 +160,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             optSautr = None,
             companyProfile = None,
             identifiersMatch = false,
-            businessVerification = BusinessVerificationUnchallenged,
+            businessVerification = Some(BusinessVerificationUnchallenged),
             registrationStatus = RegistrationNotCalled
           )
         ))
@@ -168,7 +190,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               optSautr = Some(testSautr),
               companyProfile = None,
               identifiersMatch = true,
-              businessVerification = BusinessVerificationPass,
+              businessVerification = Some(BusinessVerificationPass),
               registrationStatus = Registered(testBusinessPartnerId)
             )
           ))
@@ -191,7 +213,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               optSautr = Some(testSautr),
               companyProfile = None,
               identifiersMatch = true,
-              businessVerification = BusinessVerificationFail,
+              businessVerification = Some(BusinessVerificationFail),
               registrationStatus = RegistrationNotCalled
             )
           ))
@@ -213,7 +235,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               optSautr = Some(testSautr),
               companyProfile = None,
               identifiersMatch = true,
-              businessVerification = BusinessVerificationPass,
+              businessVerification = Some(BusinessVerificationPass),
               registrationStatus = RegistrationFailed
             )
           ))
@@ -227,6 +249,28 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
           mockAuditConnector.sendExplicitAudit("ScottishPartnershipEntityRegistration", expectedAuditModel) was called
         }
       }
+      "there is no business verification status" should {
+        "audit the correct information" in new Setup {
+          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+            PartnershipFullJourneyData(
+              optPostcode = Some(testPostcode),
+              optSautr = Some(testSautr),
+              companyProfile = None,
+              identifiersMatch = true,
+              businessVerification = None,
+              registrationStatus = RegistrationFailed
+            )
+          ))
+
+          val expectedAuditModel: JsObject = expectedAuditJson("Scottish Partnership", "not requested", "fail")
+
+          await(TestAuditService.auditPartnershipInformation(
+            testJourneyId,
+            defaultScottishPartnershipJourneyConfig
+          ))
+          mockAuditConnector.sendExplicitAudit("ScottishPartnershipEntityRegistration", expectedAuditModel) was called
+        }
+      }
     }
     "the user is identifying a scottish partnership with no SAUTR and the calling service has not provided a service name" should {
       "audit the correct information" in new Setup {
@@ -236,7 +280,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             optSautr = None,
             companyProfile = None,
             identifiersMatch = false,
-            businessVerification = BusinessVerificationUnchallenged,
+            businessVerification = Some(BusinessVerificationUnchallenged),
             registrationStatus = RegistrationNotCalled
           )
         ))

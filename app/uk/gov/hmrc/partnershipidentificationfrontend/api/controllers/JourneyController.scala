@@ -107,5 +107,3 @@ object JourneyController {
   val deskProServiceIdKey = "deskProServiceId"
   val signOutUrlKey = "signOutUrl"
 }
-
-

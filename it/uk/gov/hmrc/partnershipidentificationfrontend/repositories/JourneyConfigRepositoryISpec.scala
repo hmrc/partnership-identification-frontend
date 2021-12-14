@@ -44,54 +44,45 @@ class JourneyConfigRepositoryISpec extends ComponentSpecHelper with AbstractPati
 
   "documents" should {
     "successfully insert a new document" in {
-      await(repo.insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
+      await(repo.insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
       await(repo.count) mustBe 1
     }
 
     "successfully insert journeyConfig" in {
-      await(repo.insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
-      await(repo.findById(testJourneyId)) must contain(testGeneralPartnershipJourneyConfig)
+      await(repo.insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
+      await(repo.findById(testJourneyId)) must contain(testGeneralPartnershipJourneyConfig(businessVerificationCheck = true))
     }
 
     "successfully insert a journeyConfig for a scottish limited partnership" in {
-      await(repo.insertJourneyConfig(testJourneyId, testInternalId, testScottishLimitedPartnershipJourneyConfig))
-      await(repo.findById(testJourneyId)) must contain(testScottishLimitedPartnershipJourneyConfig)
+      await(repo.insertJourneyConfig(testJourneyId, testInternalId, testScottishLimitedPartnershipJourneyConfig(businessVerificationCheck = true)))
+      await(repo.findById(testJourneyId)) must contain(testScottishLimitedPartnershipJourneyConfig(businessVerificationCheck = true))
     }
 
     "successfully insert a journeyConfig for a limited liability partnership" in {
       await(repo.insertJourneyConfig(
         testJourneyId,
         testInternalId,
-        testLimitedLiabilityPartnershipJourneyConfig
+        testLimitedLiabilityPartnershipJourneyConfig(businessVerificationCheck = true)
       ))
-      await(repo.findById(testJourneyId)) must contain(testLimitedLiabilityPartnershipJourneyConfig)
+      await(repo.findById(testJourneyId)) must contain(testLimitedLiabilityPartnershipJourneyConfig(businessVerificationCheck = true))
     }
 
     "successfully delete all documents" in {
-      await(repo.insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
+      await(repo.insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
       await(repo.drop)
       await(repo.count) mustBe 0
     }
 
     "successfully delete one document" in {
-      await(repo.insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
-      await(repo.insertJourneyConfig(testJourneyId + 1, testInternalId, testGeneralPartnershipJourneyConfig))
+      await(repo.insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
+      await(repo.insertJourneyConfig(testJourneyId + 1, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
       await(repo.removeById(testJourneyId + 1))
       await(repo.count) mustBe 1
     }
 
-    "successfully insert a journeyConfig with businessVerificationCheck field true" in {
-      successfulInsertAJourneyConfigWith(businessVerificationCheck = true)
-    }
-
     "successfully insert a journeyConfig with businessVerificationCheck field false" in {
-      successfulInsertAJourneyConfigWith(businessVerificationCheck = false)
+      await(repo.insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = false)))
+      await(repo.findById(testJourneyId)) must contain(testGeneralPartnershipJourneyConfig(businessVerificationCheck = false))
     }
-
-    def successfulInsertAJourneyConfigWith(businessVerificationCheck: Boolean): Assertion = {
-      await(repo.insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig.copy(businessVerificationCheck = businessVerificationCheck)))
-      await(repo.findById(testJourneyId)) must contain(testGeneralPartnershipJourneyConfig.copy(businessVerificationCheck = businessVerificationCheck))
-    }
-
   }
 }

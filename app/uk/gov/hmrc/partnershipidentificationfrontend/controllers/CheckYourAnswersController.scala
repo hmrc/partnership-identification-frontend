@@ -71,9 +71,11 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
         case Some(authInternalId) =>
           journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
             journeyConfig =>
-              validationOrchestrationService.orchestrate(journeyId).flatMap {
-                case IdentifiersMatched =>
+              validationOrchestrationService.orchestrate(journeyId, journeyConfig.businessVerificationCheck).flatMap {
+                case IdentifiersMatched if journeyConfig.businessVerificationCheck =>
                   Future.successful(Redirect(routes.BusinessVerificationController.startBusinessVerificationJourney(journeyId)))
+                case IdentifiersMatched =>
+                  Future.successful(Redirect(routes.RegistrationController.register(journeyId)))
                 case NoSautrProvided | IdentifiersMismatch =>
                   auditService.auditPartnershipInformation(journeyId, journeyConfig).map {
                     _ => Redirect(routes.JourneyRedirectController.redirectToContinueUrl(journeyId))

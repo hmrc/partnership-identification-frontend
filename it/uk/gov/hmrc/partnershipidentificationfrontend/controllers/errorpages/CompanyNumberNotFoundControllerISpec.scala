@@ -37,7 +37,7 @@ class CompanyNumberNotFoundControllerISpec extends ComponentSpecHelper
     "return OK" in {
 
       lazy val result: WSResponse = {
-        await(insertJourneyConfig(testJourneyId, testInternalId, testLimitedPartnershipJourneyConfig))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         get(controllerUrl)
       }
@@ -50,7 +50,7 @@ class CompanyNumberNotFoundControllerISpec extends ComponentSpecHelper
       "no service name is passed in by the journey config" should {
 
         lazy val result: WSResponse = {
-          await(insertJourneyConfig(testJourneyId, testInternalId, testLimitedPartnershipJourneyConfig))
+          await(insertJourneyConfig(testJourneyId, testInternalId, testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           get(controllerUrl)
         }
@@ -61,7 +61,10 @@ class CompanyNumberNotFoundControllerISpec extends ComponentSpecHelper
       "service name is passed in by the journey config" should {
 
         lazy val result: WSResponse = {
-          await(insertJourneyConfig(testDefaultJourneyConfig.copy(partnershipType = LimitedPartnership)))
+          await(insertJourneyConfig(
+            testJourneyId,
+            testInternalId,
+            testJourneyConfig(LimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = true)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           get(controllerUrl)
         }

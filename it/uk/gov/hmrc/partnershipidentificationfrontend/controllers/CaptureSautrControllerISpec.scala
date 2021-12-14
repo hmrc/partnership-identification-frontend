@@ -33,7 +33,7 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
   "GET /sa-utr" when {
     "the partnership type is General or Scottish Partnership" should {
       lazy val result = {
-        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         get(s"$baseUrl/$testJourneyId/sa-utr")
       }
@@ -49,7 +49,8 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
 
         "there is a serviceName passed in the journeyConfig" should {
           lazy val result = {
-            val config = testGeneralPartnershipJourneyConfig.copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl))
+            val config = testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)
+              .copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl))
             await(insertJourneyConfig(testJourneyId, testInternalId, config))
             stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
             get(s"$baseUrl/$testJourneyId/sa-utr")
@@ -87,7 +88,7 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
 
     "the partnership type is Limited, Scottish Limited, or Limited Liability Partnership " should {
       lazy val result = {
-        await(insertJourneyConfig(testJourneyId, testInternalId, testScottishLimitedPartnershipJourneyConfig))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testScottishLimitedPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         get(s"$baseUrl/$testJourneyId/sa-utr")
       }
@@ -103,7 +104,8 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
 
         "there is a serviceName passed in the journeyConfig" should {
           lazy val result = {
-            val config = testScottishLimitedPartnershipJourneyConfig.copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl))
+            val config = testScottishLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
+              .copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl))
             await(insertJourneyConfig(testJourneyId, testInternalId, config))
             stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
             get(s"$baseUrl/$testJourneyId/sa-utr")
@@ -119,7 +121,7 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
     "a valid sautr is submitted" should {
       "store the sautr and redirect to Capture PostCode page" in {
         lazy val result: WSResponse = {
-          await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
+          await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubStoreSautr(testJourneyId, testSautr)(OK)
           post(s"$baseUrl/$testJourneyId/sa-utr")("sa-utr" -> testSautr)
@@ -134,7 +136,7 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
 
     "no sautr is submitted" should {
       lazy val result: WSResponse = {
-        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         post(s"$baseUrl/$testJourneyId/sa-utr")("sa-utr" -> "")
       }
@@ -148,7 +150,7 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
 
     "an invalid sautr is submitted" should {
       lazy val result: WSResponse = {
-        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         post(s"$baseUrl/$testJourneyId/sa-utr")("sa-utr" -> "123456789")
       }
@@ -165,7 +167,7 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
   "GET /no-sa-utr" should {
     "redirect to CYA page" when {
       "the sautr is successfully removed" in {
-        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRemoveSautr(testJourneyId)(NO_CONTENT)
         stubRemovePostcode(testJourneyId)(NO_CONTENT)
@@ -181,7 +183,7 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
 
     "throw an exception" when {
       "the backend returns a failure" in {
-        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig))
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRemoveSautr(testJourneyId)(INTERNAL_SERVER_ERROR, "Failed to remove field")
 

@@ -20,6 +20,7 @@ import play.api.http.Status.CREATED
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.Call
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.{JourneyController, routes}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig

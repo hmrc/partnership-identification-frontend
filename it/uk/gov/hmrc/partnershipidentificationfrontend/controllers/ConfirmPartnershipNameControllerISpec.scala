@@ -38,7 +38,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
         await(insertJourneyConfig(
           journeyId = testJourneyId,
           authInternalId = testInternalId,
-          journeyConfig = testLimitedPartnershipJourneyConfig
+          journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
         ))
         stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
         get(s"$baseUrl/$testJourneyId/confirm-company-name")
@@ -58,7 +58,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
             await(insertJourneyConfig(
               journeyId = testJourneyId,
               authInternalId = testInternalId,
-              journeyConfig = testLimitedPartnershipJourneyConfig.copy(
+              journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true).copy(
                 pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl))
             ))
             stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
@@ -77,7 +77,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
           await(insertJourneyConfig(
             journeyId = testJourneyId,
             authInternalId = testInternalId,
-            journeyConfig = testLimitedPartnershipJourneyConfig
+            journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
           ))
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
           get(s"$baseUrl/$testJourneyId/confirm-company-name")
@@ -107,7 +107,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
           await(insertJourneyConfig(
             journeyId = testJourneyId + "1",
             authInternalId = testInternalId,
-            journeyConfig = testLimitedPartnershipJourneyConfig
+            journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
           ))
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
           get(s"$baseUrl/$testJourneyId/confirm-company-name")
@@ -122,7 +122,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
           await(insertJourneyConfig(
             journeyId = testJourneyId,
             authInternalId = testInternalId + "1",
-            journeyConfig = testLimitedPartnershipJourneyConfig
+            journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
           ))
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
           get(s"$baseUrl/$testJourneyId/confirm-company-name")
@@ -137,7 +137,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
           await(insertJourneyConfig(
             journeyId = testJourneyId + "1",
             authInternalId = testInternalId + "1",
-            journeyConfig = testLimitedPartnershipJourneyConfig
+            journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
           ))
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
           get(s"$baseUrl/$testJourneyId/confirm-company-name")
@@ -167,7 +167,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
         await(insertJourneyConfig(
           journeyId = testJourneyId,
           authInternalId = testInternalId,
-          journeyConfig = testLimitedPartnershipJourneyConfig
+          journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
         ))
         post(s"$baseUrl/$testJourneyId/confirm-company-name")()
       }
