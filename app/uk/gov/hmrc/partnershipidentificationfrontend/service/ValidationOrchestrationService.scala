@@ -27,14 +27,18 @@ class ValidationOrchestrationService @Inject()(partnershipIdentificationService:
                                                validatePartnershipInformationService: ValidatePartnershipInformationService
                                               )(implicit ec: ExecutionContext) {
 
-  def orchestrate(journeyId: String)(implicit hc: HeaderCarrier): Future[ValidationResponse] =
+  def orchestrate(journeyId: String, businessVerificationCheck: Boolean)(implicit hc: HeaderCarrier): Future[ValidationResponse] =
     partnershipIdentificationService.retrievePartnershipInformation(journeyId).flatMap {
       case Some(PartnershipInformation(Some(SaInformation(sautr, postcode)), Some(_))) =>
         validatePartnershipInformationService.validateIdentifiers(sautr, postcode).flatMap {
           _ =>
             for {
               _ <- partnershipIdentificationService.storeIdentifiersMatch(journeyId, identifiersMatch = false)
-              _ <- partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
+              _ <- if (businessVerificationCheck) {
+                partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
+              } else {
+                Future.successful()
+              }
               _ <- partnershipIdentificationService.storeRegistrationStatus(journeyId, RegistrationNotCalled)
             } yield
               IdentifiersMismatch
@@ -50,7 +54,11 @@ class ValidationOrchestrationService @Inject()(partnershipIdentificationService:
             else {
               for {
                 _ <- partnershipIdentificationService.storeIdentifiersMatch(journeyId, identifiersMatch = false)
-                _ <- partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
+                _ <- if (businessVerificationCheck) {
+                  partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
+                } else {
+                  Future.successful()
+                }
                 _ <- partnershipIdentificationService.storeRegistrationStatus(journeyId, RegistrationNotCalled)
               } yield
                 IdentifiersMismatch
@@ -59,7 +67,11 @@ class ValidationOrchestrationService @Inject()(partnershipIdentificationService:
       case Some(PartnershipInformation(None, _)) =>
         for {
           _ <- partnershipIdentificationService.storeIdentifiersMatch(journeyId, identifiersMatch = false)
-          _ <- partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
+          _ <- if (businessVerificationCheck) {
+            partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
+          } else {
+            Future.successful()
+          }
           _ <- partnershipIdentificationService.storeRegistrationStatus(journeyId, RegistrationNotCalled)
         } yield
           NoSautrProvided

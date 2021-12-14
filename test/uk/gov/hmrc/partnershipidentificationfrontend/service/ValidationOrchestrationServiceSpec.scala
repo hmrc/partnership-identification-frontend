@@ -44,47 +44,84 @@ class ValidationOrchestrationServiceSpec extends AnyWordSpec
         mockValidateIdentifiers(testSautr, testPostcode)(Future.successful(true))
         mockStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(Future.successful(SuccessfullyStored))
 
-        lazy val result = await(TestService.orchestrate(testJourneyId))
+        lazy val result = await(TestService.orchestrate(testJourneyId, businessVerificationCheck = true))
 
         result mustBe IdentifiersMatched
       }
     }
 
     "return IdentifiersMismatch" when {
-      "the provided details are successfully matched" in {
-        mockRetrievePartnershipInformation(testJourneyId)(Future.successful(Some(testPartnershipInformation)))
-        mockValidateIdentifiers(testSautr, testPostcode)(Future.successful(false))
-        mockStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(Future.successful(SuccessfullyStored))
-        mockStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationUnchallenged)(Future.successful(SuccessfullyStored))
-        mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
+      "the businessVerificationCheck is enabled" when {
+        "the provided details do not successfully match" in {
+          mockRetrievePartnershipInformation(testJourneyId)(Future.successful(Some(testPartnershipInformation)))
+          mockValidateIdentifiers(testSautr, testPostcode)(Future.successful(false))
+          mockStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(Future.successful(SuccessfullyStored))
+          mockStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationUnchallenged)(Future.successful(SuccessfullyStored))
+          mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
 
-        lazy val result = await(TestService.orchestrate(testJourneyId))
+          lazy val result = await(TestService.orchestrate(testJourneyId, businessVerificationCheck = true))
 
-        result mustBe IdentifiersMismatch
+          result mustBe IdentifiersMismatch
+        }
+        "there is a company profile stored" in {
+          mockRetrievePartnershipInformation(testJourneyId)(Future.successful(Some(testPartnershipInformationWithCompanyProfile)))
+          mockValidateIdentifiers(testSautr, testPostcode)(Future.successful(false))
+          mockStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(Future.successful(SuccessfullyStored))
+          mockStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationUnchallenged)(Future.successful(SuccessfullyStored))
+          mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
+
+          lazy val result = await(TestService.orchestrate(testJourneyId, businessVerificationCheck = true))
+
+          result mustBe IdentifiersMismatch
+        }
       }
-      "there is a company profile stored" in {
-        mockRetrievePartnershipInformation(testJourneyId)(Future.successful(Some(testPartnershipInformationWithCompanyProfile)))
-        mockValidateIdentifiers(testSautr, testPostcode)(Future.successful(false))
-        mockStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(Future.successful(SuccessfullyStored))
-        mockStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationUnchallenged)(Future.successful(SuccessfullyStored))
-        mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
+      "the businessVerificationCheck is disabled" when {
+        "the provided details do not successfully match" in {
+          mockRetrievePartnershipInformation(testJourneyId)(Future.successful(Some(testPartnershipInformation)))
+          mockValidateIdentifiers(testSautr, testPostcode)(Future.successful(false))
+          mockStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(Future.successful(SuccessfullyStored))
+          mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
 
-        lazy val result = await(TestService.orchestrate(testJourneyId))
+          lazy val result = await(TestService.orchestrate(testJourneyId, businessVerificationCheck = false))
 
-        result mustBe IdentifiersMismatch
+          result mustBe IdentifiersMismatch
+        }
+        "there is a company profile stored" in {
+          mockRetrievePartnershipInformation(testJourneyId)(Future.successful(Some(testPartnershipInformationWithCompanyProfile)))
+          mockValidateIdentifiers(testSautr, testPostcode)(Future.successful(false))
+          mockStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(Future.successful(SuccessfullyStored))
+          mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
+
+          lazy val result = await(TestService.orchestrate(testJourneyId, businessVerificationCheck = false))
+
+          result mustBe IdentifiersMismatch
+        }
       }
     }
 
     "return NoSautrProvided" when {
-      "no Sautr is provided" in {
-        mockRetrievePartnershipInformation(testJourneyId)(Future.successful(Some(PartnershipInformation(None, None))))
-        mockStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(Future.successful(SuccessfullyStored))
-        mockStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationUnchallenged)(Future.successful(SuccessfullyStored))
-        mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
+      "the businessVerificationCheck is enabled" when {
+        "no Sautr is provided" in {
+          mockRetrievePartnershipInformation(testJourneyId)(Future.successful(Some(PartnershipInformation(None, None))))
+          mockStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(Future.successful(SuccessfullyStored))
+          mockStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationUnchallenged)(Future.successful(SuccessfullyStored))
+          mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
 
-        lazy val result = await(TestService.orchestrate(testJourneyId))
+          lazy val result = await(TestService.orchestrate(testJourneyId, businessVerificationCheck = true))
 
-        result mustBe NoSautrProvided
+          result mustBe NoSautrProvided
+        }
+      }
+      "the businessVerificationCheck is disabled" when {
+        "no Sautr is provided" in {
+          mockRetrievePartnershipInformation(testJourneyId)(Future.successful(Some(PartnershipInformation(None, None))))
+          mockStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(Future.successful(SuccessfullyStored))
+          mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
+
+          lazy val result = await(TestService.orchestrate(testJourneyId, businessVerificationCheck = false))
+
+          result mustBe NoSautrProvided
+        }
       }
     }
 
@@ -92,7 +129,7 @@ class ValidationOrchestrationServiceSpec extends AnyWordSpec
       "there is no data stored for the provided journey id" in {
         mockRetrievePartnershipInformation(testJourneyId)(Future.successful(None))
 
-        intercept[InternalServerException](await(TestService.orchestrate(testJourneyId)))
+        intercept[InternalServerException](await(TestService.orchestrate(testJourneyId, businessVerificationCheck = true)))
       }
     }
   }

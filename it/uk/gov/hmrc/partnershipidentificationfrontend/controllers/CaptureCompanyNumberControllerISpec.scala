@@ -38,7 +38,7 @@ class CaptureCompanyNumberControllerISpec extends ComponentSpecHelper
       await(insertJourneyConfig(
         journeyId = testJourneyId,
         authInternalId = testInternalId,
-        journeyConfig = testLimitedPartnershipJourneyConfig
+        journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
       ))
       stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
       get(s"$baseUrl/$testJourneyId/company-registration-number")
@@ -55,7 +55,8 @@ class CaptureCompanyNumberControllerISpec extends ComponentSpecHelper
 
       "there is a serviceName passed in the journeyConfig" should {
         lazy val result = {
-          val config = testLimitedPartnershipJourneyConfig.copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl))
+          val config = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
+            .copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl))
           await(insertJourneyConfig(
             journeyId = testJourneyId,
             authInternalId = testInternalId,
@@ -89,7 +90,7 @@ class CaptureCompanyNumberControllerISpec extends ComponentSpecHelper
           await(insertJourneyConfig(
             journeyId = testJourneyId + "1",
             authInternalId = testInternalId,
-            journeyConfig = testLimitedPartnershipJourneyConfig
+            journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
           ))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           get(s"$baseUrl/$testJourneyId/company-registration-number")
@@ -103,7 +104,7 @@ class CaptureCompanyNumberControllerISpec extends ComponentSpecHelper
           await(insertJourneyConfig(
             journeyId = testJourneyId,
             authInternalId = testInternalId + "1",
-            journeyConfig = testLimitedPartnershipJourneyConfig
+            journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
           ))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           get(s"$baseUrl/$testJourneyId/company-registration-number")
@@ -117,7 +118,7 @@ class CaptureCompanyNumberControllerISpec extends ComponentSpecHelper
           await(insertJourneyConfig(
             journeyId = testJourneyId + "1",
             authInternalId = testInternalId + "1",
-            journeyConfig = testLimitedPartnershipJourneyConfig
+            journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
           ))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           get(s"$baseUrl/$testJourneyId/company-registration-number")
@@ -146,7 +147,7 @@ class CaptureCompanyNumberControllerISpec extends ComponentSpecHelper
         await(insertJourneyConfig(
           journeyId = testJourneyId,
           authInternalId = testInternalId,
-          journeyConfig = testLimitedPartnershipJourneyConfig
+          journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
         ))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         post(s"$baseUrl/$testJourneyId/company-registration-number")(companyNumberKey -> "")
@@ -166,7 +167,7 @@ class CaptureCompanyNumberControllerISpec extends ComponentSpecHelper
         await(insertJourneyConfig(
           journeyId = testJourneyId,
           authInternalId = testInternalId,
-          journeyConfig = testLimitedPartnershipJourneyConfig
+          journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
         ))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         post(s"$baseUrl/$testJourneyId/company-registration-number")(companyNumberKey -> "0123456789")
@@ -186,7 +187,7 @@ class CaptureCompanyNumberControllerISpec extends ComponentSpecHelper
         await(insertJourneyConfig(
           journeyId = testJourneyId,
           authInternalId = testInternalId,
-          journeyConfig = testLimitedPartnershipJourneyConfig
+          journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
         ))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         post(s"$baseUrl/$testJourneyId/company-registration-number")(companyNumberKey -> "13E!!!%")

@@ -56,11 +56,19 @@ object TestConstants {
   val testSignOutUrl: String = "Sign out"
   val testDefaultServiceName: String = "Entity Validation Service"
   val testCallingServiceName: String = "Test Service"
-  val testGeneralPartnershipJourneyConfig: JourneyConfig = testJourneyConfig(GeneralPartnership)
-  val testScottishPartnershipJourneyConfig: JourneyConfig = testJourneyConfig(ScottishPartnership)
-  val testScottishLimitedPartnershipJourneyConfig: JourneyConfig = testJourneyConfig(ScottishLimitedPartnership)
-  val testLimitedPartnershipJourneyConfig: JourneyConfig = testJourneyConfig(LimitedPartnership)
-  val testLimitedLiabilityPartnershipJourneyConfig: JourneyConfig = testJourneyConfig(LimitedLiabilityPartnership)
+
+  def testJourneyConfig(partnershipType: PartnershipType, serviceName: Option[String] = None, businessVerificationCheck: Boolean): JourneyConfig =
+    JourneyConfig(testContinueUrl, businessVerificationCheck, PageConfig(serviceName, testDeskProServiceId, testSignOutUrl), partnershipType)
+  def testGeneralPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =
+    testJourneyConfig(GeneralPartnership, businessVerificationCheck = businessVerificationCheck)
+  def testScottishPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =
+    testJourneyConfig(ScottishPartnership, businessVerificationCheck = businessVerificationCheck)
+  def testScottishLimitedPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =
+    testJourneyConfig(ScottishLimitedPartnership, businessVerificationCheck = businessVerificationCheck)
+  def testLimitedPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =
+    testJourneyConfig(LimitedPartnership, businessVerificationCheck= businessVerificationCheck)
+  def testLimitedLiabilityPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =
+    testJourneyConfig(LimitedLiabilityPartnership, businessVerificationCheck = businessVerificationCheck)
 
   val testPartnershipInformationJson: JsObject = {
     Json.obj(
@@ -160,11 +168,8 @@ object TestConstants {
       Some(testSautr),
       None,
       identifiersMatch = true,
-      BusinessVerificationPass,
+      Some(BusinessVerificationPass),
       Registered(testSafeId))
-
-  def testJourneyConfig(partnershipType: PartnershipType, serviceName: Option[String] = None): JourneyConfig =
-    JourneyConfig(testContinueUrl, businessVerificationCheck = true, PageConfig(serviceName, testDeskProServiceId, testSignOutUrl), partnershipType)
 
   def testPartnershipFullJourneyDataWithCompanyProfile(companyProfile: Option[CompanyProfile] = None,
                                                        identifiersMatch: Boolean = true): PartnershipFullJourneyData =
@@ -173,7 +178,7 @@ object TestConstants {
       Some(testSautr),
       companyProfile,
       identifiersMatch,
-      BusinessVerificationUnchallenged,
+      Some(BusinessVerificationUnchallenged),
       RegistrationNotCalled
     )
 

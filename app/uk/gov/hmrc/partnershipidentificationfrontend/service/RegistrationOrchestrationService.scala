@@ -29,21 +29,32 @@ class RegistrationOrchestrationService @Inject()(partnershipIdentificationServic
                                                  registrationConnector: RegistrationConnector
                                                 )(implicit ec: ExecutionContext) {
 
-  def register(journeyId: String, partnershipType: PartnershipType)(implicit hc: HeaderCarrier): Future[RegistrationStatus] = for {
-    registrationStatus <- partnershipIdentificationService.retrieveBusinessVerificationStatus(journeyId).flatMap {
-      case Some(BusinessVerificationPass) => for {
-        optSautr <- partnershipIdentificationService.retrieveSautr(journeyId)
-        sautr = optSautr.getOrElse(throw new InternalServerException(s"SAUTR for registration cannot be found in the database for $journeyId"))
-        registrationStatus <- partnershipType match {
-          case GeneralPartnership => registrationConnector.registerGeneralPartnership(sautr)
-          case ScottishPartnership => registrationConnector.registerScottishPartnership(sautr)
-        }
-      } yield registrationStatus
-      case Some(_) =>
-        Future.successful(RegistrationNotCalled)
-      case None =>
-        throw new InternalServerException(s"Missing business verification state in database for $journeyId")
+  def register(journeyId: String,
+               partnershipType: PartnershipType,
+               businessVerificationCheck: Boolean)(implicit hc: HeaderCarrier): Future[RegistrationStatus] = for {
+    registerEntity <-
+      if (businessVerificationCheck) {
+      partnershipIdentificationService.retrieveBusinessVerificationStatus(journeyId).map {
+        case Some(BusinessVerificationPass) => true
+        case Some(_) => false
+        case None => throw new InternalServerException(s"Missing business verification state in database for $journeyId")
+      }
     }
+      else Future.successful(true)
+    registrationStatus <-
+      if (registerEntity) {
+        for {
+          optSautr <- partnershipIdentificationService.retrieveSautr(journeyId)
+          sautr = optSautr.getOrElse(throw new InternalServerException(s"SAUTR for registration cannot be found in the database for $journeyId"))
+          registrationStatus <- partnershipType match {
+            case GeneralPartnership => registrationConnector.registerGeneralPartnership(sautr)
+            case ScottishPartnership => registrationConnector.registerScottishPartnership(sautr)
+          }
+        } yield registrationStatus
+      }
+      else {
+        Future.successful(RegistrationNotCalled)
+      }
     _ <- partnershipIdentificationService.storeRegistrationStatus(journeyId, registrationStatus)
   } yield registrationStatus
 

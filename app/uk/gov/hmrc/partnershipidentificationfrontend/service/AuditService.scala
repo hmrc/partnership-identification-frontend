@@ -78,16 +78,19 @@ class AuditService @Inject()(auditConnector: AuditConnector,
     )
   }
 
-  private def verificationStatusJson(businessVerification: BusinessVerificationStatus): JsObject = Json.obj(
-    "VerificationStatus" -> (businessVerification match {
-      case BusinessVerificationPass =>
-        "success"
-      case BusinessVerificationFail =>
-        "fail"
-      case BusinessVerificationUnchallenged =>
-        "Not Enough Information to challenge"
-    })
-  )
+  private def verificationStatusJson(businessVerification: Option[BusinessVerificationStatus]): JsObject =
+    Json.obj(
+      "VerificationStatus" -> (businessVerification match {
+        case Some(BusinessVerificationPass) =>
+          "success"
+        case Some(BusinessVerificationFail) =>
+          "fail"
+        case Some(BusinessVerificationUnchallenged) =>
+          "Not Enough Information to challenge"
+        case None =>
+          "not requested"
+      })
+    )
 
   private def registerApiStatusJson(registrationStatus: RegistrationStatus): JsObject = Json.obj(
     "RegisterApiStatus" -> (registrationStatus match {
