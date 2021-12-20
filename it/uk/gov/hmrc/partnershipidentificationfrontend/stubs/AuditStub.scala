@@ -27,8 +27,8 @@ import scala.util.{Success, Try}
 
 trait AuditStub {
   def stubAudit(): StubMapping = {
-    stubPost("/write/audit", 200, "{}")
-    stubPost("/write/audit/merged", 200, "{}")
+    stubPost("/write/audit", 204, "{}")
+    stubPost("/write/audit/merged", 204, "{}")
   }
 
   def verifyAuditDetail(expectedAudit: JsObject): Unit = {

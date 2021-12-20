@@ -100,7 +100,6 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJson)
         stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> true))
         stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(OK)
-        stubAudit()
 
         lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
@@ -121,7 +120,6 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJson)
           stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> true))
           stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(OK)
-          stubAudit()
 
           lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
@@ -138,7 +136,6 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJson)
           stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> true))
           stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(OK)
-          stubAudit()
 
           lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
@@ -236,7 +233,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         ))
       }
 
-      "the business entity has a Company Profile stored" in {
+      "the business entity Limited Partnership has a Company Profile stored and the identifiersMatch is false" in {
         await(insertJourneyConfig(testJourneyId, testInternalId, testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile)
@@ -253,7 +250,16 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         }
 
         verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
-        //TODO - Confirm audit here as incorporated partnership auditing has not been implemented
+        verifyAuditDetail(Json.obj(
+          "SAUTR" -> testSautr,
+          "SApostcode" -> testPostcode,
+          "isMatch" -> false,
+          "businessType" -> "Limited Partnership",
+          "VerificationStatus" -> "Not Enough Information to challenge",
+          "RegisterApiStatus" -> "not called",
+          "callingService" -> testDefaultServiceName,
+          "companyNumber" -> testCompanyNumber
+        ))
       }
     }
 

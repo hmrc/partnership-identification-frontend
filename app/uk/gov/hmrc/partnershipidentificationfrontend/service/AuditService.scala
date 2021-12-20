@@ -19,7 +19,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.service
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, PartnershipType, ScottishPartnership}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, LimitedPartnership, PartnershipType, ScottishPartnership}
 import uk.gov.hmrc.partnershipidentificationfrontend.models._
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
@@ -33,14 +33,15 @@ class AuditService @Inject()(auditConnector: AuditConnector,
     for {
       partnershipData <- partnershipIdentificationService.retrievePartnershipFullJourneyData(journeyId)
     } yield partnershipData match {
-      case Some(PartnershipFullJourneyData(optPostcode, optSautr, _, identifiersMatch, businessVerification, registrationStatus)) =>
+      case Some(PartnershipFullJourneyData(optPostcode, optSautr, optCompanyProfile, identifiersMatch, businessVerification, registrationStatus)) =>
         val auditJson = (sautrJson(optSautr)
           ++ postcodeJson(optPostcode)
           ++ identifiersMatchJson(identifiersMatch)
           ++ businessTypeJson(journeyConfig.partnershipType)
           ++ verificationStatusJson(businessVerification)
           ++ registerApiStatusJson(registrationStatus)
-          ++ callingServiceJson(journeyConfig.pageConfig.optServiceName))
+          ++ callingServiceJson(journeyConfig.pageConfig.optServiceName)
+          ++ companyNumberJson(optCompanyProfile))
 
         auditConnector.sendExplicitAudit(auditType(journeyConfig.partnershipType), auditJson)
       case None =>
@@ -50,7 +51,15 @@ class AuditService @Inject()(auditConnector: AuditConnector,
   private def auditType(partnershipType: PartnershipType): String = partnershipType match {
     case GeneralPartnership => "GeneralPartnershipEntityRegistration"
     case ScottishPartnership => "ScottishPartnershipEntityRegistration"
+    case LimitedPartnership => "LimitedPartnershipRegistration"
     case _ => ""
+  }
+
+  private def companyNumberJson(optCompanyProfile: Option[CompanyProfile]): JsObject = optCompanyProfile match {
+    case Some(companyProfile) => Json.obj(
+      "companyNumber" -> companyProfile.companyNumber
+    )
+    case None => Json.obj()
   }
 
   private def sautrJson(optSautr: Option[String]): JsObject = optSautr match {
@@ -71,6 +80,7 @@ class AuditService @Inject()(auditConnector: AuditConnector,
     val businessType = partnershipType match {
       case GeneralPartnership => "General Partnership"
       case ScottishPartnership => "Scottish Partnership"
+      case LimitedPartnership => "Limited Partnership"
       case _ => ""
     }
     Json.obj(
