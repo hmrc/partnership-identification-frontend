@@ -37,7 +37,7 @@ class ValidationOrchestrationService @Inject()(partnershipIdentificationService:
               _ <- if (businessVerificationCheck) {
                 partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
               } else {
-                Future.successful()
+                Future.successful(())
               }
               _ <- partnershipIdentificationService.storeRegistrationStatus(journeyId, RegistrationNotCalled)
             } yield
@@ -57,7 +57,7 @@ class ValidationOrchestrationService @Inject()(partnershipIdentificationService:
                 _ <- if (businessVerificationCheck) {
                   partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
                 } else {
-                  Future.successful()
+                  Future.successful(())
                 }
                 _ <- partnershipIdentificationService.storeRegistrationStatus(journeyId, RegistrationNotCalled)
               } yield
@@ -70,7 +70,7 @@ class ValidationOrchestrationService @Inject()(partnershipIdentificationService:
           _ <- if (businessVerificationCheck) {
             partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
           } else {
-            Future.successful()
+            Future.successful(())
           }
           _ <- partnershipIdentificationService.storeRegistrationStatus(journeyId, RegistrationNotCalled)
         } yield

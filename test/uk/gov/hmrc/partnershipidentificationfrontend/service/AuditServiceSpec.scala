@@ -24,7 +24,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants._
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.ScottishPartnership
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{LimitedPartnership, ScottishPartnership}
 import uk.gov.hmrc.partnershipidentificationfrontend.models._
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
@@ -48,17 +48,6 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
     )
 
   }
-
-  def expectedAuditJson(partnershipType: String, verificationStatus: String, registerStatus: String, isMatch: Boolean = true): JsObject =
-    Json.obj(
-      "SAUTR" -> testSautr,
-      "SApostcode" -> testPostcode,
-      "isMatch" -> isMatch,
-      "businessType" -> partnershipType,
-      "VerificationStatus" -> verificationStatus,
-      "RegisterApiStatus" -> registerStatus,
-      "callingService" -> testServiceName
-    )
 
   "auditPartnershipInformation" when {
     "the user is identifying a general partnership with all information" when {
@@ -142,7 +131,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             )
           ))
 
-          val expectedAuditModel: JsObject = expectedAuditJson("General Partnership","not requested", "fail")
+          val expectedAuditModel: JsObject = expectedAuditJson("General Partnership", "not requested", "fail")
 
           await(TestAuditService.auditPartnershipInformation(
             testJourneyId,
@@ -301,6 +290,74 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
         mockAuditConnector.sendExplicitAudit("ScottishPartnershipEntityRegistration", expectedAuditModel) was called
       }
     }
+
+    "the user is identifying a limited partnership with all information" when {
+
+      val partnershipFullJourneyData: PartnershipFullJourneyData = PartnershipFullJourneyData(
+        optPostcode = Some(testPostcode),
+        optSautr = Some(testSautr),
+        companyProfile = Some(testCompanyProfile),
+        identifiersMatch = false,
+        businessVerification = Some(BusinessVerificationUnchallenged),
+        registrationStatus = RegistrationNotCalled
+      )
+
+      val journeyConfig = testDefaultGeneralPartnershipJourneyConfig.copy(partnershipType = LimitedPartnership)
+
+      val expectedAuditModel: JsObject = expectedLimitedPartnershipAuditJson(businessType = "Limited Partnership")
+
+      "identifiersMatch is false" should {
+        "audit the correct information" in new Setup {
+          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+            partnershipFullJourneyData
+          ))
+
+          await(TestAuditService.auditPartnershipInformation(
+            journeyId = testJourneyId,
+            journeyConfig = journeyConfig
+          ))
+          mockAuditConnector.sendExplicitAudit("LimitedPartnershipRegistration", expectedAuditModel) was called
+        }
+      }
+      "identifiersMatch is false and service name has not provided" should {
+        "audit the correct information" in new Setup {
+          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+            partnershipFullJourneyData
+          ))
+
+          mockAppConfig.defaultServiceName returns testServiceName
+
+          await(TestAuditService.auditPartnershipInformation(
+            journeyId = testJourneyId,
+            journeyConfig = journeyConfig.copy(pageConfig = testDefaultPageConfig.copy(optServiceName = None))
+          ))
+          mockAuditConnector.sendExplicitAudit("LimitedPartnershipRegistration", expectedAuditModel) was called
+        }
+      }
+    }
+  }
+
+  private def expectedAuditJson(partnershipType: String, verificationStatus: String, registerStatus: String, isMatch: Boolean = true): JsObject =
+    Json.obj(
+      "SAUTR" -> testSautr,
+      "SApostcode" -> testPostcode,
+      "isMatch" -> isMatch,
+      "businessType" -> partnershipType,
+      "VerificationStatus" -> verificationStatus,
+      "RegisterApiStatus" -> registerStatus,
+      "callingService" -> testServiceName
+    )
+
+  private def expectedLimitedPartnershipAuditJson(businessType: String): JsObject = {
+    Json.obj(
+      "SAUTR" -> testSautr,
+      "SApostcode" -> testPostcode,
+      "isMatch" -> false,
+      "companyNumber" -> testCompanyProfile.companyNumber,
+      "businessType" -> businessType,
+      "VerificationStatus" -> "Not Enough Information to challenge",
+      "RegisterApiStatus" -> "not called",
+      "callingService" -> testServiceName,
+    )
   }
 }
-
