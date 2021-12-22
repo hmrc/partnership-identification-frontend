@@ -34,6 +34,16 @@ import scala.concurrent.Future
 class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
 
   trait Setup {
+
+    val limitedPartnershipFullJourneyData: PartnershipFullJourneyData = PartnershipFullJourneyData(
+      optPostcode = Some(testPostcode),
+      optSautr = Some(testSautr),
+      companyProfile = Some(testCompanyProfile),
+      identifiersMatch = false,
+      businessVerification = Some(BusinessVerificationUnchallenged),
+      registrationStatus = RegistrationNotCalled
+    )
+
     val defaultScottishPartnershipJourneyConfig: JourneyConfig = testDefaultGeneralPartnershipJourneyConfig.copy(partnershipType = ScottishPartnership)
     val mockAuditConnector: AuditConnector = mock[AuditConnector]
     val mockPartnershipIdentificationService: PartnershipIdentificationService = mock[PartnershipIdentificationService]
@@ -64,7 +74,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             )
           ))
 
-          val expectedAuditModel: JsObject = expectedAuditJson("General Partnership", "success", "success")
+          val expectedAuditModel: JsObject = expectedNonLimitedPartnershipAuditJson("General Partnership", "success", "success")
 
           await(TestAuditService.auditPartnershipInformation(
             testJourneyId,
@@ -87,7 +97,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             )
           ))
 
-          val expectedAuditModel: JsObject = expectedAuditJson("General Partnership", "fail", "not called")
+          val expectedAuditModel: JsObject = expectedNonLimitedPartnershipAuditJson("General Partnership", "fail", "not called")
 
           await(TestAuditService.auditPartnershipInformation(
             testJourneyId,
@@ -109,7 +119,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             )
           ))
 
-          val expectedAuditModel: JsObject = expectedAuditJson("General Partnership", "success", "fail")
+          val expectedAuditModel: JsObject = expectedNonLimitedPartnershipAuditJson("General Partnership", "success", "fail")
 
           await(TestAuditService.auditPartnershipInformation(
             testJourneyId,
@@ -131,7 +141,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             )
           ))
 
-          val expectedAuditModel: JsObject = expectedAuditJson("General Partnership", "not requested", "fail")
+          val expectedAuditModel: JsObject = expectedNonLimitedPartnershipAuditJson("General Partnership", "not requested", "fail")
 
           await(TestAuditService.auditPartnershipInformation(
             testJourneyId,
@@ -184,7 +194,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             )
           ))
 
-          val expectedAuditModel: JsObject = expectedAuditJson("Scottish Partnership", "success", "success")
+          val expectedAuditModel: JsObject = expectedNonLimitedPartnershipAuditJson("Scottish Partnership", "success", "success")
 
           await(TestAuditService.auditPartnershipInformation(
             testJourneyId,
@@ -207,7 +217,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             )
           ))
 
-          val expectedAuditModel: JsObject = expectedAuditJson("Scottish Partnership", "fail", "not called")
+          val expectedAuditModel: JsObject = expectedNonLimitedPartnershipAuditJson("Scottish Partnership", "fail", "not called")
 
           await(TestAuditService.auditPartnershipInformation(
             testJourneyId,
@@ -229,7 +239,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             )
           ))
 
-          val expectedAuditModel: JsObject = expectedAuditJson("Scottish Partnership", "success", "fail")
+          val expectedAuditModel: JsObject = expectedNonLimitedPartnershipAuditJson("Scottish Partnership", "success", "fail")
 
           await(TestAuditService.auditPartnershipInformation(
             testJourneyId,
@@ -251,7 +261,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             )
           ))
 
-          val expectedAuditModel: JsObject = expectedAuditJson("Scottish Partnership", "not requested", "fail")
+          val expectedAuditModel: JsObject = expectedNonLimitedPartnershipAuditJson("Scottish Partnership", "not requested", "fail")
 
           await(TestAuditService.auditPartnershipInformation(
             testJourneyId,
@@ -295,7 +305,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
 
       val journeyConfig = testDefaultGeneralPartnershipJourneyConfig.copy(partnershipType = LimitedPartnership)
 
-      val expectedAuditModel: JsObject = expectedLimitedPartnershipAuditJson(businessType = "Limited Partnership")
+      val expectedAuditModel: JsObject = expectedLimitedPartnershipAuditJson( partnershipType = "Limited Partnership")
 
       "identifiersMatch is false" should {
         "audit the correct information" in new Setup {
@@ -307,7 +317,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             journeyId = testJourneyId,
             journeyConfig = journeyConfig
           ))
-          mockAuditConnector.sendExplicitAudit("LimitedPartnershipRegistration", expectedAuditModel) was called
+          mockAuditConnector.sendExplicitAudit(auditType = "LimitedPartnershipRegistration", detail = expectedAuditModel) was called
         }
       }
       "identifiersMatch is false and service name has not provided" should {
@@ -326,83 +336,116 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
         }
       }
     }
-  }
 
-  "the user is identifying a limited liability partnership with all information" when {
+    "the user is identifying a limited liability partnership with all information" when {
 
-    val journeyConfig = testDefaultGeneralPartnershipJourneyConfig.copy(partnershipType = LimitedLiabilityPartnership)
+      val journeyConfig = testDefaultGeneralPartnershipJourneyConfig.copy(partnershipType = LimitedLiabilityPartnership)
 
-    val expectedAuditModel: JsObject = expectedLimitedPartnershipAuditJson(businessType = "Limited Liability Partnership")
+      val expectedAuditModel: JsObject = expectedLimitedPartnershipAuditJson( partnershipType = "Limited Liability Partnership")
 
-    "identifiersMatch is false" should {
-      "audit the correct information" in new Setup {
-        mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
-          limitedPartnershipFullJourneyData
-        ))
+      "identifiersMatch is false" should {
+        "audit the correct information" in new Setup {
+          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+            limitedPartnershipFullJourneyData
+          ))
 
-        await(TestAuditService.auditPartnershipInformation(
-          journeyId = testJourneyId,
-          journeyConfig = journeyConfig
-        ))
+          await(TestAuditService.auditPartnershipInformation(
+            journeyId = testJourneyId,
+            journeyConfig = journeyConfig
+          ))
 
-        mockAuditConnector.sendExplicitAudit(
-          "LimitedLiabilityPartnershipRegistration",
-          expectedAuditModel
-        ) was called
+          mockAuditConnector.sendExplicitAudit(
+            auditType = "LimitedLiabilityPartnershipRegistration",
+            detail = expectedAuditModel
+          ) was called
+        }
+      }
+
+      "identifiersMatch is false and service name has not provided" should {
+        "audit the correct information" in new Setup {
+          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+            limitedPartnershipFullJourneyData
+          ))
+
+          mockAppConfig.defaultServiceName returns testServiceName
+
+          await(TestAuditService.auditPartnershipInformation(
+            journeyId = testJourneyId,
+            journeyConfig = journeyConfig.copy(pageConfig = testDefaultPageConfig.copy(optServiceName = None))
+          ))
+
+          mockAuditConnector.sendExplicitAudit(
+            auditType = "LimitedLiabilityPartnershipRegistration",
+            detail = expectedAuditModel
+          ) was called
+        }
       }
     }
 
-    "identifiersMatch is false and service name has not provided" should {
-      "audit the correct information" in new Setup {
-        mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
-          limitedPartnershipFullJourneyData
-        ))
+    "the user is identifying a scottish limited partnership with all information" when {
 
-        mockAppConfig.defaultServiceName returns testServiceName
+      val journeyConfig = testDefaultGeneralPartnershipJourneyConfig.copy(partnershipType = ScottishLimitedPartnership)
 
-        await(TestAuditService.auditPartnershipInformation(
-          journeyId = testJourneyId,
-          journeyConfig = journeyConfig.copy(pageConfig = testDefaultPageConfig.copy(optServiceName = None))
-        ))
+      val expectedAuditModel: JsObject = expectedLimitedPartnershipAuditJson(partnershipType = "Scottish LTD Partnership")
 
-        mockAuditConnector.sendExplicitAudit(
-          "LimitedLiabilityPartnershipRegistration",
-          expectedAuditModel
-        ) was called
+      "identifiersMatch is false" should {
+        "audit the correct information" in new Setup {
+          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+            limitedPartnershipFullJourneyData
+          ))
+
+          await(TestAuditService.auditPartnershipInformation(
+            journeyId = testJourneyId,
+            journeyConfig = journeyConfig
+          ))
+
+          mockAuditConnector.sendExplicitAudit(
+            auditType = "ScottishLTDPartnershipRegistration",
+            detail = expectedAuditModel
+          ) was called
+        }
+      }
+
+      "identifiersMatch is false and service name has not provided" should {
+        "audit the correct information" in new Setup {
+          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+            limitedPartnershipFullJourneyData
+          ))
+
+          mockAppConfig.defaultServiceName returns testServiceName
+
+          await(TestAuditService.auditPartnershipInformation(
+            journeyId = testJourneyId,
+            journeyConfig = journeyConfig.copy(pageConfig = testDefaultPageConfig.copy(optServiceName = None))
+          ))
+
+          mockAuditConnector.sendExplicitAudit(
+            auditType = "ScottishLTDPartnershipRegistration",
+            detail = expectedAuditModel
+          ) was called
+        }
       }
     }
   }
 
-  val limitedPartnershipFullJourneyData: PartnershipFullJourneyData = PartnershipFullJourneyData(
-    optPostcode = Some(testPostcode),
-    optSautr = Some(testSautr),
-    companyProfile = Some(testCompanyProfile),
-    identifiersMatch = false,
-    businessVerification = Some(BusinessVerificationUnchallenged),
-    registrationStatus = RegistrationNotCalled
+  private def expectedNonLimitedPartnershipAuditJson(partnershipType: String,
+                                                     verificationStatus: String,
+                                                     registerStatus: String,
+                                                     isMatch: Boolean = true): JsObject = Json.obj(
+    "SAUTR" -> testSautr,
+    "SApostcode" -> testPostcode,
+    "isMatch" -> isMatch,
+    "businessType" -> partnershipType,
+    "VerificationStatus" -> verificationStatus,
+    "RegisterApiStatus" -> registerStatus,
+    "callingService" -> testServiceName
   )
 
-  private def expectedAuditJson(partnershipType: String, verificationStatus: String, registerStatus: String, isMatch: Boolean = true): JsObject =
-    Json.obj(
-      "SAUTR" -> testSautr,
-      "SApostcode" -> testPostcode,
-      "isMatch" -> isMatch,
-      "businessType" -> partnershipType,
-      "VerificationStatus" -> verificationStatus,
-      "RegisterApiStatus" -> registerStatus,
-      "callingService" -> testServiceName
-    )
+  private def expectedLimitedPartnershipAuditJson(partnershipType: String): JsObject = expectedNonLimitedPartnershipAuditJson(
+    partnershipType = partnershipType,
+    verificationStatus = "Not Enough Information to challenge",
+    registerStatus = "not called",
+    isMatch = false
+  ) ++ Json.obj("companyNumber" -> testCompanyProfile.companyNumber)
 
-  private def expectedLimitedPartnershipAuditJson(businessType: String): JsObject = {
-    Json.obj(
-      "SAUTR" -> testSautr,
-      "SApostcode" -> testPostcode,
-      "isMatch" -> false,
-      "companyNumber" -> testCompanyProfile.companyNumber,
-      "businessType" -> businessType,
-      "VerificationStatus" -> "Not Enough Information to challenge",
-      "RegisterApiStatus" -> "not called",
-      "callingService" -> testServiceName,
-    )
-  }
 }
