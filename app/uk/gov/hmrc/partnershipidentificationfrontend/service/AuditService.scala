@@ -19,7 +19,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.service
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, LimitedPartnership, PartnershipType, ScottishPartnership}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
 import uk.gov.hmrc.partnershipidentificationfrontend.models._
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
@@ -52,6 +52,7 @@ class AuditService @Inject()(auditConnector: AuditConnector,
     case GeneralPartnership => "GeneralPartnershipEntityRegistration"
     case ScottishPartnership => "ScottishPartnershipEntityRegistration"
     case LimitedPartnership => "LimitedPartnershipRegistration"
+    case LimitedLiabilityPartnership => "LimitedLiabilityPartnershipRegistration"
     case _ => ""
   }
 
@@ -81,6 +82,7 @@ class AuditService @Inject()(auditConnector: AuditConnector,
       case GeneralPartnership => "General Partnership"
       case ScottishPartnership => "Scottish Partnership"
       case LimitedPartnership => "Limited Partnership"
+      case LimitedLiabilityPartnership => "Limited Liability Partnership"
       case _ => ""
     }
     Json.obj(

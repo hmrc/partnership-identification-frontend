@@ -21,7 +21,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.FeatureSwitching
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.GeneralPartnership
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, LimitedLiabilityPartnership}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationUnchallenged, RegistrationNotCalled}
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuditStub, AuthStub, PartnershipIdentificationStub, ValidatePartnershipInformationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
@@ -259,6 +259,39 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           "RegisterApiStatus" -> "not called",
           "callingService" -> testDefaultServiceName,
           "companyNumber" -> testCompanyNumber
+        ))
+      }
+
+      "the business entity Limited Liability Partnership has a Company Profile stored and the identifiersMatch is false" in {
+        await(insertJourneyConfig(
+          testJourneyId,
+          testInternalId,
+          testJourneyConfig(LimitedLiabilityPartnership, Some(testCallingServiceName), businessVerificationCheck = true)
+        ))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile)
+        stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> true))
+        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
+        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)(OK)
+        stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
+
+        lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
+
+        result must have {
+          httpStatus(SEE_OTHER)
+          redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
+        }
+
+        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
+        verifyAuditDetail(Json.obj(
+          "isMatch" -> false,
+          "businessType" -> "Limited Liability Partnership",
+          "VerificationStatus" -> "Not Enough Information to challenge",
+          "RegisterApiStatus" -> "not called",
+          "callingService" -> testCallingServiceName,
+          "companyNumber" -> testCompanyNumber,
+          "SAUTR" -> testCtutr,
+          "SApostcode" -> testPostcode
         ))
       }
     }
