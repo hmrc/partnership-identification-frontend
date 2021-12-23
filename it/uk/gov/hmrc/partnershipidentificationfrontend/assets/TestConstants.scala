@@ -193,6 +193,17 @@ object TestConstants {
     partnershipType = GeneralPartnership
   )
 
+  def testLimitedPartnershipAuditJson(businessType: String): JsObject = Json.obj(
+    "SAUTR" -> testSautr,
+    "SApostcode" -> testPostcode,
+    "isMatch" -> false,
+    "businessType" -> businessType,
+    "VerificationStatus" -> "Not Enough Information to challenge",
+    "RegisterApiStatus" -> "not called",
+    "callingService" -> testDefaultServiceName,
+    "companyNumber" -> testCompanyNumber
+  )
+
   final case class JourneyConfigData(journeyId: String,
                                      internalId: String,
                                      continueUrl: String,

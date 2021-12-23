@@ -26,9 +26,11 @@ import uk.gov.hmrc.partnershipidentificationfrontend.utils.WiremockHelper.stubPo
 import scala.util.{Success, Try}
 
 trait AuditStub {
+  private val httpStatusRecognisedByFrontEnd = 204
+
   def stubAudit(): StubMapping = {
-    stubPost("/write/audit", 204, "{}")
-    stubPost("/write/audit/merged", 204, "{}")
+    stubPost("/write/audit", status = httpStatusRecognisedByFrontEnd, responseBody = "{}")
+    stubPost("/write/audit/merged", status = httpStatusRecognisedByFrontEnd, responseBody = "{}")
   }
 
   def verifyAuditDetail(expectedAudit: JsObject): Unit = {

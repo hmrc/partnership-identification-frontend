@@ -53,6 +53,7 @@ class AuditService @Inject()(auditConnector: AuditConnector,
     case ScottishPartnership => "ScottishPartnershipEntityRegistration"
     case LimitedPartnership => "LimitedPartnershipRegistration"
     case LimitedLiabilityPartnership => "LimitedLiabilityPartnershipRegistration"
+    case ScottishLimitedPartnership => "ScottishLTDPartnershipRegistration"
     case _ => ""
   }
 
@@ -83,6 +84,7 @@ class AuditService @Inject()(auditConnector: AuditConnector,
       case ScottishPartnership => "Scottish Partnership"
       case LimitedPartnership => "Limited Partnership"
       case LimitedLiabilityPartnership => "Limited Liability Partnership"
+      case ScottishLimitedPartnership => "Scottish LTD Partnership"
       case _ => ""
     }
     Json.obj(
