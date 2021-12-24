@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import play.api.data.Form
 import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants.{testContinueUrl, testDefaultGeneralPartnershipJourneyConfig, testDeskProServiceId, testSignOutUrl}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.LimitedLiabilityPartnership
-import uk.gov.hmrc.partnershipidentificationfrontend.testonly.forms.TestCreateJourneyForm.{businessVerificationCheck, continueUrl, deskProServiceId, signOutUrl}
+import uk.gov.hmrc.partnershipidentificationfrontend.testonly.forms.TestCreateJourneyForm.{accessibilityUrl, businessVerificationCheck, continueUrl, deskProServiceId, signOutUrl}
 
 class TestCreateJourneyFormSpec extends AnyFlatSpec {
 
@@ -31,7 +31,8 @@ class TestCreateJourneyFormSpec extends AnyFlatSpec {
     continueUrl -> testContinueUrl,
     TestCreateJourneyForm.businessVerificationCheck -> "true",
     deskProServiceId -> testDeskProServiceId,
-    signOutUrl -> testSignOutUrl
+    signOutUrl -> testSignOutUrl,
+    accessibilityUrl -> accessibilityUrl
   )
 
   private val formUnderTest: Form[JourneyConfig] = TestCreateJourneyForm.form(LimitedLiabilityPartnership)

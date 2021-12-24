@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ trait CheckYourAnswersViewTests {
     }
 
     "have sign out link redirecting to signOutUrl from journey config" in {
-      doc.getSignOutText mustBe testSignOutUrl
+      doc.getSignOutLink mustBe testSignOutUrl
     }
 
     "have the correct beta banner" in {
@@ -135,6 +135,14 @@ trait CheckYourAnswersViewTests {
 
       "have a continue and confirm button" in {
         doc.getSubmitButton.first.text mustBe Base.confirmAndContinue
+      }
+
+      "have a back link" in {
+        doc.getBackLinkText mustBe Base.back
+      }
+
+      "have accessibility statement link redirecting to accessibilityUrl from journey config" in {
+        doc.getAccessibilityLink mustBe testAccessibilityUrl
       }
     }
 

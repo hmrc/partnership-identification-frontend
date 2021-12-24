@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ object ViewSpecHelper {
 
     lazy val getSummaryListRows: Elements = element.getElementsByClass("govuk-summary-list__row")
 
-    lazy val getServiceName: Elements = element.getElementsByClass("govuk-header__link--service-name")
+    lazy val getServiceName: Elements = element.getElementsByClass("hmrc-header__service-name")
 
     def getSpan(id: String): Elements = element.select(s"""span[id=$id]""")
 
@@ -76,11 +76,17 @@ object ViewSpecHelper {
 
     def getBanner: Elements = element.getElementsByClass("govuk-phase-banner__text")
 
+    def getFooters: Elements = element.select("ul[class=govuk-footer__inline-list] > li > a")
+
     lazy val getSignOutLink: String = element.select(".hmrc-sign-out-nav__link").attr("href")
 
     lazy val getSignOutText: String = element.select(".hmrc-sign-out-nav__link").text
 
-    lazy val getBannerLink: String = element.getElementsByClass("govuk-link-beta").attr("href")
+    lazy val getBannerLink: String = getBanner.select(".govuk-link").attr("href")
+
+    lazy val getBackLinkText: String = element.select(".govuk-back-link").text
+
+    lazy val getAccessibilityLink: String = element.getFooters.get(1).attr("href")
 
   }
 

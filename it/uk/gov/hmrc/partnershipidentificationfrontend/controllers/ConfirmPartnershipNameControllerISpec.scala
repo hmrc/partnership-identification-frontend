@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
               journeyId = testJourneyId,
               authInternalId = testInternalId,
               journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true).copy(
-                pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl))
+                pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl))
             ))
             stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
             get(s"$baseUrl/$testJourneyId/confirm-company-name")

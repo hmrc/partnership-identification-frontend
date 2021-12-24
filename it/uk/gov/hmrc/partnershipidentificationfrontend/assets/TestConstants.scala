@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,11 +54,17 @@ object TestConstants {
 
   val testDeskProServiceId: String = "vrs"
   val testSignOutUrl: String = "Sign out"
+  val testAccessibilityUrl: String = "/accessibility"
   val testDefaultServiceName: String = "Entity Validation Service"
   val testCallingServiceName: String = "Test Service"
 
   def testJourneyConfig(partnershipType: PartnershipType, serviceName: Option[String] = None, businessVerificationCheck: Boolean): JourneyConfig =
-    JourneyConfig(testContinueUrl, businessVerificationCheck, PageConfig(serviceName, testDeskProServiceId, testSignOutUrl), partnershipType)
+    JourneyConfig(
+      testContinueUrl,
+      businessVerificationCheck,
+      PageConfig(serviceName,testDeskProServiceId, testSignOutUrl, testAccessibilityUrl),
+      partnershipType)
+
   def testGeneralPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =
     testJourneyConfig(GeneralPartnership, businessVerificationCheck = businessVerificationCheck)
   def testScottishPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =

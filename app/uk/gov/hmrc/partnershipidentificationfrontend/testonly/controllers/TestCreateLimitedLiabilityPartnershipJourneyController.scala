@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,11 +45,13 @@ class TestCreateLimitedLiabilityPartnershipJourneyController @Inject()(messagesC
     implicit request =>
     authorised() {
       Future.successful(
-        Ok(view(
-          defaultPageConfig,
-          form(LimitedLiabilityPartnership).fill(defaultJourneyConfig),
-          routes.TestCreateLimitedLiabilityPartnershipJourneyController.submit()
-        ))
+        Ok(
+          view(
+            defaultPageConfig,
+            form(LimitedLiabilityPartnership).fill(defaultJourneyConfig),
+            routes.TestCreateLimitedLiabilityPartnershipJourneyController.submit()
+          )
+        )
       )
     }
   }
@@ -60,8 +62,12 @@ class TestCreateLimitedLiabilityPartnershipJourneyController @Inject()(messagesC
       form(LimitedLiabilityPartnership).bindFromRequest().fold(
         formWithErrors =>
         Future.successful(
-          BadRequest(view(defaultPageConfig, formWithErrors,
-            routes.TestCreateLimitedLiabilityPartnershipJourneyController.submit()))
+          BadRequest(
+            view(defaultPageConfig,
+              formWithErrors,
+              routes.TestCreateLimitedLiabilityPartnershipJourneyController.submit()
+            )
+          )
         ),
         journeyConfig => {
           testCreateJourneyConnector.createLimitedLiabilityPartnershipJourney(journeyConfig)

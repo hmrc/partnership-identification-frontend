@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ class CapturePostCodeControllerISpec extends ComponentSpecHelper
       "there is a serviceName passed in the journeyConfig" should {
         lazy val result = {
           val config = testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)
-            .copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl))
+            .copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl))
           await(insertJourneyConfig(testJourneyId, testInternalId, config))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           get(s"$baseUrl/$testJourneyId/self-assessment-postcode")

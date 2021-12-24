@@ -58,6 +58,11 @@ This is a test entry point which simulates a service by triggering the initial P
     - Used for skipping further verification checks carried out currently by Business Verification (SI)
     - This is currently autofilled but can be changed
 
+6. Accessibility Statement URL
+
+   - Shown in the footer - a link to the accessibility statement for the calling service
+   - This is currently autofilled but can be changed
+
 
 #### GET test-only/create-scottish-partnership-journey
 
@@ -88,6 +93,11 @@ This is a test entry point which simulates a service by triggering the initial P
     - Used for skipping further verification checks carried out currently by Business Verification (SI)
     - This is currently autofilled but can be changed
 
+6. Accessibility Statement URL
+
+   - Shown in the footer - a link to the accessibility statement for the calling service
+   - This is currently autofilled but can be changed
+
 
 #### GET test-only/create-limited-partnership-journey
 
@@ -117,34 +127,44 @@ This is a test entry point which simulates a service by triggering the initial P
 
     - The value of this input field has no effect because identifiersMatch defaults to false for incorporated partnerships and as such business verification and registration are not performed
 
+6. Accessibility Statement URL
+
+   - Shown in the footer - a link to the accessibility statement for the calling service
+   - This is currently autofilled but can be changed
+
 
 #### GET test-only/create-scottish-limited-partnership-journey
 
-   ---
-   This is a test entry point which simulates a service by triggering the initial POST call to set up a journey for Scottish Limited Partnerships.
+---
+This is a test entry point which simulates a service by triggering the initial POST call to set up a journey for Scottish Limited Partnerships.
 
-   1. Continue URL (Required)
+1. Continue URL (Required)
 
-      - Where to redirect the user after the journey has been completed
+   - Where to redirect the user after the journey has been completed
 
-   2. Service Name (Optional)
+2. Service Name (Optional)
 
-      - Service Name to use throughout the service
-      - Currently, this is empty by default, so the default service name will be used
+   - Service Name to use throughout the service
+   - Currently, this is empty by default, so the default service name will be used
 
-   3. DeskPro Service ID (Required)
+3. DeskPro Service ID (Required)
 
-      - Used for the `Get help with this page` link
-      - This is currently autofilled but can be changed
+   - Used for the `Get help with this page` link
+   - This is currently autofilled but can be changed
 
-   4. Sign Out URL (Required)
+4. Sign Out URL (Required)
 
-      - Shown in the HMRC header - typically a link to a feedback questionnaire
-      - This is currently autofilled but can be changed
+   - Shown in the HMRC header - typically a link to a feedback questionnaire
+   - This is currently autofilled but can be changed
 
-   5. Business verification checkbox
+5. Business verification checkbox
 
-      - The value of this input field has no effect because identifiersMatch defaults to false for incorporated partnerships and as such business verification and registration are not performed
+   - The value of this input field has no effect because identifiersMatch defaults to false for incorporated partnerships and as such business verification and registration are not performed
+
+6. Accessibility Statement URL
+
+   - Shown in the footer - a link to the accessibility statement for the calling service
+   - This is currently autofilled but can be changed
 
 #### GET test-only/create-limited-liability-partnership-journey
 
@@ -173,6 +193,11 @@ This is a test entry point which simulates a service by triggering the initial P
 5. Business verification checkbox
 
    - This value has no effect because identifiersMatch defaults to false for incorporated partnerships and as such business verification and registration are not performed
+
+6. Accessibility Statement URL
+
+   - Shown in the footer - a link to the accessibility statement for the calling service
+   - This is currently autofilled but can be changed
 
 #### GET test-only/retrieve-journey/:journeyId or test-only/retrieve-journey
 

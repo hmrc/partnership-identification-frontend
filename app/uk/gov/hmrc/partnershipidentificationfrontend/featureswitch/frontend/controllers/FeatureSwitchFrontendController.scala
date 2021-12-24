@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ class FeatureSwitchFrontendController @Inject()(featureSwitchService: FeatureSwi
                                                )(implicit ec: ExecutionContext,
                                                  appConfig: AppConfig) extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
-  private val defaultPageConfig = PageConfig(None, "vrs", appConfig.vatRegFeedbackUrl)
+  private val defaultPageConfig = PageConfig(None, "vrs", appConfig.vatRegFeedbackUrl, "/")
 
   def show: Action[AnyContent] = Action.async {
     implicit req =>

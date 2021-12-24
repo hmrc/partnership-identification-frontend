@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,13 @@ class TestCreateScottishPartnershipJourneyController @Inject()(messagesControlle
     implicit request =>
       authorised() {
         Future.successful(
-          Ok(view(defaultPageConfig, form(ScottishPartnership).fill(defaultJourneyConfig), routes.TestCreateScottishPartnershipJourneyController.submit()))
+          Ok(
+            view(
+              defaultPageConfig,
+              form(ScottishPartnership).fill(defaultJourneyConfig),
+              routes.TestCreateScottishPartnershipJourneyController.submit()
+            )
+          )
         )
       }
   }
@@ -56,7 +62,12 @@ class TestCreateScottishPartnershipJourneyController @Inject()(messagesControlle
         form(ScottishPartnership).bindFromRequest().fold(
           formWithErrors =>
             Future.successful(
-              BadRequest(view(defaultPageConfig, formWithErrors, routes.TestCreateScottishPartnershipJourneyController.submit()))
+              BadRequest(
+                view(defaultPageConfig,
+                  formWithErrors,
+                  routes.TestCreateScottishPartnershipJourneyController.submit()
+                )
+              )
             ),
           journeyConfig =>
             testCreateJourneyConnector.createScottishPartnershipJourney(journeyConfig)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +29,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TestCreateScottishLimitedPartnershipJourneyController @Inject()
-  (messagesControllerComponents: MessagesControllerComponents,
-   testCreateJourneyConnector: TestCreateJourneyConnector,
-   view: test_create_journey,
-   val authConnector: AuthConnector)(implicit ec: ExecutionContext, appConfig: AppConfig)
-  extends FrontendController(messagesControllerComponents) with AuthorisedFunctions {
+class TestCreateScottishLimitedPartnershipJourneyController @Inject()(messagesControllerComponents: MessagesControllerComponents,
+                                                                      testCreateJourneyConnector: TestCreateJourneyConnector,
+                                                                      view: test_create_journey,
+                                                                      val authConnector: AuthConnector
+                                                                     )(implicit ec: ExecutionContext,
+                                                                       appConfig: AppConfig) extends FrontendController(messagesControllerComponents) with AuthorisedFunctions {
 
   private val defaultPageConfig = Utils.defaultPageConfig(appConfig)
 
@@ -42,13 +42,17 @@ class TestCreateScottishLimitedPartnershipJourneyController @Inject()
 
   val show: Action[AnyContent] = Action.async {
     implicit request =>
-    authorised(){
-      Future.successful(Ok(view(
-        defaultPageConfig,
-        form(ScottishLimitedPartnership).fill(defaultJourneyConfig),
-        routes.TestCreateScottishLimitedPartnershipJourneyController.submit()
-      )))
-    }
+      authorised() {
+        Future.successful(
+          Ok(
+            view(
+              defaultPageConfig,
+              form(ScottishLimitedPartnership).fill(defaultJourneyConfig),
+              routes.TestCreateScottishLimitedPartnershipJourneyController.submit()
+            )
+          )
+        )
+      }
   }
 
   val submit: Action[AnyContent] = Action.async {
@@ -57,7 +61,13 @@ class TestCreateScottishLimitedPartnershipJourneyController @Inject()
         form(ScottishLimitedPartnership).bindFromRequest().fold(
           formWithErrors =>
             Future.successful(
-              BadRequest(view(defaultPageConfig, formWithErrors, routes.TestCreateScottishLimitedPartnershipJourneyController.submit()))
+              BadRequest(
+                view(
+                  defaultPageConfig,
+                  formWithErrors,
+                  routes.TestCreateScottishLimitedPartnershipJourneyController.submit()
+                )
+              )
             ),
           journeyConfig => {
             testCreateJourneyConnector.createScottishLimitedPartnershipJourney(journeyConfig)

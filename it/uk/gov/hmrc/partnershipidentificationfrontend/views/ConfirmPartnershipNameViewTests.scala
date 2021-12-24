@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.libs.ws.WSResponse
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.MessageLookup.{Base, BetaBanner, Header, ConfirmPartnershipName => messages}
+import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ViewSpecHelper.ElementExtensions
@@ -42,8 +43,8 @@ trait ConfirmPartnershipNameViewTests {
       doc.getSignOutText mustBe Header.signOut
     }
 
-    "sign out link redirects to feedback page" in {
-      doc.getSignOutLink mustBe config.vatRegFeedbackUrl
+    "have sign out link redirecting to signOutUrl from journey config" in {
+      doc.getSignOutLink mustBe testSignOutUrl
     }
 
     "have the correct beta banner" in {
@@ -71,7 +72,11 @@ trait ConfirmPartnershipNameViewTests {
     }
 
     "have a back link" in {
-      doc.getElementById("back-link").text mustBe Base.back
+      doc.getBackLinkText mustBe Base.back
+    }
+
+    "have accessibility statement link redirecting to accessibilityUrl from journey config" in {
+      doc.getAccessibilityLink mustBe testAccessibilityUrl
     }
   }
 

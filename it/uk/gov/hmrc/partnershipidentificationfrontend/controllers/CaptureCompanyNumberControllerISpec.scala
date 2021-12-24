@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ class CaptureCompanyNumberControllerISpec extends ComponentSpecHelper
       "there is a serviceName passed in the journeyConfig" should {
         lazy val result = {
           val config = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
-            .copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl))
+            .copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl))
           await(insertJourneyConfig(
             journeyId = testJourneyId,
             authInternalId = testInternalId,
