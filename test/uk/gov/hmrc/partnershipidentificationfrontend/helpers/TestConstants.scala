@@ -30,6 +30,7 @@ object TestConstants {
   val testInternalId: String = UUID.randomUUID().toString
   val testSafeId: String = UUID.randomUUID().toString
   val testPostcode: String = "AA11AA"
+  val testRegisteredOfficePostcode: String = "BB11BB"
   val testSignOutUrl: String = "/signOutUrl"
   val testSautr: String = "1234567890"
   val testCompanyNumber: String = "12345678"
@@ -43,7 +44,7 @@ object TestConstants {
     "country" -> "United Kingdom",
     "locality" -> "test city",
     "po_box" -> "123",
-    "postal_code" -> "AA11AA",
+    "postal_code" -> testRegisteredOfficePostcode,
     "premises" -> "1",
     "region" -> "test region"
   )

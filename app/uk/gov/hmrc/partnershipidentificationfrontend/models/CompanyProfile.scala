@@ -17,9 +17,16 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.models
 
 import play.api.libs.json._
+import CompanyProfile._
 
-case class CompanyProfile(companyName: String, companyNumber: String, dateOfIncorporation: String, unsanitisedCHROAddress: JsObject)
+case class CompanyProfile(companyName: String,
+                          companyNumber: String,
+                          dateOfIncorporation: String,
+                          unsanitisedCHROAddress: JsObject) {
+  val optRegisteredOfficePostcode: Option[String] = (unsanitisedCHROAddress \ registeredOfficePostcodeKey).asOpt[String]
+}
 
 object CompanyProfile {
   implicit val format: OFormat[CompanyProfile] = Json.format[CompanyProfile]
+  private val registeredOfficePostcodeKey = "postal_code"
 }

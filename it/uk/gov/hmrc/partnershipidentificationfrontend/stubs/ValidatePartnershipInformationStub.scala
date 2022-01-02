@@ -18,16 +18,18 @@ package uk.gov.hmrc.partnershipidentificationfrontend.stubs
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.{JsObject, Json}
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipInformation
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.WiremockMethods
 
 trait ValidatePartnershipInformationStub extends WiremockMethods {
 
-  def stubValidate(partnershipInformation: PartnershipInformation)(status: Int, body: JsObject): StubMapping =
+  def stubValidate(sautr: String, postcode: String)(status: Int, body: JsObject): StubMapping =
     when(
       method = POST,
       uri = s"/partnership-identification/validate-partnership-information",
-      body = Json.toJson(partnershipInformation)
+      body = Json.obj(
+        "sautr" -> sautr,
+        "postcode" -> postcode
+      )
     ).thenReturn(
       status = status,
       body = body

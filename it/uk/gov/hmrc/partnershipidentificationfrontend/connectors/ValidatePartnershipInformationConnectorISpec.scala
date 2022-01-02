@@ -34,7 +34,7 @@ class ValidatePartnershipInformationConnectorISpec extends ComponentSpecHelper w
   "POST /partnership-information/validate-partnership-information" should {
     "return true" when {
       "the supplied postcode matches what is held downstream" in {
-        stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> true))
+        stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> true))
 
         val result = await(connector.validate(testSautr, testPostcode))
 
@@ -44,7 +44,7 @@ class ValidatePartnershipInformationConnectorISpec extends ComponentSpecHelper w
 
     "return false" when {
       "the supplied postcode does not match what is held downstream" in {
-        stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> false))
+        stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> false))
 
         val result = await(connector.validate(testSautr, testPostcode))
 
@@ -54,13 +54,13 @@ class ValidatePartnershipInformationConnectorISpec extends ComponentSpecHelper w
 
     "throw an exception" when {
       "any other response is returned" in {
-        stubValidate(testPartnershipInformation)(GATEWAY_TIMEOUT, body = Json.obj())
+        stubValidate(testSautr, testPostcode)(GATEWAY_TIMEOUT, body = Json.obj())
 
         intercept[InternalServerException](await(connector.validate(testSautr, testPostcode)))
       }
 
       "invalid JSON is returned" in {
-        stubValidate(testPartnershipInformation)(OK, body = Json.obj())
+        stubValidate(testSautr, testPostcode)(OK, body = Json.obj())
 
         intercept[InternalServerException](await(connector.validate(testSautr, testPostcode)))
       }

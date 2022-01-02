@@ -28,6 +28,7 @@ object TestConstants {
   val testJourneyId: String = UUID.randomUUID().toString
   val testSautr: String = "1234567890"
   val testPostcode: String = "AA11AA"
+  val testRegisteredOfficePostcode: String = "BB11BB"
   val testContinueUrl: String = "/test"
   val testCredentialId: String = UUID.randomUUID().toString
   val GGProviderId: String = UUID.randomUUID().toString
@@ -46,7 +47,7 @@ object TestConstants {
     "country" -> "United Kingdom",
     "locality" -> "test city",
     "po_box" -> "123",
-    "postal_code" -> "AA11AA",
+    "postal_code" -> testRegisteredOfficePostcode,
     "premises" -> "1",
     "region" -> "test region"
   )
@@ -152,7 +153,7 @@ object TestConstants {
           "country" -> "United Kingdom",
           "locality" -> "test city",
           "po_box" -> "123",
-          "postal_code" -> "AA11AA",
+          "postal_code" -> testRegisteredOfficePostcode,
           "premises" -> "1",
           "region" -> "test region"
         )
