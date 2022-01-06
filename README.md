@@ -41,6 +41,7 @@ All other fields must be provided.
    "optServiceName" : "Service Name",
    "deskProServiceId" : "abc",
    "signOutUrl" : "/sign-out",
+   "accessibilityUrl" : "/accessibility-statement/my-service"
 }
 ```
 
@@ -77,6 +78,7 @@ All other fields must be provided.
    "optServiceName" : "Service Name",
    "deskProServiceId" : "abc",
    "signOutUrl" : "/sign-out",
+   "accessibilityUrl" : "/accessibility-statement/my-service"
 }
 ```
 
@@ -109,6 +111,7 @@ All other fields must be provided.
    "optServiceName" : "Service Name",
    "deskProServiceId" : "abc",
    "signOutUrl" : "/sign-out",
+   "accessibilityUrl" : "/accessibility-statement/my-service"
 }
 ```
 
@@ -138,6 +141,7 @@ All other fields must be provided.
    "optServiceName" : "Service Name",
    "deskProServiceId" : "abc",
    "signOutUrl" : "/sign-out",
+   "accessibilityUrl" : "/accessibility-statement/my-service"
 }
 ```
 
@@ -170,6 +174,7 @@ All other fields must be provided.
    "optServiceName" : "Service Name",
    "deskProServiceId" : "abc",
    "signOutUrl" : "/sign-out",
+   "accessibilityUrl" : "/accessibility-statement/my-service"
 }
 ```
 

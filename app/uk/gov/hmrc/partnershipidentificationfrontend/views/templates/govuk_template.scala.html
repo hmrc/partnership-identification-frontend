@@ -1,5 +1,5 @@
 @*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *@
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.{Header, HmrcHeader, HmrcTimeoutDialog, TimeoutDialog}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcHeader
 @import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 @import uk.gov.hmrc.partnershipidentificationfrontend.models.PageConfig
-@import uk.gov.hmrc.partnershipidentificationfrontend.views.helpers.FooterLinks
-@import uk.gov.hmrc.partnershipidentificationfrontend.views.html.helpers.phaseBanner
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTrackingConsentSnippet
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcTrackingConsentSnippet, HmrcLayout, HmrcTimeoutDialogHelper}
+@import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import views.html.helper.CSPNonce
 
-@this(govukLayout: GovukLayout,
-        hmrcHeader: HmrcHeader,
-        phaseBanner: phaseBanner,
-        appConfig: AppConfig,
-        footerLinks: FooterLinks,
-        footer: govukFooter,
-        hmrcTimeoutDialog: HmrcTimeoutDialog,
-        govukBackLink: GovukBackLink,
-        hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet
+@this(
+    hmrcLayout: HmrcLayout,
+    hmrcHeader: HmrcHeader,
+    appConfig: AppConfig,
+    hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
+    standardBetaBanner: StandardBetaBanner,
+    hmrcTimeoutDialogHelper: HmrcTimeoutDialogHelper
 )
 
 @(pageConfig: PageConfig, title: String, timeout: Boolean = true, showBackLink: Boolean = true)(contentBlock: Html)(implicit messages: Messages, appConfig: AppConfig, request: RequestHeader)
@@ -38,31 +35,9 @@
         <!--[if lte IE 8]><link href='@controllers.routes.Assets.versioned("stylesheets/application-ie-8.css")' rel="stylesheet" type="text/css" /><![endif]-->
         <!--[if gt IE 8]><!--> <link href='@controllers.routes.Assets.versioned("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css" />
         <!--<![endif]-->
-    @hmrcTrackingConsentSnippet(CSPNonce.get)
-    @if(timeout) {
-        @hmrcTimeoutDialog(TimeoutDialog(
-            language = Some(messages.lang.code),
-            timeout = Some(appConfig.timeout),
-            countdown = Some(appConfig.countdown),
-            keepAliveUrl = Some("#"),
-            signOutUrl = Some(pageConfig.signOutUrl)
-        ))
-    }
+
+        @hmrcTimeoutDialogHelper(signOutUrl = pageConfig.signOutUrl)
 }
-
- @headerBlock = {
-    @hmrcHeader(Header(
-        serviceName = Some(pageConfig.optServiceName.getOrElse(appConfig.defaultServiceName)),
-        signOutHref = Some(appConfig.vatRegFeedbackUrl)
-    ))
- }
-
- @beforeContentBlock = {
-    @phaseBanner("beta", pageConfig)
-    @if(showBackLink) {
-        @govukBackLink(BackLink(href = "#", content = Text(messages("base.back")), attributes = Map("id" -> "back-link")))
-    }
- }
 
 @content = {
     <div class="govuk-!-margin-bottom-6">
@@ -76,24 +51,21 @@
     </div>
 }
 
-@footerBlock = {
-    @footer(Footer(meta = Some(Meta(items = Some(footerLinks.items)))))
-}
 
 @scripts = {
-    <script @{CSPNonce.attr} src='@controllers.routes.Assets.versioned("lib/govuk-frontend/govuk/all.js")'></script>
-    <script @{CSPNonce.attr} src='@controllers.routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
-    <script @{CSPNonce.attr}>window.GOVUKFrontend.initAll();</script>
-    <script @{CSPNonce.attr}>window.HMRCFrontend.initAll();</script>
     <script @{CSPNonce.attr} src='@controllers.routes.Assets.versioned("javascripts/backLink.js")'></script>
 }
 
- @govukLayout(
+@hmrcLayout(
     pageTitle = Some(title),
-    headBlock = Some(head),
-    beforeContentBlock = Some(beforeContentBlock),
-    headerBlock = Some(headerBlock),
-    scriptsBlock = Some(scripts),
-    footerItems = Seq.empty,
-    footerBlock = Some(footerBlock)
+    isWelshTranslationAvailable = false,
+    signOutUrl = Some(pageConfig.signOutUrl),
+    additionalHeadBlock = Some(head),
+    accessibilityStatementUrl = Some(pageConfig.accessibilityUrl),
+    nonce = CSPNonce.get,
+    phaseBanner = Some(standardBetaBanner(url = appConfig.betaFeedbackUrl(pageConfig.deskProServiceId))),
+    serviceName = Some(pageConfig.optServiceName.getOrElse(appConfig.defaultServiceName)),
+    backLinkUrl = Some("#"),
+    additionalScriptsBlock = Some(scripts)
 )(content)
+

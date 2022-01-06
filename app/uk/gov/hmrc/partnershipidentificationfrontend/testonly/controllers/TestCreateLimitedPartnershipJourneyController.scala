@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.LimitedPartnership
+import uk.gov.hmrc.partnershipidentificationfrontend.testonly.Utils
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.connectors.TestCreateJourneyConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.forms.TestCreateJourneyForm.form
-import uk.gov.hmrc.partnershipidentificationfrontend.testonly.Utils
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.views.html.test_create_journey
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -45,7 +45,13 @@ class TestCreateLimitedPartnershipJourneyController @Inject()(messagesController
     implicit request =>
       authorised() {
         Future.successful(
-          Ok(view(defaultPageConfig, form(LimitedPartnership).fill(defaultJourneyConfig), routes.TestCreateLimitedPartnershipJourneyController.submit()))
+          Ok(
+            view(
+              defaultPageConfig,
+              form(LimitedPartnership).fill(defaultJourneyConfig),
+              routes.TestCreateLimitedPartnershipJourneyController.submit()
+            )
+          )
         )
       }
   }
@@ -56,7 +62,13 @@ class TestCreateLimitedPartnershipJourneyController @Inject()(messagesController
         form(LimitedPartnership).bindFromRequest().fold(
           formWithErrors =>
             Future.successful(
-              BadRequest(view(defaultPageConfig, formWithErrors, routes.TestCreateLimitedPartnershipJourneyController.submit()))
+              BadRequest(
+                view(
+                  defaultPageConfig,
+                  formWithErrors,
+                  routes.TestCreateLimitedPartnershipJourneyController.submit()
+                )
+              )
             ),
           journeyConfig =>
             testCreateJourneyConnector.createLimitedPartnershipJourney(journeyConfig)

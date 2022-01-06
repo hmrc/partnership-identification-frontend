@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,8 @@ object Utils {
   def defaultPageConfig(appConfig: AppConfig): PageConfig = PageConfig(
     optServiceName = None,
     deskProServiceId = "vrs",
-    signOutUrl = appConfig.vatRegFeedbackUrl
+    signOutUrl = appConfig.vatRegFeedbackUrl,
+    "/"
   )
 
 }

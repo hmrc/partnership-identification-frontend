@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,6 +66,7 @@ object TestCreateJourneyConnector {
     JourneyController.businessVerificationCheckKey -> journeyConfig.businessVerificationCheck,
     JourneyController.optServiceNameKey -> journeyConfig.pageConfig.optServiceName,
     JourneyController.deskProServiceIdKey -> journeyConfig.pageConfig.deskProServiceId,
-    JourneyController.signOutUrlKey -> journeyConfig.pageConfig.signOutUrl
+    JourneyController.signOutUrlKey -> journeyConfig.pageConfig.signOutUrl,
+    JourneyController.accessibilityUrlKey -> journeyConfig.pageConfig.accessibilityUrl
   )
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,10 +58,11 @@ class JourneyController @Inject()(controllerComponents: ControllerComponents,
         optServiceName <- (json \ optServiceNameKey).validateOpt[String]
         deskProServiceId <- (json \ deskProServiceIdKey).validate[String]
         signOutUrl <- (json \ signOutUrlKey).validate[String]
+        accessibilityUrl <- (json \ accessibilityUrlKey).validate[String]
       } yield JourneyConfig(
         continueUrl,
         businessVerificationCheck.getOrElse(true),
-        PageConfig(optServiceName, deskProServiceId, signOutUrl),
+        PageConfig(optServiceName, deskProServiceId, signOutUrl, accessibilityUrl),
         partnershipType
       )
     }) {
@@ -106,4 +107,5 @@ object JourneyController {
   val optServiceNameKey = "optServiceName"
   val deskProServiceIdKey = "deskProServiceId"
   val signOutUrlKey = "signOutUrl"
+  val accessibilityUrlKey = "accessibilityUrl"
 }

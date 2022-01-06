@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.libs.ws.WSResponse
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.MessageLookup.{Base, BetaBanner, Header, CapturePostCode => messages}
-import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.{testDefaultServiceName, testSignOutUrl}
+import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ViewSpecHelper.ElementExtensions
@@ -40,7 +40,7 @@ trait CapturePostCodeViewTests {
     }
 
     "have sign out link redirecting to signOutUrl from journey config" in {
-      doc.getSignOutText mustBe testSignOutUrl
+      doc.getSignOutLink mustBe testSignOutUrl
     }
 
     "have the correct beta banner" in {
@@ -74,6 +74,13 @@ trait CapturePostCodeViewTests {
       doc.getSubmitButton.first.text mustBe Base.saveAndContinue
     }
 
+    "have a back link" in {
+      doc.getBackLinkText mustBe Base.back
+    }
+
+    "have accessibility statement link redirecting to accessibilityUrl from journey config" in {
+      doc.getAccessibilityLink mustBe testAccessibilityUrl
+    }
   }
 
   def testCapturePostCodeViewWithNoPostCodeErrorMessages(result: => WSResponse): Unit = {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ object TestConstants {
   val testSafeId: String = UUID.randomUUID().toString
   val testPostcode: String = "AA11AA"
   val testSignOutUrl: String = "/signOutUrl"
+  val testAccessibilityUrl: String = "/accessibility"
   val testSautr: String = "1234567890"
   val testCompanyNumber: String = "12345678"
   val testDateOfIncorporation: String = LocalDate.of(2000, 1, 1).toString
@@ -56,7 +57,7 @@ object TestConstants {
   val testServiceName = "testServiceName"
   val testDeskProServiceId = "testDeskProServiceId"
   val testBusinessPartnerId = "testBusinessPartnerId"
-  val testDefaultPageConfig: PageConfig = PageConfig(Some(testServiceName), testDeskProServiceId, testSignOutUrl)
+  val testDefaultPageConfig: PageConfig = PageConfig(Some(testServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl)
   val testDefaultGeneralPartnershipJourneyConfig: JourneyConfig = JourneyConfig(
     testContinueUrl,
     businessVerificationCheck = true,

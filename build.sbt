@@ -13,8 +13,7 @@ lazy val microservice = Project(appName, file("."))
     scalaVersion := "2.12.13",
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     TwirlKeys.templateImports ++= Seq(
-      "uk.gov.hmrc.govukfrontend.views.html.components._",
-      "uk.gov.hmrc.govukfrontend.views.html.helpers._"
+      "uk.gov.hmrc.govukfrontend.views.html.components._"
     ),
     pipelineStages in Assets := Seq(gzip),
     // ***************

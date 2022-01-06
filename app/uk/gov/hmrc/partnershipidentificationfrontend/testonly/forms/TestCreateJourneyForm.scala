@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ object TestCreateJourneyForm {
   val deskProServiceId = "deskProServiceId"
   val alphanumericRegex = "^[A-Z0-9]*$"
   val signOutUrl = "signOutUrl"
+  val accessibilityUrl = "accessibilityUrl"
 
   def form(partnershipType: PartnershipType): Form[JourneyConfig] = {
     Form(mapping(
@@ -40,12 +41,13 @@ object TestCreateJourneyForm {
       serviceName -> optText,
       businessVerificationCheck -> boolean,
       deskProServiceId -> text.verifying(deskProServiceIdEmpty),
-      signOutUrl -> text.verifying(signOutUrlEmpty)
-    )((continueUrl, serviceName, businessVerificationCheck, deskProServiceId, signOutUrl) =>
+      signOutUrl -> text.verifying(signOutUrlEmpty),
+      accessibilityUrl -> text.verifying(accessibilityUrlEmpty),
+    )((continueUrl, serviceName, businessVerificationCheck, deskProServiceId, signOutUrl, accessibilityUrl) =>
       JourneyConfig(
         continueUrl,
         businessVerificationCheck,
-        pageConfig = PageConfig(serviceName, deskProServiceId, signOutUrl),
+        pageConfig = PageConfig(serviceName, deskProServiceId, signOutUrl, accessibilityUrl),
         partnershipType = partnershipType
       ))(journeyConfig =>
       Some(
@@ -53,7 +55,8 @@ object TestCreateJourneyForm {
         journeyConfig.pageConfig.optServiceName,
         journeyConfig.businessVerificationCheck,
         journeyConfig.pageConfig.deskProServiceId,
-        journeyConfig.pageConfig.signOutUrl
+        journeyConfig.pageConfig.signOutUrl,
+        journeyConfig.pageConfig.accessibilityUrl
       )))
   }
 
@@ -75,6 +78,13 @@ object TestCreateJourneyForm {
     signOutUrl => validate(
       constraint = signOutUrl.isEmpty,
       errMsg = "Sign Out Url is not entered"
+    )
+  )
+
+  def accessibilityUrlEmpty: Constraint[String] = Constraint("accessibility_url.not_entered")(
+    accessibilityUrl => validate(
+      constraint = accessibilityUrl.isEmpty,
+      errMsg = "Accessibility Url is not entered"
     )
   )
 

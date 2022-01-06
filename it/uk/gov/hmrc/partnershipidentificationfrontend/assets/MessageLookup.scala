@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ object MessageLookup {
   }
 
   object BetaBanner {
-    val title = "This is a new service - your feedback (opens in new tab) will help us to improve it."
+    val title = "This is a new service – your feedback will help us to improve it."
   }
 
   object CaptureCompanyNumber {
