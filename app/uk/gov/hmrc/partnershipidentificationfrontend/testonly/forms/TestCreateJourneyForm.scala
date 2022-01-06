@@ -42,7 +42,7 @@ object TestCreateJourneyForm {
       businessVerificationCheck -> boolean,
       deskProServiceId -> text.verifying(deskProServiceIdEmpty),
       signOutUrl -> text.verifying(signOutUrlEmpty),
-      accessibilityUrl -> text.verifying(accessibilityUrlEmpty),
+      accessibilityUrl -> text.verifying(accessibilityUrlEmpty)
     )((continueUrl, serviceName, businessVerificationCheck, deskProServiceId, signOutUrl, accessibilityUrl) =>
       JourneyConfig(
         continueUrl,
