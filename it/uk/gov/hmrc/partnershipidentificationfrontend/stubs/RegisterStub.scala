@@ -17,11 +17,12 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.stubs
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.RegistrationStatus
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.{WiremockHelper, WiremockMethods}
 
 trait RegisterStub extends WiremockMethods {
+  implicit private val RegistrationStatusFormat: OFormat[RegistrationStatus] = RegistrationStatus.format
 
   def stubRegisterGeneralPartnership(sautr: String)(status: Int, body: RegistrationStatus): StubMapping =
     when(method = POST, uri = "/partnership-identification/register-general-partnership", Json.obj("sautr" -> sautr))
@@ -43,4 +44,68 @@ trait RegisterStub extends WiremockMethods {
   def verifyRegisterScottishPartnership(sautr: String): Unit =
     WiremockHelper.verifyPost(uri = "/partnership-identification/register-scottish-partnership", optBody = Some(Json.obj("sautr" -> sautr).toString))
 
+  def stubRegisterLimitedPartnership(sautr: String, companyNumber: String)(status: Int, body: RegistrationStatus): StubMapping =
+    when(method = POST,
+      uri = "/partnership-identification/register-limited-partnership",
+      Json.obj(
+        "sautr" -> sautr,
+        "companyNumber" -> companyNumber
+      )
+    ).thenReturn(
+      status = status,
+      body = Json.obj("registration" -> body)
+    )
+
+  def verifyRegisterLimitedPartnership(sautr: String, companyNumber: String): Unit =
+    WiremockHelper.verifyPost(
+      uri = "/partnership-identification/register-limited-partnership",
+      optBody = Some(Json.obj(
+        "sautr" -> sautr,
+        "companyNumber" -> companyNumber
+      ).toString)
+    )
+
+  def stubRegisterLimitedLiabilityPartnership(sautr: String, companyNumber: String)(status: Int, body: RegistrationStatus): StubMapping =
+    when(method = POST,
+      uri = "/partnership-identification/register-limited-liability-partnership",
+      Json.obj(
+        "sautr" -> sautr,
+        "companyNumber" -> companyNumber
+      )
+    ).thenReturn(
+      status = status,
+      body = Json.obj("registration" -> body)
+    )
+
+  def verifyRegisterLimitedLiabilityPartnership(sautr: String, companyNumber: String): Unit =
+    WiremockHelper.verifyPost(
+      uri = "/partnership-identification/register-limited-liability-partnership",
+      optBody = Some(Json.obj(
+        "sautr" -> sautr,
+        "companyNumber" -> companyNumber
+      ).toString)
+    )
+
+
+  def stubRegisterScottishLimitedPartnership(sautr: String, companyNumber: String)(status: Int, body: RegistrationStatus): StubMapping =
+    when(
+      method = POST,
+      uri = "/partnership-identification/register-scottish-limited-partnership",
+      Json.obj(
+        "sautr" -> sautr,
+        "companyNumber" -> companyNumber
+      )
+    ).thenReturn(
+      status = status,
+      body = Json.obj("registration" -> body)
+    )
+
+  def verifyRegisterScottishLimitedPartnership(sautr: String, companyNumber: String): Unit =
+    WiremockHelper.verifyPost(
+      uri = "/partnership-identification/register-scottish-limited-partnership",
+      optBody = Some(Json.obj(
+        "sautr" -> sautr,
+        "companyNumber" -> companyNumber
+      ).toString)
+    )
 }

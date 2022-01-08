@@ -18,7 +18,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.service
 
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.RegistrationConnector
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, PartnershipType, ScottishPartnership}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, LimitedLiabilityPartnership, LimitedPartnership, PartnershipType, ScottishLimitedPartnership, ScottishPartnership}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationPass, RegistrationNotCalled, RegistrationStatus}
 
 import javax.inject.{Inject, Singleton}
@@ -45,10 +45,20 @@ class RegistrationOrchestrationService @Inject()(partnershipIdentificationServic
       if (registerEntity) {
         for {
           optSautr <- partnershipIdentificationService.retrieveSautr(journeyId)
-          sautr = optSautr.getOrElse(throw new InternalServerException(s"SAUTR for registration cannot be found in the database for $journeyId"))
-          registrationStatus <- partnershipType match {
-            case GeneralPartnership => registrationConnector.registerGeneralPartnership(sautr)
-            case ScottishPartnership => registrationConnector.registerScottishPartnership(sautr)
+          optCompanyProfile <- partnershipIdentificationService.retrieveCompanyProfile(journeyId)
+          registrationStatus <- (partnershipType, optSautr, optCompanyProfile) match {
+            case (GeneralPartnership, Some(sautr), None) =>
+              registrationConnector.registerGeneralPartnership(sautr)
+            case (ScottishPartnership, Some(sautr), None) =>
+              registrationConnector.registerScottishPartnership(sautr)
+            case (LimitedPartnership, Some(sautr), Some(companyProfile)) =>
+              registrationConnector.registerLimitedPartnership(sautr, companyProfile.companyNumber)
+            case (LimitedLiabilityPartnership, Some(sautr), Some(companyProfile)) =>
+              registrationConnector.registerLimitedLiabilityPartnership(sautr, companyProfile.companyNumber)
+            case (ScottishLimitedPartnership, Some(sautr), Some(companyProfile)) =>
+              registrationConnector.registerScottishLimitedPartnership(sautr, companyProfile.companyNumber)
+            case _ =>
+              throw new InternalServerException(s"Invalid registration data in the database for $journeyId")
           }
         } yield registrationStatus
       }

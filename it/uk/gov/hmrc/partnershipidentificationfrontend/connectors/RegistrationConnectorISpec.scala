@@ -18,7 +18,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 
 import play.api.test.Helpers.{OK, await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.{testSafeId, testSautr}
+import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.{testCompanyNumber, testSafeId, testSautr}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{Registered, RegistrationFailed}
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.RegisterStub
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
@@ -73,4 +73,69 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
     }
   }
 
+  "registerLimitedPartnership" should {
+    "return Registered" when {
+      "the registration has been successful" in {
+        stubRegisterLimitedPartnership(testSautr, testCompanyNumber)(OK, Registered(testSafeId))
+
+        val result = await(registrationConnector.registerLimitedPartnership(testSautr, testCompanyNumber))
+
+        result mustBe Registered(testSafeId)
+      }
+    }
+
+    "return RegistrationFailed" when {
+      "the registration has not been successful" in {
+        stubRegisterLimitedPartnership(testSautr, testCompanyNumber)(OK, RegistrationFailed)
+
+        val result = await(registrationConnector.registerLimitedPartnership(testSautr, testCompanyNumber))
+
+        result mustBe RegistrationFailed
+      }
+    }
+  }
+
+  "registerLimitedLiabilityPartnership" should {
+    "return Registered" when {
+      "the registration has been successful" in {
+        stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber)(OK, Registered(testSafeId))
+
+        val result = await(registrationConnector.registerLimitedLiabilityPartnership(testSautr, testCompanyNumber))
+
+        result mustBe Registered(testSafeId)
+      }
+    }
+
+    "return RegistrationFailed" when {
+      "the registration has not been successful" in {
+        stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber)(OK, RegistrationFailed)
+
+        val result = await(registrationConnector.registerLimitedLiabilityPartnership(testSautr, testCompanyNumber))
+
+        result mustBe RegistrationFailed
+      }
+    }
+  }
+
+  "registerScottishLimitedPartnership" should {
+    "return Registered" when {
+      "the registration has been successful" in {
+        stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber)(OK, Registered(testSafeId))
+
+        val result = await(registrationConnector.registerScottishLimitedPartnership(testSautr, testCompanyNumber))
+
+        result mustBe Registered(testSafeId)
+      }
+    }
+
+    "return RegistrationFailed" when {
+      "the registration has not been successful" in {
+        stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber)(OK, RegistrationFailed)
+
+        val result = await(registrationConnector.registerScottishLimitedPartnership(testSautr, testCompanyNumber))
+
+        result mustBe RegistrationFailed
+      }
+    }
+  }
 }

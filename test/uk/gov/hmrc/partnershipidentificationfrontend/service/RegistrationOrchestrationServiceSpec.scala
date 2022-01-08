@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.mocks.MockRegistrationConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, ScottishPartnership}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, LimitedLiabilityPartnership, LimitedPartnership, ScottishLimitedPartnership, ScottishPartnership}
 import uk.gov.hmrc.partnershipidentificationfrontend.models._
 import uk.gov.hmrc.partnershipidentificationfrontend.service.mocks.MockPartnershipIdentificationService
 
@@ -47,6 +47,7 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec
       "the General Partnership is successfully verified and then registered" when {
         "the businessVerificationCheck is enabled" in {
           mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+          mockRetrieveCompanyProfile(testJourneyId)(Future.successful(None))
           mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
           mockRegisterGeneralPartnership(testSautr)(Future.successful(Registered(testSafeId)))
           mockStoreRegistrationResponse(testJourneyId, Registered(testSafeId))(Future.successful(SuccessfullyStored))
@@ -58,6 +59,7 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec
         }
         "the businessVerificationCheck is not enabled" in {
           mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+          mockRetrieveCompanyProfile(testJourneyId)(Future.successful(None))
           mockRegisterGeneralPartnership(testSautr)(Future.successful(Registered(testSafeId)))
           mockStoreRegistrationResponse(testJourneyId, Registered(testSafeId))(Future.successful(SuccessfullyStored))
 
@@ -70,6 +72,7 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec
 
       "the General Partnership is verified but fails to register" in {
         mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+        mockRetrieveCompanyProfile(testJourneyId)(Future.successful(None))
         mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
         mockRegisterGeneralPartnership(testSautr)(Future.successful(RegistrationFailed))
         mockStoreRegistrationResponse(testJourneyId, RegistrationFailed)(Future.successful(SuccessfullyStored))
@@ -82,30 +85,33 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec
 
       "the Scottish Partnership is successfully verified and then registered" when {
         "the businessVerificationCheck is enabled" in {
-        mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
-        mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
-        mockRegisterScottishPartnership(testSautr)(Future.successful(Registered(testSafeId)))
-        mockStoreRegistrationResponse(testJourneyId, Registered(testSafeId))(Future.successful(SuccessfullyStored))
+          mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+          mockRetrieveCompanyProfile(testJourneyId)(Future.successful(None))
+          mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
+          mockRegisterScottishPartnership(testSautr)(Future.successful(Registered(testSafeId)))
+          mockStoreRegistrationResponse(testJourneyId, Registered(testSafeId))(Future.successful(SuccessfullyStored))
 
-        await(TestService.register(testJourneyId, ScottishPartnership, businessVerificationCheck = true)) mustBe Registered(testSafeId)
+          await(TestService.register(testJourneyId, ScottishPartnership, businessVerificationCheck = true)) mustBe Registered(testSafeId)
 
-        verifyRegisterScottishPartnership(testSautr)
-        verifyStoreRegistrationResponse(testJourneyId, Registered(testSafeId))
+          verifyRegisterScottishPartnership(testSautr)
+          verifyStoreRegistrationResponse(testJourneyId, Registered(testSafeId))
+        }
+        "the businessVerificationCheck is not enabled" in {
+          mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+          mockRetrieveCompanyProfile(testJourneyId)(Future.successful(None))
+          mockRegisterScottishPartnership(testSautr)(Future.successful(Registered(testSafeId)))
+          mockStoreRegistrationResponse(testJourneyId, Registered(testSafeId))(Future.successful(SuccessfullyStored))
+
+          await(TestService.register(testJourneyId, ScottishPartnership, businessVerificationCheck = false)) mustBe Registered(testSafeId)
+
+          verifyRegisterScottishPartnership(testSautr)
+          verifyStoreRegistrationResponse(testJourneyId, Registered(testSafeId))
+        }
       }
-      "the businessVerificationCheck is not enabled" in {
-        mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
-        mockRegisterScottishPartnership(testSautr)(Future.successful(Registered(testSafeId)))
-        mockStoreRegistrationResponse(testJourneyId, Registered(testSafeId))(Future.successful(SuccessfullyStored))
-
-        await(TestService.register(testJourneyId, ScottishPartnership, businessVerificationCheck = false)) mustBe Registered(testSafeId)
-
-        verifyRegisterScottishPartnership(testSautr)
-        verifyStoreRegistrationResponse(testJourneyId, Registered(testSafeId))
-      }
-    }
 
       "when the Scottish Partnership is verified but fails to register" in {
         mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+        mockRetrieveCompanyProfile(testJourneyId)(Future.successful(None))
         mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
         mockRegisterScottishPartnership(testSautr)(Future.successful(RegistrationFailed))
         mockStoreRegistrationResponse(testJourneyId, RegistrationFailed)(Future.successful(SuccessfullyStored))
@@ -117,9 +123,127 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec
       }
     }
 
+    "the Limited Partnership is successfully verified and then registered" when {
+      "the businessVerificationCheck is enabled" in {
+        mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+        mockRetrieveCompanyProfile(testJourneyId)(Future.successful(Some(testCompanyProfile)))
+        mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
+        mockRegisterLimitedPartnership(testSautr, testCompanyNumber)(Future.successful(Registered(testSafeId)))
+        mockStoreRegistrationResponse(testJourneyId, Registered(testSafeId))(Future.successful(SuccessfullyStored))
+
+        await(TestService.register(testJourneyId, LimitedPartnership, businessVerificationCheck = true)) mustBe Registered(testSafeId)
+
+        verifyRegisterLimitedPartnership(testSautr, testCompanyNumber)
+        verifyStoreRegistrationResponse(testJourneyId, Registered(testSafeId))
+      }
+      "the businessVerificationCheck is not enabled" in {
+        mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+        mockRetrieveCompanyProfile(testJourneyId)(Future.successful(Some(testCompanyProfile)))
+        mockRegisterLimitedPartnership(testSautr, testCompanyNumber)(Future.successful(Registered(testSafeId)))
+        mockStoreRegistrationResponse(testJourneyId, Registered(testSafeId))(Future.successful(SuccessfullyStored))
+
+        await(TestService.register(testJourneyId, LimitedPartnership, businessVerificationCheck = false)) mustBe Registered(testSafeId)
+
+        verifyRegisterLimitedPartnership(testSautr, testCompanyNumber)
+        verifyStoreRegistrationResponse(testJourneyId, Registered(testSafeId))
+      }
+    }
+
+    "when the Limited Partnership is verified but fails to register" in {
+      mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+      mockRetrieveCompanyProfile(testJourneyId)(Future.successful(Some(testCompanyProfile)))
+      mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
+      mockRegisterLimitedPartnership(testSautr, testCompanyNumber)(Future.successful(RegistrationFailed))
+      mockStoreRegistrationResponse(testJourneyId, RegistrationFailed)(Future.successful(SuccessfullyStored))
+
+      await(TestService.register(testJourneyId, LimitedPartnership, businessVerificationCheck = true)) mustBe RegistrationFailed
+
+      verifyRegisterLimitedPartnership(testSautr, testCompanyNumber)
+      verifyStoreRegistrationResponse(testJourneyId, RegistrationFailed)
+    }
+
+    "the Limited Liability Partnership is successfully verified and then registered" when {
+      "the businessVerificationCheck is enabled" in {
+        mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+        mockRetrieveCompanyProfile(testJourneyId)(Future.successful(Some(testCompanyProfile)))
+        mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
+        mockRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber)(Future.successful(Registered(testSafeId)))
+        mockStoreRegistrationResponse(testJourneyId, Registered(testSafeId))(Future.successful(SuccessfullyStored))
+
+        await(TestService.register(testJourneyId, LimitedLiabilityPartnership, businessVerificationCheck = true)) mustBe Registered(testSafeId)
+
+        verifyRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber)
+        verifyStoreRegistrationResponse(testJourneyId, Registered(testSafeId))
+      }
+      "the businessVerificationCheck is not enabled" in {
+        mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+        mockRetrieveCompanyProfile(testJourneyId)(Future.successful(Some(testCompanyProfile)))
+        mockRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber)(Future.successful(Registered(testSafeId)))
+        mockStoreRegistrationResponse(testJourneyId, Registered(testSafeId))(Future.successful(SuccessfullyStored))
+
+        await(TestService.register(testJourneyId, LimitedLiabilityPartnership, businessVerificationCheck = false)) mustBe Registered(testSafeId)
+
+        verifyRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber)
+        verifyStoreRegistrationResponse(testJourneyId, Registered(testSafeId))
+      }
+    }
+
+    "when the Limited Liability Partnership is verified but fails to register" in {
+      mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+      mockRetrieveCompanyProfile(testJourneyId)(Future.successful(Some(testCompanyProfile)))
+      mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
+      mockRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber)(Future.successful(RegistrationFailed))
+      mockStoreRegistrationResponse(testJourneyId, RegistrationFailed)(Future.successful(SuccessfullyStored))
+
+      await(TestService.register(testJourneyId, LimitedLiabilityPartnership, businessVerificationCheck = true)) mustBe RegistrationFailed
+
+      verifyRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber)
+      verifyStoreRegistrationResponse(testJourneyId, RegistrationFailed)
+    }
+
+    "the Scottish Limited Partnership is successfully verified and then registered" when {
+      "the businessVerificationCheck is enabled" in {
+        mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+        mockRetrieveCompanyProfile(testJourneyId)(Future.successful(Some(testCompanyProfile)))
+        mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
+        mockRegisterScottishLimitedPartnership(testSautr, testCompanyNumber)(Future.successful(Registered(testSafeId)))
+        mockStoreRegistrationResponse(testJourneyId, Registered(testSafeId))(Future.successful(SuccessfullyStored))
+
+        await(TestService.register(testJourneyId, ScottishLimitedPartnership, businessVerificationCheck = true)) mustBe Registered(testSafeId)
+
+        verifyRegisterScottishLimitedPartnership(testSautr, testCompanyNumber)
+        verifyStoreRegistrationResponse(testJourneyId, Registered(testSafeId))
+      }
+      "the businessVerificationCheck is not enabled" in {
+        mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+        mockRetrieveCompanyProfile(testJourneyId)(Future.successful(Some(testCompanyProfile)))
+        mockRegisterScottishLimitedPartnership(testSautr, testCompanyNumber)(Future.successful(Registered(testSafeId)))
+        mockStoreRegistrationResponse(testJourneyId, Registered(testSafeId))(Future.successful(SuccessfullyStored))
+
+        await(TestService.register(testJourneyId, ScottishLimitedPartnership, businessVerificationCheck = false)) mustBe Registered(testSafeId)
+
+        verifyRegisterScottishLimitedPartnership(testSautr, testCompanyNumber)
+        verifyStoreRegistrationResponse(testJourneyId, Registered(testSafeId))
+      }
+    }
+
+    "when the Scottish Limited Partnership is verified but fails to register" in {
+      mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+      mockRetrieveCompanyProfile(testJourneyId)(Future.successful(Some(testCompanyProfile)))
+      mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
+      mockRegisterScottishLimitedPartnership(testSautr, testCompanyNumber)(Future.successful(RegistrationFailed))
+      mockStoreRegistrationResponse(testJourneyId, RegistrationFailed)(Future.successful(SuccessfullyStored))
+
+      await(TestService.register(testJourneyId, ScottishLimitedPartnership, businessVerificationCheck = true)) mustBe RegistrationFailed
+
+      verifyRegisterScottishLimitedPartnership(testSautr, testCompanyNumber)
+      verifyStoreRegistrationResponse(testJourneyId, RegistrationFailed)
+    }
+
     "store a registration state of registration not called" when {
       "the business entity did not pass verification" in {
         mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+        mockRetrieveCompanyProfile(testJourneyId)(Future.successful(None))
         mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationFail)))
         mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
 
@@ -130,6 +254,7 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec
 
       "the business entity was not challenged to verify" in {
         mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+        mockRetrieveCompanyProfile(testJourneyId)(Future.successful(None))
         mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationUnchallenged)))
         mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
 
@@ -142,6 +267,7 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec
     "throw an Internal Server Exception" when {
       "there is no sautr in the database" in {
         mockRetrieveSautr(testJourneyId)(Future.successful(None))
+        mockRetrieveCompanyProfile(testJourneyId)(Future.successful(None))
         mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
 
         intercept[InternalServerException](
@@ -151,6 +277,7 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec
 
       "there is no business verification response in the database and the businessVerificationCheck flag is true" in {
         mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
+        mockRetrieveCompanyProfile(testJourneyId)(Future.successful(None))
         mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(None))
 
         intercept[InternalServerException](
@@ -160,6 +287,7 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec
 
       "there is nothing in the database" in {
         mockRetrieveSautr(testJourneyId)(Future.successful(None))
+        mockRetrieveCompanyProfile(testJourneyId)(Future.successful(None))
         mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(None))
 
         intercept[InternalServerException](

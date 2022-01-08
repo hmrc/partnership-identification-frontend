@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.testonly.stubs.controllers
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsString, Json}
 import play.api.mvc.{Action, AnyContent, InjectedController}
 
 import javax.inject.Singleton
@@ -50,8 +50,16 @@ class CompaniesHouseStubController extends InjectedController {
       registeredOfficeAddressKey -> stubRegisteredOfficeAddress
     )
 
+    val stubLtdPartnershipProfileWithNonMatchingPostcode = Json.obj(
+      companyNameKey -> stubCompanyName,
+      companyNumberKey -> companyNumber,
+      dateOfIncorporationKey -> stubDateOfIncorporation,
+      registeredOfficeAddressKey -> (stubRegisteredOfficeAddress + ("postal_code" -> JsString("BB11BB")))
+    )
+
     Action {
       companyNumber match {
+        case "00000002" => Ok(stubLtdPartnershipProfileWithNonMatchingPostcode)
         case "00000001" => NotFound
         case _ => Ok(stubLtdPartnershipProfile)
       }

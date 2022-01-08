@@ -52,7 +52,7 @@ class PartnershipIdentificationService @Inject()(connector: PartnershipIdentific
   def storeRegistrationStatus(journeyId: String,
                               registrationStatus: RegistrationStatus
                              )(implicit hc: HeaderCarrier): Future[SuccessfullyStored.type] =
-    connector.storeData[RegistrationStatus](journeyId, RegistrationKey, registrationStatus)
+    connector.storeData[RegistrationStatus](journeyId, RegistrationKey, registrationStatus)(RegistrationStatus.format, hc)
 
   def retrieveSautr(journeyId: String)(implicit hc: HeaderCarrier): Future[Option[String]] =
     connector.retrievePartnershipInformation[String](journeyId, SautrKey)

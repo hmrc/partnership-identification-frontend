@@ -51,6 +51,30 @@ trait MockRegistrationConnector extends MockitoSugar with BeforeAndAfterEach {
     ).thenReturn(response)
   }
 
+  def mockRegisterLimitedPartnership(sautr: String, companyNumber: String)(response: Future[RegistrationStatus]): OngoingStubbing[_] = {
+    when(mockRegistrationConnector.registerLimitedPartnership(
+      ArgumentMatchers.eq(sautr),
+      ArgumentMatchers.eq(companyNumber)
+    )(ArgumentMatchers.any[HeaderCarrier])
+    ).thenReturn(response)
+  }
+
+  def mockRegisterLimitedLiabilityPartnership(sautr: String, companyNumber: String)(response: Future[RegistrationStatus]): OngoingStubbing[_] = {
+    when(mockRegistrationConnector.registerLimitedLiabilityPartnership(
+      ArgumentMatchers.eq(sautr),
+      ArgumentMatchers.eq(companyNumber)
+    )(ArgumentMatchers.any[HeaderCarrier])
+    ).thenReturn(response)
+  }
+
+  def mockRegisterScottishLimitedPartnership(sautr: String, companyNumber: String)(response: Future[RegistrationStatus]): OngoingStubbing[_] = {
+    when(mockRegistrationConnector.registerScottishLimitedPartnership(
+      ArgumentMatchers.eq(sautr),
+      ArgumentMatchers.eq(companyNumber)
+    )(ArgumentMatchers.any[HeaderCarrier])
+    ).thenReturn(response)
+  }
+
   def verifyRegisterGeneralPartnership(sautr: String): Unit = {
     verify(mockRegistrationConnector).registerGeneralPartnership(
       ArgumentMatchers.eq(sautr)
@@ -63,4 +87,24 @@ trait MockRegistrationConnector extends MockitoSugar with BeforeAndAfterEach {
     )(ArgumentMatchers.any[HeaderCarrier])
   }
 
+  def verifyRegisterLimitedPartnership(sautr: String, companyNumber: String): Unit = {
+    verify(mockRegistrationConnector).registerLimitedPartnership(
+      ArgumentMatchers.eq(sautr),
+      ArgumentMatchers.eq(companyNumber)
+    )(ArgumentMatchers.any[HeaderCarrier])
+  }
+
+  def verifyRegisterLimitedLiabilityPartnership(sautr: String, companyNumber: String): Unit = {
+    verify(mockRegistrationConnector).registerLimitedLiabilityPartnership(
+      ArgumentMatchers.eq(sautr),
+      ArgumentMatchers.eq(companyNumber)
+    )(ArgumentMatchers.any[HeaderCarrier])
+  }
+
+  def verifyRegisterScottishLimitedPartnership(sautr: String, companyNumber: String): Unit = {
+    verify(mockRegistrationConnector).registerScottishLimitedPartnership(
+      ArgumentMatchers.eq(sautr),
+      ArgumentMatchers.eq(companyNumber)
+    )(ArgumentMatchers.any[HeaderCarrier])
+  }
 }
