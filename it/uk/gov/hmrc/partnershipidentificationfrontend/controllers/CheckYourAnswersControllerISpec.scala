@@ -94,11 +94,28 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
 
   "POST /check-your-answers-business" should {
     "redirect to the start Business Verification Journey" when {
-      "the applicant's known facts successfully match" in {
+      "the applicant's known facts successfully match for a general partnership" in {
         await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJson)
-        stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> true))
+        stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> true))
+        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(OK)
+
+        lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
+
+        result must have {
+          httpStatus(SEE_OTHER)
+          redirectUri(routes.BusinessVerificationController.startBusinessVerificationJourney(testJourneyId).url)
+        }
+
+        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)
+      }
+      "the applicant's known facts successfully match for an incorporated partnership" in {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile)
+        stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> true))
+        stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> true))
         stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(OK)
 
         lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
@@ -118,7 +135,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = false)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJson)
-          stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> true))
+          stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> true))
           stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(OK)
 
           lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
@@ -134,7 +151,60 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           await(insertJourneyConfig(testJourneyId, testInternalId, testScottishPartnershipJourneyConfig(businessVerificationCheck = false)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJson)
-          stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> true))
+          stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> true))
+          stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(OK)
+
+          lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
+
+          result must have {
+            httpStatus(SEE_OTHER)
+            redirectUri(routes.RegistrationController.register(testJourneyId).url)
+          }
+
+          verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)
+        }
+        "the business entity is a limited Partnership" in {
+          await(insertJourneyConfig(testJourneyId, testInternalId, testLimitedPartnershipJourneyConfig(businessVerificationCheck = false)))
+          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+          stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile)
+          stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> true))
+          stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> true))
+          stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(OK)
+
+          lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
+
+          result must have {
+            httpStatus(SEE_OTHER)
+            redirectUri(routes.RegistrationController.register(testJourneyId).url)
+          }
+
+          verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)
+        }
+
+        "the business entity is a limited liability Partnership" in {
+          await(insertJourneyConfig(testJourneyId, testInternalId, testLimitedLiabilityPartnershipJourneyConfig(businessVerificationCheck = false)))
+          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+          stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile)
+          stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> true))
+          stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> true))
+          stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(OK)
+
+          lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
+
+          result must have {
+            httpStatus(SEE_OTHER)
+            redirectUri(routes.RegistrationController.register(testJourneyId).url)
+          }
+
+          verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)
+        }
+
+        "the business entity is a Scottish limited Partnership" in {
+          await(insertJourneyConfig(testJourneyId, testInternalId, testScottishLimitedPartnershipJourneyConfig(businessVerificationCheck = false)))
+          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+          stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile)
+          stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> true))
+          stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> true))
           stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(OK)
 
           lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
@@ -170,7 +240,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
             )
           )
         )
-        stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> false))
+        stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> false))
         stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
         stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)(OK)
         stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
@@ -196,7 +266,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         }
       }
 
-      "the applicant does not have a sautr" in {
+      "the applicant does not have an sautr" in {
         await(insertJourneyConfig(
           testJourneyId,
           testInternalId,
@@ -224,13 +294,15 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         }
 
         verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
-        verifyAuditDetail(Json.obj(
-          "isMatch" -> false,
-          "businessType" -> "General Partnership",
-          "VerificationStatus" -> "Not Enough Information to challenge",
-          "RegisterApiStatus" -> "not called",
-          "callingService" -> testCallingServiceName
-        ))
+        eventually {
+          verifyAuditDetail(Json.obj(
+            "isMatch" -> false,
+            "businessType" -> "General Partnership",
+            "VerificationStatus" -> "Not Enough Information to challenge",
+            "RegisterApiStatus" -> "not called",
+            "callingService" -> testCallingServiceName
+          ))
+        }
       }
 
       "the business entity Limited Partnership has a Company Profile stored and the identifiersMatch is false" in {
@@ -241,7 +313,8 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         )
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile)
-        stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> true))
+        stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> false))
+        stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> false))
         stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
         stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)(OK)
         stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
@@ -254,7 +327,9 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         }
 
         verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
-        verifyAuditDetail(expectedAudit = testLimitedPartnershipAuditJson(businessType = "Limited Partnership"))
+        eventually {
+          verifyAuditDetail(expectedAudit = testLimitedPartnershipAuditJson(businessType = "Limited Partnership"))
+        }
       }
 
       "the business entity Limited Liability Partnership has a Company Profile stored and the identifiersMatch is false" in {
@@ -265,7 +340,8 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         ))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile)
-        stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> true))
+        stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> false))
+        stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> false))
         stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
         stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)(OK)
         stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
@@ -278,7 +354,9 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         }
 
         verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
-        verifyAuditDetail(expectedAudit = testLimitedPartnershipAuditJson(businessType = "Limited Liability Partnership"))
+        eventually {
+          verifyAuditDetail(expectedAudit = testLimitedPartnershipAuditJson(businessType = "Limited Liability Partnership"))
+        }
       }
 
       "the business entity Scottish Limited Partnership has a Company Profile stored and the identifiersMatch is false" in {
@@ -289,7 +367,8 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         ))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile)
-        stubValidate(testPartnershipInformation)(OK, body = Json.obj("identifiersMatch" -> true))
+        stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> false))
+        stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> false))
         stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
         stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)(OK)
         stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
@@ -302,7 +381,9 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         }
 
         verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
-        verifyAuditDetail(expectedAudit = testLimitedPartnershipAuditJson(businessType = "Scottish LTD Partnership"))
+        eventually {
+          verifyAuditDetail(expectedAudit = testLimitedPartnershipAuditJson(businessType = "Scottish LTD Partnership"))
+        }
       }
     }
 

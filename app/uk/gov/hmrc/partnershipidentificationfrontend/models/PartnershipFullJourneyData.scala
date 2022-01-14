@@ -42,7 +42,7 @@ object PartnershipFullJourneyData {
       (JsPath \ CompanyProfileKey).readNullable[CompanyProfile] and
       (JsPath \ IdentifiersMatchKey).read[Boolean] and
       (JsPath \ BusinessVerificationKey).readNullable[BusinessVerificationStatus] and
-      (JsPath \ RegistrationStatusKey).read[RegistrationStatus]
+      (JsPath \ RegistrationStatusKey).read[RegistrationStatus](RegistrationStatus.format)
     ) (PartnershipFullJourneyData.apply _)
 
   val writes: OWrites[PartnershipFullJourneyData] = (
@@ -51,7 +51,7 @@ object PartnershipFullJourneyData {
       (JsPath \ CompanyProfileKey).writeNullable[CompanyProfile] and
       (JsPath \ IdentifiersMatchKey).write[Boolean] and
       (JsPath \ BusinessVerificationKey).writeNullable[BusinessVerificationStatus] and
-      (JsPath \ RegistrationStatusKey).write[RegistrationStatus]
+      (JsPath \ RegistrationStatusKey).write[RegistrationStatus](RegistrationStatus.format)
     ) (unlift(PartnershipFullJourneyData.unapply))
 
   implicit val format: OFormat[PartnershipFullJourneyData] = OFormat(reads, writes)

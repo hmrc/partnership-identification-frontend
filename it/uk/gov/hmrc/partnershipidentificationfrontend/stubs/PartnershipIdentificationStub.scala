@@ -17,12 +17,12 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.stubs
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.libs.json.{JsObject, JsString, JsValue, Json}
+import play.api.libs.json.{JsObject, JsString, JsValue, Json, OFormat}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, CompanyProfile, RegistrationStatus}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.{WiremockHelper, WiremockMethods}
 
 trait PartnershipIdentificationStub extends WiremockMethods {
-
+  implicit private val RegistrationStatusFormat: OFormat[RegistrationStatus] = RegistrationStatus.format
 
   def stubStoreSautr(journeyId: String, sautr: String)(status: Int): StubMapping =
     when(method = PUT,

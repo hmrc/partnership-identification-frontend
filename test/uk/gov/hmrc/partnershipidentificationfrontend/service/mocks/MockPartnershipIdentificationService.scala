@@ -23,7 +23,7 @@ import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, PartnershipInformation, RegistrationStatus}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, CompanyProfile, PartnershipInformation, RegistrationStatus}
 import uk.gov.hmrc.partnershipidentificationfrontend.service.PartnershipIdentificationService
 
 import scala.concurrent.Future
@@ -41,6 +41,13 @@ trait MockPartnershipIdentificationService extends MockitoSugar with BeforeAndAf
   def mockRetrieveSautr(journeyId: String)
                        (response: Future[Option[String]]): OngoingStubbing[_] =
     when(mockPartnershipIdentificationService.retrieveSautr(
+      ArgumentMatchers.eq(journeyId)
+    )(ArgumentMatchers.any[HeaderCarrier])
+    ).thenReturn(response)
+
+  def mockRetrieveCompanyProfile(journeyId: String)
+                       (response: Future[Option[CompanyProfile]]): OngoingStubbing[_] =
+    when(mockPartnershipIdentificationService.retrieveCompanyProfile(
       ArgumentMatchers.eq(journeyId)
     )(ArgumentMatchers.any[HeaderCarrier])
     ).thenReturn(response)
@@ -67,6 +74,11 @@ trait MockPartnershipIdentificationService extends MockitoSugar with BeforeAndAf
     )(ArgumentMatchers.any[HeaderCarrier])
     ).thenReturn(response)
 
+  def verifyStoreIdentifiersMatch(journeyId: String, identifiersMatch: Boolean): Unit =
+    verify(mockPartnershipIdentificationService).storeIdentifiersMatch(
+      ArgumentMatchers.eq(journeyId),
+      ArgumentMatchers.eq(identifiersMatch)
+    )(ArgumentMatchers.any[HeaderCarrier])
 
   def mockStoreBusinessVerificationResponse(journeyId: String, businessVerificationStatus: BusinessVerificationStatus)
                                            (response: Future[SuccessfullyStored.type]): OngoingStubbing[_] =
@@ -75,6 +87,12 @@ trait MockPartnershipIdentificationService extends MockitoSugar with BeforeAndAf
       ArgumentMatchers.eq(businessVerificationStatus)
     )(ArgumentMatchers.any[HeaderCarrier])
     ).thenReturn(response)
+
+  def verifyStoreBusinessVerificationResponse(journeyId: String, businessVerificationStatus: BusinessVerificationStatus): Unit =
+    verify(mockPartnershipIdentificationService).storeBusinessVerificationStatus(
+      ArgumentMatchers.eq(journeyId),
+      ArgumentMatchers.eq(businessVerificationStatus)
+    )(ArgumentMatchers.any[HeaderCarrier])
 
   def mockRetrievePartnershipInformation(journeyId: String)(response: Future[Option[PartnershipInformation]]): OngoingStubbing[_] =
     when(mockPartnershipIdentificationService.retrievePartnershipInformation(

@@ -17,52 +17,78 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 
 import play.api.http.Status.OK
-import play.api.libs.json.{JsObject, Json, Writes}
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse, InternalServerException}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.connectors.RegistrationHttpParser.RegistrationHttpReads
+import uk.gov.hmrc.partnershipidentificationfrontend.connectors.RegistrationHttpParser._
 import uk.gov.hmrc.partnershipidentificationfrontend.models.RegistrationStatus
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class RegistrationConnector @Inject()(httpClient: HttpClient,
-                                      appConfig: AppConfig
-                                     )(implicit ec: ExecutionContext) {
-
-  private def buildRegisterJson(sautr: String): JsObject = Json.obj("sautr" -> sautr)
-
-  def registerGeneralPartnership(sautr: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
-    httpClient.POST[JsObject, RegistrationStatus](appConfig.registerGeneralPartnershipUrl, buildRegisterJson(sautr))(
-      implicitly[Writes[JsObject]],
-      RegistrationHttpReads,
-      hc,
-      ec
-    )
-
-  def registerScottishPartnership(sautr: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
-    httpClient.POST[JsObject, RegistrationStatus](appConfig.registerScottishPartnershipUrl, buildRegisterJson(sautr))(
-      implicitly[Writes[JsObject]],
-      RegistrationHttpReads,
-      hc,
-      ec
-    )
-
-}
-
 object RegistrationHttpParser {
   val registrationKey = "registration"
+  val sautrKey = "sautr"
+  val companyNumberKey = "companyNumber"
 
   implicit object RegistrationHttpReads extends HttpReads[RegistrationStatus] {
     override def read(method: String, url: String, response: HttpResponse): RegistrationStatus = {
       response.status match {
         case OK =>
-          (response.json \ registrationKey).as[RegistrationStatus]
+          (response.json \ registrationKey).as[RegistrationStatus](RegistrationStatus.format)
         case _ =>
           throw new InternalServerException(s"Unexpected response from Register API - status = ${response.status}, body = ${response.body}")
       }
     }
   }
+}
+
+class RegistrationConnector @Inject()(httpClient: HttpClient,
+                                      appConfig: AppConfig
+                                     )(implicit ec: ExecutionContext) {
+  def registerGeneralPartnership(sautr: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
+    httpClient.POST[JsObject, RegistrationStatus](
+      appConfig.registerGeneralPartnershipUrl,
+      Json.obj(
+        sautrKey -> sautr
+      )
+    )
+
+  def registerScottishPartnership(sautr: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
+    httpClient.POST[JsObject, RegistrationStatus](
+      appConfig.registerScottishPartnershipUrl,
+      Json.obj(
+        sautrKey -> sautr
+      )
+    )
+
+  def registerLimitedPartnership(sautr: String, companyNumber: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
+    httpClient.POST[JsObject, RegistrationStatus](
+      appConfig.registerLimitedPartnershipUrl,
+      Json.obj(
+        sautrKey -> sautr,
+        companyNumberKey -> companyNumber
+      )
+    )
+
+  def registerLimitedLiabilityPartnership(sautr: String, companyNumber: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
+    httpClient.POST[JsObject, RegistrationStatus](
+      appConfig.registerLimitedLiabilityPartnershipUrl,
+      Json.obj(
+        sautrKey -> sautr,
+        companyNumberKey -> companyNumber
+      )
+    )
+
+  def registerScottishLimitedPartnership(sautr: String, companyNumber: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
+    httpClient.POST[JsObject, RegistrationStatus](
+      appConfig.registerScottishLimitedPartnershipUrl,
+      Json.obj(
+        sautrKey -> sautr,
+        companyNumberKey -> companyNumber
+      )
+    )
 
 }
+

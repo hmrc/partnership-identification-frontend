@@ -40,7 +40,9 @@ trait AuditStub {
         Try(Json.parse(request.getBodyAsString)) match {
           case Success(auditJson) => auditJson \ "detail" match {
             case JsDefined(auditDetail) if auditDetail == expectedAudit => exactMatch()
-            case _ => noMatch()
+            case fail => {
+              noMatch()
+            }
           }
           case _ => noMatch()
         }

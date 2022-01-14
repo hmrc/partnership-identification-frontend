@@ -87,6 +87,9 @@ class AppConfig @Inject()(config: Configuration,
 
   lazy val registerGeneralPartnershipUrl: String = s"$backendUrl/partnership-identification/register-general-partnership"
   lazy val registerScottishPartnershipUrl: String = s"$backendUrl/partnership-identification/register-scottish-partnership"
+  lazy val registerLimitedPartnershipUrl: String = s"$backendUrl/partnership-identification/register-limited-partnership"
+  lazy val registerLimitedLiabilityPartnershipUrl: String = s"$backendUrl/partnership-identification/register-limited-liability-partnership"
+  lazy val registerScottishLimitedPartnershipUrl: String = s"$backendUrl/partnership-identification/register-scottish-limited-partnership"
 
   private lazy val incorporationInformationUrl = servicesConfig.baseUrl("incorporation-information")
 

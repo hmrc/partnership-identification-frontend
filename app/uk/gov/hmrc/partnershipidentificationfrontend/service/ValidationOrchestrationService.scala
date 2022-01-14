@@ -27,56 +27,46 @@ class ValidationOrchestrationService @Inject()(partnershipIdentificationService:
                                                validatePartnershipInformationService: ValidatePartnershipInformationService
                                               )(implicit ec: ExecutionContext) {
 
-  def orchestrate(journeyId: String, businessVerificationCheck: Boolean)(implicit hc: HeaderCarrier): Future[ValidationResponse] =
+  def orchestrate(journeyId: String, businessVerificationCheck: Boolean)(implicit hc: HeaderCarrier): Future[ValidationResponse] = {
     partnershipIdentificationService.retrievePartnershipInformation(journeyId).flatMap {
-      case Some(PartnershipInformation(Some(SaInformation(sautr, postcode)), Some(_))) =>
-        validatePartnershipInformationService.validateIdentifiers(sautr, postcode).flatMap {
-          _ =>
-            for {
-              _ <- partnershipIdentificationService.storeIdentifiersMatch(journeyId, identifiersMatch = false)
-              _ <- if (businessVerificationCheck) {
-                partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
-              } else {
-                Future.successful(())
-              }
-              _ <- partnershipIdentificationService.storeRegistrationStatus(journeyId, RegistrationNotCalled)
-            } yield
-              IdentifiersMismatch
-        }
-      case Some(PartnershipInformation(Some(SaInformation(sautr, postcode)), _)) =>
-        validatePartnershipInformationService.validateIdentifiers(sautr, postcode).flatMap {
-          identifiersMatch =>
-            if (identifiersMatch) {
-              partnershipIdentificationService.storeIdentifiersMatch(journeyId, identifiersMatch = true).map {
-                _ => IdentifiersMatched
-              }
+      case Some(PartnershipInformation(optSaInformation, optCompanyProfile)) => for {
+        identifiersMatch <- (optSaInformation, optCompanyProfile) match {
+          case (Some(SaInformation(sautr, postcode)), None) =>
+            validatePartnershipInformationService.validateIdentifiers(sautr, postcode)
+          case (Some(SaInformation(sautr, postcode)), Some(companyProfile)) =>
+            companyProfile.optRegisteredOfficePostcode match {
+              case Some(registeredOfficePostcode) => for {
+                saPostcodeMatches <- validatePartnershipInformationService.validateIdentifiers(sautr, postcode)
+                registeredOfficePostcodeMatches <- validatePartnershipInformationService.validateIdentifiers(sautr, registeredOfficePostcode)
+              } yield saPostcodeMatches && registeredOfficePostcodeMatches
+              case None =>
+                Future.successful(false) //If there is no address held on Companies House, fail to match
             }
-            else {
-              for {
-                _ <- partnershipIdentificationService.storeIdentifiersMatch(journeyId, identifiersMatch = false)
-                _ <- if (businessVerificationCheck) {
-                  partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
-                } else {
-                  Future.successful(())
-                }
-                _ <- partnershipIdentificationService.storeRegistrationStatus(journeyId, RegistrationNotCalled)
-              } yield
-                IdentifiersMismatch
-            }
+          case (None, _) =>
+            Future.successful(false)
         }
-      case Some(PartnershipInformation(None, _)) =>
-        for {
-          _ <- partnershipIdentificationService.storeIdentifiersMatch(journeyId, identifiersMatch = false)
-          _ <- if (businessVerificationCheck) {
-            partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
-          } else {
-            Future.successful(())
-          }
-          _ <- partnershipIdentificationService.storeRegistrationStatus(journeyId, RegistrationNotCalled)
-        } yield
-          NoSautrProvided
+        _ <- partnershipIdentificationService.storeIdentifiersMatch(journeyId, identifiersMatch = identifiersMatch)
+        _ <- if (businessVerificationCheck && !identifiersMatch) {
+          partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
+        } else {
+          Future.successful(())
+        }
+        _ <- if (!identifiersMatch) {
+          partnershipIdentificationService.storeRegistrationStatus(journeyId, RegistrationNotCalled)
+        } else {
+          Future.successful(())
+        }
+      } yield if (optSaInformation.isDefined) {
+        if (identifiersMatch) {
+          IdentifiersMatched
+        } else {
+          IdentifiersMismatch
+        }
+      } else {
+        NoSautrProvided
+      }
       case _ =>
         throw new InternalServerException(s"No data stored for journeyId: $journeyId")
     }
-
+  }
 }
