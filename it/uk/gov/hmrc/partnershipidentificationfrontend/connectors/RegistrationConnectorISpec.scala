@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 
-import play.api.test.Helpers.{OK, await, defaultAwaitTimeout}
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.{testCompanyNumber, testSafeId, testSautr}
+import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{Registered, RegistrationFailed}
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.RegisterStub
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
@@ -32,9 +32,9 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
   "registerGeneralPartnership" should {
     "return Registered" when {
       "the registration has been successful" in {
-        stubRegisterGeneralPartnership(testSautr)(OK, Registered(testSafeId))
+        stubRegisterGeneralPartnership(testSautr, testRegime)(OK, Registered(testSafeId))
 
-        val result = await(registrationConnector.registerGeneralPartnership(testSautr))
+        val result = await(registrationConnector.registerGeneralPartnership(testSautr, testRegime))
 
         result mustBe Registered(testSafeId)
       }
@@ -42,9 +42,9 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
     "return RegistrationFailed" when {
       "the registration has not been successful" in {
-        stubRegisterGeneralPartnership(testSautr)(OK, RegistrationFailed)
+        stubRegisterGeneralPartnership(testSautr, testRegime)(OK, RegistrationFailed)
 
-        val result = await(registrationConnector.registerGeneralPartnership(testSautr))
+        val result = await(registrationConnector.registerGeneralPartnership(testSautr, testRegime))
 
         result mustBe RegistrationFailed
       }
@@ -54,9 +54,9 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
   "registerScottishPartnership" should {
     "return Registered" when {
       "the registration has been successful" in {
-        stubRegisterScottishPartnership(testSautr)(OK, Registered(testSafeId))
+        stubRegisterScottishPartnership(testSautr, testRegime)(OK, Registered(testSafeId))
 
-        val result = await(registrationConnector.registerScottishPartnership(testSautr))
+        val result = await(registrationConnector.registerScottishPartnership(testSautr, testRegime))
 
         result mustBe Registered(testSafeId)
       }
@@ -64,9 +64,9 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
     "return RegistrationFailed" when {
       "the registration has not been successful" in {
-        stubRegisterScottishPartnership(testSautr)(OK, RegistrationFailed)
+        stubRegisterScottishPartnership(testSautr, testRegime)(OK, RegistrationFailed)
 
-        val result = await(registrationConnector.registerScottishPartnership(testSautr))
+        val result = await(registrationConnector.registerScottishPartnership(testSautr, testRegime))
 
         result mustBe RegistrationFailed
       }
@@ -76,9 +76,9 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
   "registerLimitedPartnership" should {
     "return Registered" when {
       "the registration has been successful" in {
-        stubRegisterLimitedPartnership(testSautr, testCompanyNumber)(OK, Registered(testSafeId))
+        stubRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, Registered(testSafeId))
 
-        val result = await(registrationConnector.registerLimitedPartnership(testSautr, testCompanyNumber))
+        val result = await(registrationConnector.registerLimitedPartnership(testSautr, testCompanyNumber, testRegime))
 
         result mustBe Registered(testSafeId)
       }
@@ -86,9 +86,9 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
     "return RegistrationFailed" when {
       "the registration has not been successful" in {
-        stubRegisterLimitedPartnership(testSautr, testCompanyNumber)(OK, RegistrationFailed)
+        stubRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, RegistrationFailed)
 
-        val result = await(registrationConnector.registerLimitedPartnership(testSautr, testCompanyNumber))
+        val result = await(registrationConnector.registerLimitedPartnership(testSautr, testCompanyNumber, testRegime))
 
         result mustBe RegistrationFailed
       }
@@ -98,9 +98,9 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
   "registerLimitedLiabilityPartnership" should {
     "return Registered" when {
       "the registration has been successful" in {
-        stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber)(OK, Registered(testSafeId))
+        stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(OK, Registered(testSafeId))
 
-        val result = await(registrationConnector.registerLimitedLiabilityPartnership(testSautr, testCompanyNumber))
+        val result = await(registrationConnector.registerLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime))
 
         result mustBe Registered(testSafeId)
       }
@@ -108,9 +108,9 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
     "return RegistrationFailed" when {
       "the registration has not been successful" in {
-        stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber)(OK, RegistrationFailed)
+        stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(OK, RegistrationFailed)
 
-        val result = await(registrationConnector.registerLimitedLiabilityPartnership(testSautr, testCompanyNumber))
+        val result = await(registrationConnector.registerLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime))
 
         result mustBe RegistrationFailed
       }
@@ -120,9 +120,9 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
   "registerScottishLimitedPartnership" should {
     "return Registered" when {
       "the registration has been successful" in {
-        stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber)(OK, Registered(testSafeId))
+        stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, Registered(testSafeId))
 
-        val result = await(registrationConnector.registerScottishLimitedPartnership(testSautr, testCompanyNumber))
+        val result = await(registrationConnector.registerScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime))
 
         result mustBe Registered(testSafeId)
       }
@@ -130,9 +130,9 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
     "return RegistrationFailed" when {
       "the registration has not been successful" in {
-        stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber)(OK, RegistrationFailed)
+        stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, RegistrationFailed)
 
-        val result = await(registrationConnector.registerScottishLimitedPartnership(testSautr, testCompanyNumber))
+        val result = await(registrationConnector.registerScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime))
 
         result mustBe RegistrationFailed
       }

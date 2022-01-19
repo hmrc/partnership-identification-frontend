@@ -47,46 +47,51 @@ object RegistrationHttpParser {
 class RegistrationConnector @Inject()(httpClient: HttpClient,
                                       appConfig: AppConfig
                                      )(implicit ec: ExecutionContext) {
-  def registerGeneralPartnership(sautr: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
+  def registerGeneralPartnership(sautr: String, regime: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
     httpClient.POST[JsObject, RegistrationStatus](
       appConfig.registerGeneralPartnershipUrl,
       Json.obj(
-        sautrKey -> sautr
+        sautrKey -> sautr,
+        "regime" -> regime
       )
     )
 
-  def registerScottishPartnership(sautr: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
+  def registerScottishPartnership(sautr: String, regime: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
     httpClient.POST[JsObject, RegistrationStatus](
       appConfig.registerScottishPartnershipUrl,
       Json.obj(
-        sautrKey -> sautr
+        sautrKey -> sautr,
+        "regime" -> regime
       )
     )
 
-  def registerLimitedPartnership(sautr: String, companyNumber: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
+  def registerLimitedPartnership(sautr: String, companyNumber: String, regime: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
     httpClient.POST[JsObject, RegistrationStatus](
       appConfig.registerLimitedPartnershipUrl,
       Json.obj(
         sautrKey -> sautr,
-        companyNumberKey -> companyNumber
+        companyNumberKey -> companyNumber,
+        "regime" -> regime
       )
     )
 
-  def registerLimitedLiabilityPartnership(sautr: String, companyNumber: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
+  def registerLimitedLiabilityPartnership(sautr: String, companyNumber: String, regime: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
     httpClient.POST[JsObject, RegistrationStatus](
       appConfig.registerLimitedLiabilityPartnershipUrl,
       Json.obj(
         sautrKey -> sautr,
-        companyNumberKey -> companyNumber
+        companyNumberKey -> companyNumber,
+        "regime" -> regime
       )
     )
 
-  def registerScottishLimitedPartnership(sautr: String, companyNumber: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
+  def registerScottishLimitedPartnership(sautr: String, companyNumber: String, regime: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
     httpClient.POST[JsObject, RegistrationStatus](
       appConfig.registerScottishLimitedPartnershipUrl,
       Json.obj(
         sautrKey -> sautr,
-        companyNumberKey -> companyNumber
+        companyNumberKey -> companyNumber,
+        "regime" -> regime
       )
     )
 

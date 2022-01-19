@@ -22,11 +22,12 @@ import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, Page
 
 object Utils {
 
-  def defaultJourneyConfigFor(appConfig: AppConfig, pageConfig: PageConfig, partnershipType: PartnershipType): JourneyConfig = JourneyConfig(
+  def defaultJourneyConfigFor(appConfig: AppConfig, pageConfig: PageConfig, partnershipType: PartnershipType, regime: String): JourneyConfig = JourneyConfig(
     continueUrl = s"${appConfig.selfUrl}/identify-your-partnership/test-only/retrieve-journey",
     pageConfig = pageConfig,
     businessVerificationCheck = true,
-    partnershipType = partnershipType
+    partnershipType = partnershipType,
+    regime = regime
   )
 
   def defaultPageConfig(appConfig: AppConfig): PageConfig = PageConfig(

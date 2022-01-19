@@ -20,10 +20,10 @@ import org.scalatest.OptionValues._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers._
 import play.api.data.Form
-import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants.{testContinueUrl, testDefaultGeneralPartnershipJourneyConfig, testDeskProServiceId, testSignOutUrl}
+import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.LimitedLiabilityPartnership
-import uk.gov.hmrc.partnershipidentificationfrontend.testonly.forms.TestCreateJourneyForm.{accessibilityUrl, businessVerificationCheck, continueUrl, deskProServiceId, signOutUrl}
+import uk.gov.hmrc.partnershipidentificationfrontend.testonly.forms.TestCreateJourneyForm._
 
 class TestCreateJourneyFormSpec extends AnyFlatSpec {
 
@@ -32,7 +32,8 @@ class TestCreateJourneyFormSpec extends AnyFlatSpec {
     TestCreateJourneyForm.businessVerificationCheck -> "true",
     deskProServiceId -> testDeskProServiceId,
     signOutUrl -> testSignOutUrl,
-    accessibilityUrl -> accessibilityUrl
+    accessibilityUrl -> accessibilityUrl,
+    regime -> testRegime
   )
 
   private val formUnderTest: Form[JourneyConfig] = TestCreateJourneyForm.form(LimitedLiabilityPartnership)

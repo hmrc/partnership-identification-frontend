@@ -33,7 +33,8 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
     JourneyController.continueUrlKey -> testContinueUrl,
     JourneyController.deskProServiceIdKey -> testDeskProServiceId,
     JourneyController.signOutUrlKey -> testSignOutUrl,
-    JourneyController.accessibilityUrlKey -> testAccessibilityUrl
+    JourneyController.accessibilityUrlKey -> testAccessibilityUrl,
+    JourneyController.regimeKey -> testRegime
   )
 
   val expectedBusinessVerificationCheckJsonKey = "businessVerificationCheck"
@@ -52,7 +53,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
           (result.json \ "journeyStartUrl").as[String] must include(expectedJourneyStartUrl.url)
 
           await(journeyConfigRepository.findById(testJourneyId)) mustBe
-            Some(testJourneyConfig(expectedJourneyConfigPartnershipType, businessVerificationCheck = true))
+            Some(testJourneyConfig(expectedJourneyConfigPartnershipType, businessVerificationCheck = true, regime = testRegime))
           await(journeyConfigRepository.drop)
         }
 
@@ -97,7 +98,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
             (result.json \ "journeyStartUrl").as[String] must include(expectedJourneyStartUrl.url)
 
-            val expectedJourneyConfig = testJourneyConfig(expectedJourneyConfigPartnershipType, businessVerificationCheck = true)
+            val expectedJourneyConfig = testJourneyConfig(expectedJourneyConfigPartnershipType, businessVerificationCheck = true, regime = testRegime)
               .copy(businessVerificationCheck = false)
 
             await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(expectedJourneyConfig)
@@ -147,7 +148,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
             (result.json \ "journeyStartUrl").as[String] must include(expectedJourneyStartUrl.url)
 
-            await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testJourneyConfig(expectedJourneyConfigPartnershipType, businessVerificationCheck = true))
+            await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testJourneyConfig(expectedJourneyConfigPartnershipType, businessVerificationCheck = true, regime = testRegime))
             await(journeyConfigRepository.drop)
           }
 

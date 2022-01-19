@@ -37,74 +37,84 @@ trait MockRegistrationConnector extends MockitoSugar with BeforeAndAfterEach {
     reset(mockRegistrationConnector)
   }
 
-  def mockRegisterGeneralPartnership(sautr: String)(response: Future[RegistrationStatus]): OngoingStubbing[_] = {
+  def mockRegisterGeneralPartnership(sautr: String, regime: String)(response: Future[RegistrationStatus]): OngoingStubbing[_] = {
     when(mockRegistrationConnector.registerGeneralPartnership(
-      ArgumentMatchers.eq(sautr)
+      ArgumentMatchers.eq(sautr),
+      ArgumentMatchers.eq(regime)
     )(ArgumentMatchers.any[HeaderCarrier])
     ).thenReturn(response)
   }
 
-  def mockRegisterScottishPartnership(sautr: String)(response: Future[RegistrationStatus]): OngoingStubbing[_] = {
+  def mockRegisterScottishPartnership(sautr: String, regime: String)(response: Future[RegistrationStatus]): OngoingStubbing[_] = {
     when(mockRegistrationConnector.registerScottishPartnership(
-      ArgumentMatchers.eq(sautr)
+      ArgumentMatchers.eq(sautr),
+      ArgumentMatchers.eq(regime)
     )(ArgumentMatchers.any[HeaderCarrier])
     ).thenReturn(response)
   }
 
-  def mockRegisterLimitedPartnership(sautr: String, companyNumber: String)(response: Future[RegistrationStatus]): OngoingStubbing[_] = {
+  def mockRegisterLimitedPartnership(sautr: String, companyNumber: String, regime: String)(response: Future[RegistrationStatus]): OngoingStubbing[_] = {
     when(mockRegistrationConnector.registerLimitedPartnership(
       ArgumentMatchers.eq(sautr),
-      ArgumentMatchers.eq(companyNumber)
+      ArgumentMatchers.eq(companyNumber),
+      ArgumentMatchers.eq(regime)
     )(ArgumentMatchers.any[HeaderCarrier])
     ).thenReturn(response)
   }
 
-  def mockRegisterLimitedLiabilityPartnership(sautr: String, companyNumber: String)(response: Future[RegistrationStatus]): OngoingStubbing[_] = {
+  def mockRegisterLimitedLiabilityPartnership(sautr: String, companyNumber: String, regime: String)(response: Future[RegistrationStatus]): OngoingStubbing[_] = {
     when(mockRegistrationConnector.registerLimitedLiabilityPartnership(
       ArgumentMatchers.eq(sautr),
-      ArgumentMatchers.eq(companyNumber)
+      ArgumentMatchers.eq(companyNumber),
+      ArgumentMatchers.eq(regime)
     )(ArgumentMatchers.any[HeaderCarrier])
     ).thenReturn(response)
   }
 
-  def mockRegisterScottishLimitedPartnership(sautr: String, companyNumber: String)(response: Future[RegistrationStatus]): OngoingStubbing[_] = {
+  def mockRegisterScottishLimitedPartnership(sautr: String, companyNumber: String, regime: String)(response: Future[RegistrationStatus]): OngoingStubbing[_] = {
     when(mockRegistrationConnector.registerScottishLimitedPartnership(
       ArgumentMatchers.eq(sautr),
-      ArgumentMatchers.eq(companyNumber)
+      ArgumentMatchers.eq(companyNumber),
+      ArgumentMatchers.eq(regime)
     )(ArgumentMatchers.any[HeaderCarrier])
     ).thenReturn(response)
   }
 
-  def verifyRegisterGeneralPartnership(sautr: String): Unit = {
+  def verifyRegisterGeneralPartnership(sautr: String, regime: String): Unit = {
     verify(mockRegistrationConnector).registerGeneralPartnership(
-      ArgumentMatchers.eq(sautr)
+      ArgumentMatchers.eq(sautr),
+      ArgumentMatchers.eq(regime)
     )(ArgumentMatchers.any[HeaderCarrier])
   }
 
-  def verifyRegisterScottishPartnership(sautr: String): Unit = {
+  def verifyRegisterScottishPartnership(sautr: String, regime: String): Unit = {
     verify(mockRegistrationConnector).registerScottishPartnership(
-      ArgumentMatchers.eq(sautr)
+      ArgumentMatchers.eq(sautr),
+      ArgumentMatchers.eq(regime)
     )(ArgumentMatchers.any[HeaderCarrier])
   }
 
-  def verifyRegisterLimitedPartnership(sautr: String, companyNumber: String): Unit = {
+  def verifyRegisterLimitedPartnership(sautr: String, companyNumber: String, regime: String): Unit = {
     verify(mockRegistrationConnector).registerLimitedPartnership(
       ArgumentMatchers.eq(sautr),
-      ArgumentMatchers.eq(companyNumber)
+      ArgumentMatchers.eq(companyNumber),
+      ArgumentMatchers.eq(regime)
     )(ArgumentMatchers.any[HeaderCarrier])
   }
 
-  def verifyRegisterLimitedLiabilityPartnership(sautr: String, companyNumber: String): Unit = {
+  def verifyRegisterLimitedLiabilityPartnership(sautr: String, companyNumber: String, regime: String): Unit = {
     verify(mockRegistrationConnector).registerLimitedLiabilityPartnership(
       ArgumentMatchers.eq(sautr),
-      ArgumentMatchers.eq(companyNumber)
+      ArgumentMatchers.eq(companyNumber),
+      ArgumentMatchers.eq(regime)
     )(ArgumentMatchers.any[HeaderCarrier])
   }
 
-  def verifyRegisterScottishLimitedPartnership(sautr: String, companyNumber: String): Unit = {
+  def verifyRegisterScottishLimitedPartnership(sautr: String, companyNumber: String, regime: String): Unit = {
     verify(mockRegistrationConnector).registerScottishLimitedPartnership(
       ArgumentMatchers.eq(sautr),
-      ArgumentMatchers.eq(companyNumber)
+      ArgumentMatchers.eq(companyNumber),
+      ArgumentMatchers.eq(regime)
     )(ArgumentMatchers.any[HeaderCarrier])
   }
 }

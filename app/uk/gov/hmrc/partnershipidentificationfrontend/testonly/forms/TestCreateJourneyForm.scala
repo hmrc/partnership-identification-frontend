@@ -34,6 +34,7 @@ object TestCreateJourneyForm {
   val alphanumericRegex = "^[A-Z0-9]*$"
   val signOutUrl = "signOutUrl"
   val accessibilityUrl = "accessibilityUrl"
+  val regime = "regime"
 
   def form(partnershipType: PartnershipType): Form[JourneyConfig] = {
     Form(mapping(
@@ -42,13 +43,15 @@ object TestCreateJourneyForm {
       businessVerificationCheck -> boolean,
       deskProServiceId -> text.verifying(deskProServiceIdEmpty),
       signOutUrl -> text.verifying(signOutUrlEmpty),
-      accessibilityUrl -> text.verifying(accessibilityUrlEmpty)
-    )((continueUrl, serviceName, businessVerificationCheck, deskProServiceId, signOutUrl, accessibilityUrl) =>
+      accessibilityUrl -> text.verifying(accessibilityUrlEmpty),
+      regime -> text.verifying(regimeEmpty)
+    )((continueUrl, serviceName, businessVerificationCheck, deskProServiceId, signOutUrl, accessibilityUrl, regime) =>
       JourneyConfig(
         continueUrl,
         businessVerificationCheck,
         pageConfig = PageConfig(serviceName, deskProServiceId, signOutUrl, accessibilityUrl),
-        partnershipType = partnershipType
+        partnershipType = partnershipType,
+        regime
       ))(journeyConfig =>
       Some(
         journeyConfig.continueUrl,
@@ -56,7 +59,8 @@ object TestCreateJourneyForm {
         journeyConfig.businessVerificationCheck,
         journeyConfig.pageConfig.deskProServiceId,
         journeyConfig.pageConfig.signOutUrl,
-        journeyConfig.pageConfig.accessibilityUrl
+        journeyConfig.pageConfig.accessibilityUrl,
+        journeyConfig.regime
       )))
   }
 
@@ -85,6 +89,13 @@ object TestCreateJourneyForm {
     accessibilityUrl => validate(
       constraint = accessibilityUrl.isEmpty,
       errMsg = "Accessibility Url is not entered"
+    )
+  )
+
+  def regimeEmpty: Constraint[String] = Constraint("regime.not_entered")(
+    regime => validate(
+      constraint = regime.isEmpty,
+      errMsg = "Regime is not entered"
     )
   )
 

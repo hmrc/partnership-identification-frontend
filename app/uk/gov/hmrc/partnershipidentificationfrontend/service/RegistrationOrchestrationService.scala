@@ -31,7 +31,8 @@ class RegistrationOrchestrationService @Inject()(partnershipIdentificationServic
 
   def register(journeyId: String,
                partnershipType: PartnershipType,
-               businessVerificationCheck: Boolean)(implicit hc: HeaderCarrier): Future[RegistrationStatus] = for {
+               businessVerificationCheck: Boolean,
+               regime: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] = for {
     registerEntity <-
       if (businessVerificationCheck) {
       partnershipIdentificationService.retrieveBusinessVerificationStatus(journeyId).map {
@@ -48,15 +49,15 @@ class RegistrationOrchestrationService @Inject()(partnershipIdentificationServic
           optCompanyProfile <- partnershipIdentificationService.retrieveCompanyProfile(journeyId)
           registrationStatus <- (partnershipType, optSautr, optCompanyProfile) match {
             case (GeneralPartnership, Some(sautr), None) =>
-              registrationConnector.registerGeneralPartnership(sautr)
+              registrationConnector.registerGeneralPartnership(sautr, regime)
             case (ScottishPartnership, Some(sautr), None) =>
-              registrationConnector.registerScottishPartnership(sautr)
+              registrationConnector.registerScottishPartnership(sautr, regime)
             case (LimitedPartnership, Some(sautr), Some(companyProfile)) =>
-              registrationConnector.registerLimitedPartnership(sautr, companyProfile.companyNumber)
+              registrationConnector.registerLimitedPartnership(sautr, companyProfile.companyNumber, regime)
             case (LimitedLiabilityPartnership, Some(sautr), Some(companyProfile)) =>
-              registrationConnector.registerLimitedLiabilityPartnership(sautr, companyProfile.companyNumber)
+              registrationConnector.registerLimitedLiabilityPartnership(sautr, companyProfile.companyNumber, regime)
             case (ScottishLimitedPartnership, Some(sautr), Some(companyProfile)) =>
-              registrationConnector.registerScottishLimitedPartnership(sautr, companyProfile.companyNumber)
+              registrationConnector.registerScottishLimitedPartnership(sautr, companyProfile.companyNumber, regime)
             case _ =>
               throw new InternalServerException(s"Invalid registration data in the database for $journeyId")
           }

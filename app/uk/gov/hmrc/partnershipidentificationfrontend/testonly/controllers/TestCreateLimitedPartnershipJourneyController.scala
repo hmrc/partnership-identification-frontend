@@ -39,7 +39,7 @@ class TestCreateLimitedPartnershipJourneyController @Inject()(messagesController
 
   private val defaultPageConfig = Utils.defaultPageConfig(appConfig)
 
-  private val defaultJourneyConfig = Utils.defaultJourneyConfigFor(appConfig, defaultPageConfig, LimitedPartnership)
+  private val defaultJourneyConfig = Utils.defaultJourneyConfigFor(appConfig, defaultPageConfig, LimitedPartnership, regime = "VATC")
 
   val show: Action[AnyContent] = Action.async {
     implicit request =>
