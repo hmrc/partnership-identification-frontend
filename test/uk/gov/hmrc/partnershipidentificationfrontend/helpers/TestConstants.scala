@@ -33,6 +33,7 @@ object TestConstants {
   val testRegisteredOfficePostcode: String = "BB11BB"
   val testSignOutUrl: String = "/signOutUrl"
   val testAccessibilityUrl: String = "/accessibility"
+  val testRegime: String = "VATC"
   val testSautr: String = "1234567890"
   val testCompanyNumber: String = "12345678"
   val testDateOfIncorporation: String = LocalDate.of(2000, 1, 1).toString
@@ -63,7 +64,8 @@ object TestConstants {
     testContinueUrl,
     businessVerificationCheck = true,
     pageConfig = testDefaultPageConfig,
-    partnershipType = GeneralPartnership
+    partnershipType = GeneralPartnership,
+    testRegime
   )
 
 

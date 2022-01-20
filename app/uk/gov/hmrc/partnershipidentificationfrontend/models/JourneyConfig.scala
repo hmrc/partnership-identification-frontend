@@ -18,4 +18,4 @@ package uk.gov.hmrc.partnershipidentificationfrontend.models
 
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.PartnershipType
 
-case class JourneyConfig(continueUrl: String, businessVerificationCheck: Boolean, pageConfig: PageConfig, partnershipType: PartnershipType)
+case class JourneyConfig(continueUrl: String, businessVerificationCheck: Boolean, pageConfig: PageConfig, partnershipType: PartnershipType, regime: String)

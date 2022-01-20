@@ -28,6 +28,7 @@ object TestConstants {
   val testJourneyId: String = UUID.randomUUID().toString
   val testSautr: String = "1234567890"
   val testPostcode: String = "AA11AA"
+  val testRegime = "VATC"
   val testRegisteredOfficePostcode: String = "BB11BB"
   val testContinueUrl: String = "/test"
   val testCredentialId: String = UUID.randomUUID().toString
@@ -59,23 +60,24 @@ object TestConstants {
   val testDefaultServiceName: String = "Entity Validation Service"
   val testCallingServiceName: String = "Test Service"
 
-  def testJourneyConfig(partnershipType: PartnershipType, serviceName: Option[String] = None, businessVerificationCheck: Boolean): JourneyConfig =
+  def testJourneyConfig(partnershipType: PartnershipType, serviceName: Option[String] = None, businessVerificationCheck: Boolean, regime: String): JourneyConfig =
     JourneyConfig(
       testContinueUrl,
       businessVerificationCheck,
       PageConfig(serviceName,testDeskProServiceId, testSignOutUrl, testAccessibilityUrl),
-      partnershipType)
+      partnershipType,
+      regime)
 
   def testGeneralPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =
-    testJourneyConfig(GeneralPartnership, businessVerificationCheck = businessVerificationCheck)
+    testJourneyConfig(GeneralPartnership, businessVerificationCheck = businessVerificationCheck, regime = testRegime)
   def testScottishPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =
-    testJourneyConfig(ScottishPartnership, businessVerificationCheck = businessVerificationCheck)
+    testJourneyConfig(ScottishPartnership, businessVerificationCheck = businessVerificationCheck, regime = testRegime)
   def testScottishLimitedPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =
-    testJourneyConfig(ScottishLimitedPartnership, businessVerificationCheck = businessVerificationCheck)
+    testJourneyConfig(ScottishLimitedPartnership, businessVerificationCheck = businessVerificationCheck, regime = testRegime)
   def testLimitedPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =
-    testJourneyConfig(LimitedPartnership, businessVerificationCheck= businessVerificationCheck)
+    testJourneyConfig(LimitedPartnership, businessVerificationCheck= businessVerificationCheck, regime = testRegime)
   def testLimitedLiabilityPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =
-    testJourneyConfig(LimitedLiabilityPartnership, businessVerificationCheck = businessVerificationCheck)
+    testJourneyConfig(LimitedLiabilityPartnership, businessVerificationCheck = businessVerificationCheck, regime = testRegime)
 
   val testPartnershipInformationJson: JsObject = {
     Json.obj(

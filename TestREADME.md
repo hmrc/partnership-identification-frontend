@@ -63,6 +63,12 @@ This is a test entry point which simulates a service by triggering the initial P
    - Shown in the footer - a link to the accessibility statement for the calling service
    - This is currently autofilled but can be changed
 
+7. Regime
+
+   - This is the Tax Regime Identifier
+   - It is passed down to the Registration API
+   - Accepted values are PPT or VATC
+
 
 #### GET test-only/create-scottish-partnership-journey
 
@@ -98,6 +104,12 @@ This is a test entry point which simulates a service by triggering the initial P
    - Shown in the footer - a link to the accessibility statement for the calling service
    - This is currently autofilled but can be changed
 
+7. Regime
+
+   - This is the Tax Regime Identifier
+   - It is passed down to the Registration API
+   - Accepted values are PPT or VATC
+
 
 #### GET test-only/create-limited-partnership-journey
 
@@ -131,6 +143,12 @@ This is a test entry point which simulates a service by triggering the initial P
 
    - Shown in the footer - a link to the accessibility statement for the calling service
    - This is currently autofilled but can be changed
+
+7. Regime
+
+   - This is the Tax Regime Identifier
+   - It is passed down to the Registration API
+   - Accepted values are PPT or VATC
 
 
 #### GET test-only/create-scottish-limited-partnership-journey
@@ -166,6 +184,12 @@ This is a test entry point which simulates a service by triggering the initial P
    - Shown in the footer - a link to the accessibility statement for the calling service
    - This is currently autofilled but can be changed
 
+7. Regime
+
+   - This is the Tax Regime Identifier
+   - It is passed down to the Registration API
+   - Accepted values are PPT or VATC
+
 #### GET test-only/create-limited-liability-partnership-journey
 
 ---
@@ -198,6 +222,12 @@ This is a test entry point which simulates a service by triggering the initial P
 
    - Shown in the footer - a link to the accessibility statement for the calling service
    - This is currently autofilled but can be changed
+
+7. Regime
+
+   - This is the Tax Regime Identifier
+   - It is passed down to the Registration API
+   - Accepted values are PPT or VATC
 
 #### GET test-only/retrieve-journey/:journeyId or test-only/retrieve-journey
 

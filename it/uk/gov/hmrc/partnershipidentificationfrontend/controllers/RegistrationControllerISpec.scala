@@ -57,12 +57,12 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = true)))
+              testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
           stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
-          stubRegisterGeneralPartnership(testSautr)(status = OK, body = Registered(testSafeId))
+          stubRegisterGeneralPartnership(testSautr, testRegime)(status = OK, body = Registered(testSafeId))
           stubStoreRegistrationStatus(testJourneyId, Registered(testSafeId))(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJson)
           stubAudit()
@@ -71,7 +71,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterGeneralPartnership(testSautr)
+          verifyRegisterGeneralPartnership(testSautr, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
           verifyAuditDetail(auditJson("General Partnership", "success", "success"))
         }
@@ -81,12 +81,12 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = true)))
+              testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
           stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
-          stubRegisterGeneralPartnership(testSautr)(status = OK, body = RegistrationFailed)
+          stubRegisterGeneralPartnership(testSautr, testRegime)(status = OK, body = RegistrationFailed)
           stubStoreRegistrationStatus(testJourneyId, RegistrationFailed)(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonRegistrationFailed)
           stubAudit()
@@ -95,7 +95,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterGeneralPartnership(testSautr)
+          verifyRegisterGeneralPartnership(testSautr, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, RegistrationFailed)
           verifyAuditDetail(auditJson("General Partnership", "fail", "success"))
         }
@@ -105,12 +105,12 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(ScottishPartnership, Some(testCallingServiceName), businessVerificationCheck = true)))
+              testJourneyConfig(ScottishPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
           stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
-          stubRegisterScottishPartnership(testSautr)(status = OK, body = Registered(testSafeId))
+          stubRegisterScottishPartnership(testSautr, testRegime)(status = OK, body = Registered(testSafeId))
           stubStoreRegistrationStatus(testJourneyId, Registered(testSafeId))(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJson)
           stubAudit()
@@ -119,7 +119,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterScottishPartnership(testSautr)
+          verifyRegisterScottishPartnership(testSautr, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
           verifyAuditDetail(auditJson("Scottish Partnership", "success", "success"))
         }
@@ -129,12 +129,12 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(ScottishPartnership, Some(testCallingServiceName), businessVerificationCheck = true)))
+              testJourneyConfig(ScottishPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
           stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
-          stubRegisterScottishPartnership(testSautr)(status = OK, body = RegistrationFailed)
+          stubRegisterScottishPartnership(testSautr, testRegime)(status = OK, body = RegistrationFailed)
           stubStoreRegistrationStatus(testJourneyId, RegistrationFailed)(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonRegistrationFailed)
           stubAudit()
@@ -143,7 +143,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterScottishPartnership(testSautr)
+          verifyRegisterScottishPartnership(testSautr, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, RegistrationFailed)
           verifyAuditDetail(auditJson("Scottish Partnership", "fail", "success"))
         }
@@ -153,12 +153,12 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(LimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = true)))
+              testJourneyConfig(LimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
           stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
-          stubRegisterLimitedPartnership(testSautr, testCompanyNumber)(status = OK, body = Registered(testSafeId))
+          stubRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(status = OK, body = Registered(testSafeId))
           stubStoreRegistrationStatus(testJourneyId, Registered(testSafeId))(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJson)
           stubAudit()
@@ -167,7 +167,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterLimitedPartnership(testSautr, testCompanyNumber)
+          verifyRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
           verifyAuditDetail(auditJson("Limited Partnership", "success", "success"))
         }
@@ -177,12 +177,12 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(LimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = true)))
+              testJourneyConfig(LimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
           stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
-          stubRegisterLimitedPartnership(testSautr, testCompanyNumber)(status = OK, body = RegistrationFailed)
+          stubRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(status = OK, body = RegistrationFailed)
           stubStoreRegistrationStatus(testJourneyId, RegistrationFailed)(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonRegistrationFailed)
           stubAudit()
@@ -191,7 +191,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterLimitedPartnership(testSautr, testCompanyNumber)
+          verifyRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, RegistrationFailed)
           verifyAuditDetail(auditJson("Limited Partnership", "fail", "success"))
         }
@@ -201,12 +201,12 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(ScottishLimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = true)))
+              testJourneyConfig(ScottishLimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
           stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
-          stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber)(status = OK, body = Registered(testSafeId))
+          stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(status = OK, body = Registered(testSafeId))
           stubStoreRegistrationStatus(testJourneyId, Registered(testSafeId))(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJson)
           stubAudit()
@@ -215,7 +215,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterScottishLimitedPartnership(testSautr, testCompanyNumber)
+          verifyRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
           verifyAuditDetail(auditJson("Scottish LTD Partnership", "success", "success"))
         }
@@ -225,12 +225,12 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(ScottishLimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = true)))
+              testJourneyConfig(ScottishLimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
           stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
-          stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber)(status = OK, body = RegistrationFailed)
+          stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(status = OK, body = RegistrationFailed)
           stubStoreRegistrationStatus(testJourneyId, RegistrationFailed)(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonRegistrationFailed)
           stubAudit()
@@ -239,7 +239,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterScottishLimitedPartnership(testSautr, testCompanyNumber)
+          verifyRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, RegistrationFailed)
           verifyAuditDetail(auditJson("Scottish LTD Partnership", "fail", "success"))
         }
@@ -249,12 +249,12 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(LimitedLiabilityPartnership, Some(testCallingServiceName), businessVerificationCheck = true)))
+              testJourneyConfig(LimitedLiabilityPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
           stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
-          stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber)(status = OK, body = Registered(testSafeId))
+          stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(status = OK, body = Registered(testSafeId))
           stubStoreRegistrationStatus(testJourneyId, Registered(testSafeId))(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJson)
           stubAudit()
@@ -263,7 +263,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber)
+          verifyRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
           verifyAuditDetail(auditJson("Limited Liability Partnership", "success", "success"))
         }
@@ -273,12 +273,12 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(LimitedLiabilityPartnership, Some(testCallingServiceName), businessVerificationCheck = true)))
+              testJourneyConfig(LimitedLiabilityPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
           stubRetrieveBusinessVerificationStatus(testJourneyId)(status = OK, body = Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
-          stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber)(status = OK, body = RegistrationFailed)
+          stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(status = OK, body = RegistrationFailed)
           stubStoreRegistrationStatus(testJourneyId, RegistrationFailed)(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonRegistrationFailed)
           stubAudit()
@@ -287,7 +287,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber)
+          verifyRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, RegistrationFailed)
           verifyAuditDetail(auditJson("Limited Liability Partnership", "fail", "success"))
         }
@@ -297,11 +297,11 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           await(insertJourneyConfig(
             testJourneyId,
             testInternalId,
-            testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = false)))
+            testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
-          stubRegisterGeneralPartnership(testSautr)(status = OK, body = Registered(testSafeId))
+          stubRegisterGeneralPartnership(testSautr, testRegime)(status = OK, body = Registered(testSafeId))
           stubStoreRegistrationStatus(testJourneyId, Registered(testSafeId))(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJson - "businessVerification")
           stubAudit()
@@ -310,7 +310,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterGeneralPartnership(testSautr)
+          verifyRegisterGeneralPartnership(testSautr, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
           verifyAuditDetail(auditJson("General Partnership", "success", "not requested"))
         }
@@ -320,11 +320,11 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = false)))
+              testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
-          stubRegisterGeneralPartnership(testSautr)(status = OK, body = RegistrationFailed)
+          stubRegisterGeneralPartnership(testSautr, testRegime)(status = OK, body = RegistrationFailed)
           stubStoreRegistrationStatus(testJourneyId, RegistrationFailed)(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonRegistrationFailed - "businessVerification")
           stubAudit()
@@ -333,7 +333,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterGeneralPartnership(testSautr)
+          verifyRegisterGeneralPartnership(testSautr, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, RegistrationFailed)
           verifyAuditDetail(auditJson("General Partnership", "fail", "not requested"))
         }
@@ -343,11 +343,11 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(ScottishPartnership, Some(testCallingServiceName), businessVerificationCheck = false)))
+              testJourneyConfig(ScottishPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
-          stubRegisterScottishPartnership(testSautr)(status = OK, body = Registered(testSafeId))
+          stubRegisterScottishPartnership(testSautr, testRegime)(status = OK, body = Registered(testSafeId))
           stubStoreRegistrationStatus(testJourneyId, Registered(testSafeId))(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJson - "businessVerification")
           stubAudit()
@@ -356,7 +356,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterScottishPartnership(testSautr)
+          verifyRegisterScottishPartnership(testSautr, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
           verifyAuditDetail(auditJson("Scottish Partnership", "success", "not requested"))
         }
@@ -366,11 +366,11 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(ScottishPartnership, Some(testCallingServiceName), businessVerificationCheck = false)))
+              testJourneyConfig(ScottishPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
-          stubRegisterScottishPartnership(testSautr)(status = OK, body = RegistrationFailed)
+          stubRegisterScottishPartnership(testSautr, testRegime)(status = OK, body = RegistrationFailed)
           stubStoreRegistrationStatus(testJourneyId, RegistrationFailed)(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonRegistrationFailed - "businessVerification")
           stubAudit()
@@ -379,7 +379,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterScottishPartnership(testSautr)
+          verifyRegisterScottishPartnership(testSautr, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, RegistrationFailed)
           verifyAuditDetail(auditJson("Scottish Partnership", "fail", "not requested"))
         }
@@ -389,11 +389,11 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(LimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = false)))
+              testJourneyConfig(LimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
-          stubRegisterLimitedPartnership(testSautr, testCompanyNumber)(status = OK, body = Registered(testSafeId))
+          stubRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(status = OK, body = Registered(testSafeId))
           stubStoreRegistrationStatus(testJourneyId, Registered(testSafeId))(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJson - "businessVerification")
           stubAudit()
@@ -402,7 +402,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterLimitedPartnership(testSautr, testCompanyNumber)
+          verifyRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
           verifyAuditDetail(auditJson("Limited Partnership", "success", "not requested"))
         }
@@ -412,11 +412,11 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(LimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = false)))
+              testJourneyConfig(LimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
-          stubRegisterLimitedPartnership(testSautr, testCompanyNumber)(status = OK, body = RegistrationFailed)
+          stubRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(status = OK, body = RegistrationFailed)
           stubStoreRegistrationStatus(testJourneyId, RegistrationFailed)(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonRegistrationFailed - "businessVerification")
           stubAudit()
@@ -425,7 +425,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterLimitedPartnership(testSautr, testCompanyNumber)
+          verifyRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, RegistrationFailed)
           verifyAuditDetail(auditJson("Limited Partnership", "fail", "not requested"))
         }
@@ -435,11 +435,11 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(LimitedLiabilityPartnership, Some(testCallingServiceName), businessVerificationCheck = false)))
+              testJourneyConfig(LimitedLiabilityPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
-          stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber)(status = OK, body = Registered(testSafeId))
+          stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(status = OK, body = Registered(testSafeId))
           stubStoreRegistrationStatus(testJourneyId, Registered(testSafeId))(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJson - "businessVerification")
           stubAudit()
@@ -448,7 +448,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber)
+          verifyRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
           verifyAuditDetail(auditJson("Limited Liability Partnership", "success", "not requested"))
         }
@@ -458,11 +458,11 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(LimitedLiabilityPartnership, Some(testCallingServiceName), businessVerificationCheck = false)))
+              testJourneyConfig(LimitedLiabilityPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
-          stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber)(status = OK, body = RegistrationFailed)
+          stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(status = OK, body = RegistrationFailed)
           stubStoreRegistrationStatus(testJourneyId, RegistrationFailed)(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonRegistrationFailed - "businessVerification")
           stubAudit()
@@ -471,7 +471,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber)
+          verifyRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, RegistrationFailed)
           verifyAuditDetail(auditJson("Limited Liability Partnership", "fail", "not requested"))
         }
@@ -481,11 +481,11 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(ScottishLimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = false)))
+              testJourneyConfig(ScottishLimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
-          stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber)(status = OK, body = Registered(testSafeId))
+          stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(status = OK, body = Registered(testSafeId))
           stubStoreRegistrationStatus(testJourneyId, Registered(testSafeId))(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJson - "businessVerification")
           stubAudit()
@@ -494,7 +494,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterScottishLimitedPartnership(testSautr, testCompanyNumber)
+          verifyRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, Registered(testSafeId))
           verifyAuditDetail(auditJson("Scottish LTD Partnership", "success", "not requested"))
         }
@@ -504,11 +504,11 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(ScottishLimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = false)))
+              testJourneyConfig(ScottishLimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
-          stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber)(status = OK, body = RegistrationFailed)
+          stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(status = OK, body = RegistrationFailed)
           stubStoreRegistrationStatus(testJourneyId, RegistrationFailed)(status = OK)
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonRegistrationFailed - "businessVerification")
           stubAudit()
@@ -517,7 +517,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
 
           result.status mustBe SEE_OTHER
           result.header(LOCATION) mustBe Some(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
-          verifyRegisterScottishLimitedPartnership(testSautr, testCompanyNumber)
+          verifyRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)
           verifyStoreRegistrationStatus(testJourneyId, RegistrationFailed)
           verifyAuditDetail(auditJson("Scottish LTD Partnership", "fail", "not requested"))
         }

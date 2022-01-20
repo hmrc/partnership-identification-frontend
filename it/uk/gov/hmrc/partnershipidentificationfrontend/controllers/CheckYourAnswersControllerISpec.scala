@@ -224,7 +224,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         await(insertJourneyConfig(
           testJourneyId,
           testInternalId,
-          testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = true)
+          testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)
         ))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(OK,
@@ -270,7 +270,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         await(insertJourneyConfig(
           testJourneyId,
           testInternalId,
-          testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = true)
+          testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)
         ))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(OK, Json.obj(
