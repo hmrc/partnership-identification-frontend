@@ -84,101 +84,101 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
         )
       }
     }
-      "return (for all PartnershipType) a created journey with businessVerificationCheck false" when {
-        "the incoming json has a businessVerificationCheck field set to false" in {
-          def assertTheCreatedJourneyConfigHasBVCFalseFor(postToApiUrlSuffix: String,
-                                                          expectedJourneyConfigPartnershipType: PartnershipType,
-                                                          expectedJourneyStartUrl: Call): Unit = {
-            stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-            stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
+    "return (for all PartnershipType) a created journey with businessVerificationCheck false" when {
+      "the incoming json has a businessVerificationCheck field set to false" in {
+        def assertTheCreatedJourneyConfigHasBVCFalseFor(postToApiUrlSuffix: String,
+                                                        expectedJourneyConfigPartnershipType: PartnershipType,
+                                                        expectedJourneyStartUrl: Call): Unit = {
+          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+          stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
 
-            val incomingJson = testJourneyConfigJson ++ Json.obj(expectedBusinessVerificationCheckJsonKey -> false)
+          val incomingJson = testJourneyConfigJson ++ Json.obj(expectedBusinessVerificationCheckJsonKey -> false)
 
-            lazy val result = post(s"/partnership-identification/api/$postToApiUrlSuffix", incomingJson)
+          lazy val result = post(s"/partnership-identification/api/$postToApiUrlSuffix", incomingJson)
 
-            (result.json \ "journeyStartUrl").as[String] must include(expectedJourneyStartUrl.url)
+          (result.json \ "journeyStartUrl").as[String] must include(expectedJourneyStartUrl.url)
 
-            val expectedJourneyConfig = testJourneyConfig(expectedJourneyConfigPartnershipType, businessVerificationCheck = true, regime = testRegime)
-              .copy(businessVerificationCheck = false)
+          val expectedJourneyConfig = testJourneyConfig(expectedJourneyConfigPartnershipType, businessVerificationCheck = true, regime = testRegime)
+            .copy(businessVerificationCheck = false)
 
-            await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(expectedJourneyConfig)
-            await(journeyConfigRepository.drop)
-
-          }
-
-          assertTheCreatedJourneyConfigHasBVCFalseFor(
-            postToApiUrlSuffix = "general-partnership-journey",
-            expectedJourneyConfigPartnershipType = GeneralPartnership,
-            expectedJourneyStartUrl = appRoutes.CaptureSautrController.show(testJourneyId)
-          )
-          assertTheCreatedJourneyConfigHasBVCFalseFor(
-            postToApiUrlSuffix = "scottish-partnership-journey",
-            expectedJourneyConfigPartnershipType = ScottishPartnership,
-            expectedJourneyStartUrl = appRoutes.CaptureSautrController.show(testJourneyId)
-          )
-          assertTheCreatedJourneyConfigHasBVCFalseFor(
-            postToApiUrlSuffix = "scottish-limited-partnership-journey",
-            expectedJourneyConfigPartnershipType = ScottishLimitedPartnership,
-            expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
-          )
-          assertTheCreatedJourneyConfigHasBVCFalseFor(
-            postToApiUrlSuffix = "limited-partnership-journey",
-            expectedJourneyConfigPartnershipType = LimitedPartnership,
-            expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
-          )
-          assertTheCreatedJourneyConfigHasBVCFalseFor(
-            postToApiUrlSuffix = "limited-liability-partnership-journey",
-            expectedJourneyConfigPartnershipType = LimitedLiabilityPartnership,
-            expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
-          )
+          await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(expectedJourneyConfig)
+          await(journeyConfigRepository.drop)
 
         }
+
+        assertTheCreatedJourneyConfigHasBVCFalseFor(
+          postToApiUrlSuffix = "general-partnership-journey",
+          expectedJourneyConfigPartnershipType = GeneralPartnership,
+          expectedJourneyStartUrl = appRoutes.CaptureSautrController.show(testJourneyId)
+        )
+        assertTheCreatedJourneyConfigHasBVCFalseFor(
+          postToApiUrlSuffix = "scottish-partnership-journey",
+          expectedJourneyConfigPartnershipType = ScottishPartnership,
+          expectedJourneyStartUrl = appRoutes.CaptureSautrController.show(testJourneyId)
+        )
+        assertTheCreatedJourneyConfigHasBVCFalseFor(
+          postToApiUrlSuffix = "scottish-limited-partnership-journey",
+          expectedJourneyConfigPartnershipType = ScottishLimitedPartnership,
+          expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
+        )
+        assertTheCreatedJourneyConfigHasBVCFalseFor(
+          postToApiUrlSuffix = "limited-partnership-journey",
+          expectedJourneyConfigPartnershipType = LimitedPartnership,
+          expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
+        )
+        assertTheCreatedJourneyConfigHasBVCFalseFor(
+          postToApiUrlSuffix = "limited-liability-partnership-journey",
+          expectedJourneyConfigPartnershipType = LimitedLiabilityPartnership,
+          expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
+        )
+
       }
-      "return (for all PartnershipType) a created journey with businessVerificationCheck true" when {
-        "the incoming json has a businessVerificationCheck field set to true" in {
-          def assertTheCreatedJourneyConfigHasBVCTrueFor(postToApiUrlSuffix: String,
-                                                         expectedJourneyConfigPartnershipType: PartnershipType,
-                                                         expectedJourneyStartUrl: Call): Unit = {
-            stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-            stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
+    }
+    "return (for all PartnershipType) a created journey with businessVerificationCheck true" when {
+      "the incoming json has a businessVerificationCheck field set to true" in {
+        def assertTheCreatedJourneyConfigHasBVCTrueFor(postToApiUrlSuffix: String,
+                                                       expectedJourneyConfigPartnershipType: PartnershipType,
+                                                       expectedJourneyStartUrl: Call): Unit = {
+          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+          stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
 
-            val incomingJson = testJourneyConfigJson ++ Json.obj(expectedBusinessVerificationCheckJsonKey -> true)
+          val incomingJson = testJourneyConfigJson ++ Json.obj(expectedBusinessVerificationCheckJsonKey -> true)
 
-            lazy val result = post(s"/partnership-identification/api/$postToApiUrlSuffix", incomingJson)
+          lazy val result = post(s"/partnership-identification/api/$postToApiUrlSuffix", incomingJson)
 
-            (result.json \ "journeyStartUrl").as[String] must include(expectedJourneyStartUrl.url)
+          (result.json \ "journeyStartUrl").as[String] must include(expectedJourneyStartUrl.url)
 
-            await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testJourneyConfig(expectedJourneyConfigPartnershipType, businessVerificationCheck = true, regime = testRegime))
-            await(journeyConfigRepository.drop)
-          }
-
-          assertTheCreatedJourneyConfigHasBVCTrueFor(
-            postToApiUrlSuffix = "general-partnership-journey",
-            expectedJourneyConfigPartnershipType = GeneralPartnership,
-            expectedJourneyStartUrl = appRoutes.CaptureSautrController.show(testJourneyId)
-          )
-          assertTheCreatedJourneyConfigHasBVCTrueFor(
-            postToApiUrlSuffix = "scottish-partnership-journey",
-            expectedJourneyConfigPartnershipType = ScottishPartnership,
-            expectedJourneyStartUrl = appRoutes.CaptureSautrController.show(testJourneyId)
-          )
-          assertTheCreatedJourneyConfigHasBVCTrueFor(
-            postToApiUrlSuffix = "scottish-limited-partnership-journey",
-            expectedJourneyConfigPartnershipType = ScottishLimitedPartnership,
-            expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
-          )
-          assertTheCreatedJourneyConfigHasBVCTrueFor(
-            postToApiUrlSuffix = "limited-partnership-journey",
-            expectedJourneyConfigPartnershipType = LimitedPartnership,
-            expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
-          )
-          assertTheCreatedJourneyConfigHasBVCTrueFor(
-            postToApiUrlSuffix = "limited-liability-partnership-journey",
-            expectedJourneyConfigPartnershipType = LimitedLiabilityPartnership,
-            expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
-          )
+          await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testJourneyConfig(expectedJourneyConfigPartnershipType, businessVerificationCheck = true, regime = testRegime))
+          await(journeyConfigRepository.drop)
         }
+
+        assertTheCreatedJourneyConfigHasBVCTrueFor(
+          postToApiUrlSuffix = "general-partnership-journey",
+          expectedJourneyConfigPartnershipType = GeneralPartnership,
+          expectedJourneyStartUrl = appRoutes.CaptureSautrController.show(testJourneyId)
+        )
+        assertTheCreatedJourneyConfigHasBVCTrueFor(
+          postToApiUrlSuffix = "scottish-partnership-journey",
+          expectedJourneyConfigPartnershipType = ScottishPartnership,
+          expectedJourneyStartUrl = appRoutes.CaptureSautrController.show(testJourneyId)
+        )
+        assertTheCreatedJourneyConfigHasBVCTrueFor(
+          postToApiUrlSuffix = "scottish-limited-partnership-journey",
+          expectedJourneyConfigPartnershipType = ScottishLimitedPartnership,
+          expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
+        )
+        assertTheCreatedJourneyConfigHasBVCTrueFor(
+          postToApiUrlSuffix = "limited-partnership-journey",
+          expectedJourneyConfigPartnershipType = LimitedPartnership,
+          expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
+        )
+        assertTheCreatedJourneyConfigHasBVCTrueFor(
+          postToApiUrlSuffix = "limited-liability-partnership-journey",
+          expectedJourneyConfigPartnershipType = LimitedLiabilityPartnership,
+          expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
+        )
       }
+    }
   }
 
   "POST /api/general-partnership-journey" should {
@@ -327,7 +327,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
   "GET /api/journey/:journeyId" should {
     "return captured data" when {
-      "the no Company Profile exists" in {
+      "no Company Profile exists" in {
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(
           status = OK,
@@ -349,7 +349,21 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
         lazy val result = get(s"/partnership-identification/api/journey/$testJourneyId")
 
         result.status mustBe OK
-        result.json mustBe Json.toJsObject(testPartnershipFullJourneyDataWithCompanyProfile(Some(testCompanyProfile), identifiersMatch = false))
+
+        val testJson: JsObject = Json.obj(
+          "sautr" -> testSautr,
+          "postcode" -> testPostcode,
+          "companyProfile" -> Json.toJson(testCompanyProfile),
+          "identifiersMatch" -> false,
+          "businessVerification" -> Json.obj(
+            "verificationStatus" -> "UNCHALLENGED"
+          ),
+          "registration" -> Json.obj(
+            "registrationStatus" -> "REGISTRATION_NOT_CALLED"
+          )
+        )
+
+        result.json mustBe testJson
       }
     }
 

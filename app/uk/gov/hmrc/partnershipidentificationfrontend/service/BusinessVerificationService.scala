@@ -32,16 +32,15 @@ class BusinessVerificationService @Inject()(createBusinessVerificationJourneyCon
   def createBusinessVerificationJourney(journeyId: String, sautr: String)(implicit hc: HeaderCarrier): Future[Option[String]] =
     createBusinessVerificationJourneyConnector.createBusinessVerificationJourney(journeyId, sautr).flatMap {
       case Right(JourneyCreated(redirectUrl)) => Future.successful(Option(redirectUrl))
-      case Left(failureReason) => {
+      case Left(failureReason) =>
         val bvStatus = failureReason match {
-          case NotEnoughEvidence => BusinessVerificationUnchallenged
+          case NotEnoughEvidence => BusinessVerificationNotEnoughInformationToChallenge
           case UserLockedOut => BusinessVerificationFail
           case _ => throw new InternalServerException(s"createBusinessVerificationJourney service failed with invalid BV status")
         }
         partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, bvStatus).map {
           _ => None
         }
-      }
     }
 
   def retrieveBusinessVerificationStatus(businessVerificationJourneyId: String)(implicit hc: HeaderCarrier): Future[BusinessVerificationStatus] =

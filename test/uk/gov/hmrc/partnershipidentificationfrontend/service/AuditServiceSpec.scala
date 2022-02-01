@@ -40,7 +40,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
       optSautr = Some(testSautr),
       companyProfile = Some(testCompanyProfile),
       identifiersMatch = false,
-      businessVerification = Some(BusinessVerificationUnchallenged),
+      businessVerification = Some(BusinessVerificationNotEnoughInformationToCallBV),
       registrationStatus = RegistrationNotCalled
     )
 
@@ -81,6 +81,28 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             testDefaultGeneralPartnershipJourneyConfig,
           ))
 
+          mockAuditConnector.sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel) was called
+        }
+      }
+      "business verification could not find a record for the user" should {
+        "audit the correct information" in new Setup {
+          mockPartnershipIdentificationService.retrievePartnershipFullJourneyData(testJourneyId) returns Future.successful(Some(
+            PartnershipFullJourneyData(
+              optPostcode = Some(testPostcode),
+              optSautr = Some(testSautr),
+              companyProfile = None,
+              identifiersMatch = true,
+              businessVerification = Some(BusinessVerificationNotEnoughInformationToChallenge),
+              registrationStatus = RegistrationNotCalled
+            )
+          ))
+
+          val expectedAuditModel: JsObject = expectedNonLimitedPartnershipAuditJson("General Partnership", "Not Enough Information to challenge", "not called")
+
+          await(TestAuditService.auditPartnershipInformation(
+            testJourneyId,
+            testDefaultGeneralPartnershipJourneyConfig
+          ))
           mockAuditConnector.sendExplicitAudit("GeneralPartnershipEntityRegistration", expectedAuditModel) was called
         }
       }
@@ -159,7 +181,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             optSautr = None,
             companyProfile = None,
             identifiersMatch = false,
-            businessVerification = Some(BusinessVerificationUnchallenged),
+            businessVerification = Some(BusinessVerificationNotEnoughInformationToCallBV),
             registrationStatus = RegistrationNotCalled
           )
         ))
@@ -168,7 +190,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
         val expectedAuditModel: JsObject = Json.obj(
           "isMatch" -> false,
           "businessType" -> "General Partnership",
-          "VerificationStatus" -> "Not Enough Information to challenge",
+          "VerificationStatus" -> "Not Enough Information to call BV",
           "RegisterApiStatus" -> "not called",
           "callingService" -> testServiceName
         )
@@ -279,7 +301,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             optSautr = None,
             companyProfile = None,
             identifiersMatch = false,
-            businessVerification = Some(BusinessVerificationUnchallenged),
+            businessVerification = Some(BusinessVerificationNotEnoughInformationToCallBV),
             registrationStatus = RegistrationNotCalled
           )
         ))
@@ -288,7 +310,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
         val expectedAuditModel: JsObject = Json.obj(
           "isMatch" -> false,
           "businessType" -> "Scottish Partnership",
-          "VerificationStatus" -> "Not Enough Information to challenge",
+          "VerificationStatus" -> "Not Enough Information to call BV",
           "RegisterApiStatus" -> "not called",
           "callingService" -> testServiceName
         )
@@ -443,7 +465,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
 
   private def expectedLimitedPartnershipAuditJson(partnershipType: String): JsObject = expectedNonLimitedPartnershipAuditJson(
     partnershipType = partnershipType,
-    verificationStatus = "Not Enough Information to challenge",
+    verificationStatus = "Not Enough Information to call BV",
     registerStatus = "not called",
     isMatch = false
   ) ++ Json.obj("companyNumber" -> testCompanyProfile.companyNumber)

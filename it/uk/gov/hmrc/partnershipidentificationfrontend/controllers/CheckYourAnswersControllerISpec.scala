@@ -22,7 +22,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.FeatureSwitching
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationUnchallenged, RegistrationNotCalled}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationNotEnoughInformationToCallBV, RegistrationNotCalled}
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuditStub, AuthStub, PartnershipIdentificationStub, ValidatePartnershipInformationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.views.CheckYourAnswersViewTests
@@ -68,7 +68,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
       lazy val result = {
         await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationNoSautrJson)
+        stubRetrievePartnershipDetails(testJourneyId)(OK, Json.obj())
         get(s"$baseUrl/$testJourneyId/check-your-answers-business")
       }
 
@@ -233,7 +233,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
             "postcode" -> testPostcode,
             "identifiersMatch" -> false,
             "businessVerification" -> Json.obj(
-              "verificationStatus" -> "UNCHALLENGED"
+              "verificationStatus" -> "NOT_ENOUGH_INFORMATION_TO_CALL_BV"
             ),
             "registration" -> Json.obj(
               "registrationStatus" -> "REGISTRATION_NOT_CALLED"
@@ -242,7 +242,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         )
         stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> false))
         stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
-        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)(OK)
+        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(OK)
         stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
 
         lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
@@ -259,7 +259,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
             "SApostcode" -> testPostcode,
             "isMatch" -> false,
             "businessType" -> "General Partnership",
-            "VerificationStatus" -> "Not Enough Information to challenge",
+            "VerificationStatus" -> "Not Enough Information to call BV",
             "RegisterApiStatus" -> "not called",
             "callingService" -> testCallingServiceName
           ))
@@ -276,14 +276,14 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         stubRetrievePartnershipDetails(testJourneyId)(OK, Json.obj(
           "identifiersMatch" -> false,
           "businessVerification" -> Json.obj(
-            "verificationStatus" -> "UNCHALLENGED"
+            "verificationStatus" -> "NOT_ENOUGH_INFORMATION_TO_CALL_BV"
           ),
           "registration" -> Json.obj(
             "registrationStatus" -> "REGISTRATION_NOT_CALLED"
           )
         ))
         stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
-        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)(OK)
+        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(OK)
         stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
 
         lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
@@ -298,7 +298,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           verifyAuditDetail(Json.obj(
             "isMatch" -> false,
             "businessType" -> "General Partnership",
-            "VerificationStatus" -> "Not Enough Information to challenge",
+            "VerificationStatus" -> "Not Enough Information to call BV",
             "RegisterApiStatus" -> "not called",
             "callingService" -> testCallingServiceName
           ))
@@ -316,7 +316,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> false))
         stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> false))
         stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
-        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)(OK)
+        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(OK)
         stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
 
         lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
@@ -343,7 +343,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> false))
         stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> false))
         stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
-        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)(OK)
+        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(OK)
         stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
 
         lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
@@ -370,7 +370,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> false))
         stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> false))
         stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
-        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)(OK)
+        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(OK)
         stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
 
         lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()

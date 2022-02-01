@@ -47,7 +47,7 @@ class ValidationOrchestrationService @Inject()(partnershipIdentificationService:
         }
         _ <- partnershipIdentificationService.storeIdentifiersMatch(journeyId, identifiersMatch = identifiersMatch)
         _ <- if (businessVerificationCheck && !identifiersMatch) {
-          partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationUnchallenged)
+          partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationNotEnoughInformationToCallBV)
         } else {
           Future.successful(())
         }

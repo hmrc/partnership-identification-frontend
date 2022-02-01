@@ -19,7 +19,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 import play.api.libs.json.Json
 import play.api.test.Helpers.{GATEWAY_TIMEOUT, OK, await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
-import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.{testPartnershipInformation, testPostcode, testSautr}
+import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.{testPostcode, testSautr}
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.ValidatePartnershipInformationStub
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 

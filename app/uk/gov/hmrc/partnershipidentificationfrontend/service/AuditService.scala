@@ -99,8 +99,10 @@ class AuditService @Inject()(auditConnector: AuditConnector,
           "success"
         case Some(BusinessVerificationFail) =>
           "fail"
-        case Some(BusinessVerificationUnchallenged) =>
+        case Some(BusinessVerificationNotEnoughInformationToChallenge) =>
           "Not Enough Information to challenge"
+        case Some(BusinessVerificationNotEnoughInformationToCallBV) =>
+          "Not Enough Information to call BV"
         case None =>
           "not requested"
       })
