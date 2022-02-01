@@ -53,29 +53,35 @@ object TestConstants {
     "region" -> "test region"
   )
   val testCompanyProfile: CompanyProfile = CompanyProfile(testCompanyName, testCompanyNumber, testDateOfIncorporation, testAddress)
-
   val testDeskProServiceId: String = "vrs"
   val testSignOutUrl: String = "Sign out"
   val testAccessibilityUrl: String = "/accessibility"
   val testDefaultServiceName: String = "Entity Validation Service"
   val testCallingServiceName: String = "Test Service"
 
-  def testJourneyConfig(partnershipType: PartnershipType, serviceName: Option[String] = None, businessVerificationCheck: Boolean, regime: String): JourneyConfig =
+  def testJourneyConfig(partnershipType: PartnershipType,
+                        serviceName: Option[String] = None,
+                        businessVerificationCheck: Boolean,
+                        regime: String): JourneyConfig =
     JourneyConfig(
       testContinueUrl,
       businessVerificationCheck,
-      PageConfig(serviceName,testDeskProServiceId, testSignOutUrl, testAccessibilityUrl),
+      PageConfig(serviceName, testDeskProServiceId, testSignOutUrl, testAccessibilityUrl),
       partnershipType,
       regime)
 
   def testGeneralPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =
     testJourneyConfig(GeneralPartnership, businessVerificationCheck = businessVerificationCheck, regime = testRegime)
+
   def testScottishPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =
     testJourneyConfig(ScottishPartnership, businessVerificationCheck = businessVerificationCheck, regime = testRegime)
+
   def testScottishLimitedPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =
     testJourneyConfig(ScottishLimitedPartnership, businessVerificationCheck = businessVerificationCheck, regime = testRegime)
+
   def testLimitedPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =
-    testJourneyConfig(LimitedPartnership, businessVerificationCheck= businessVerificationCheck, regime = testRegime)
+    testJourneyConfig(LimitedPartnership, businessVerificationCheck = businessVerificationCheck, regime = testRegime)
+
   def testLimitedLiabilityPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =
     testJourneyConfig(LimitedLiabilityPartnership, businessVerificationCheck = businessVerificationCheck, regime = testRegime)
 
@@ -85,8 +91,6 @@ object TestConstants {
       "postcode" -> testPostcode
     )
   }
-
-  val testPartnershipInformationNoSautrJson: JsObject = Json.obj()
 
   val testPartnershipInformationWithCompanyProfile: JsObject =
     Json.obj(
@@ -145,7 +149,7 @@ object TestConstants {
       "postcode" -> testPostcode,
       "identifiersMatch" -> false,
       "businessVerification" -> Json.obj(
-        "verificationStatus" -> "UNCHALLENGED"
+        "verificationStatus" -> "NOT_ENOUGH_INFORMATION_TO_CALL_BV"
       ),
       "registration" -> Json.obj(
         "registrationStatus" -> "REGISTRATION_NOT_CALLED"
@@ -169,8 +173,6 @@ object TestConstants {
     )
   }
 
-  val testPartnershipInformation: PartnershipInformation = PartnershipInformation(Some(SaInformation(testSautr, testPostcode)), None)
-
   val testPartnershipFullJourneyData: PartnershipFullJourneyData =
     PartnershipFullJourneyData(
       Some(testPostcode),
@@ -180,46 +182,15 @@ object TestConstants {
       Some(BusinessVerificationPass),
       Registered(testSafeId))
 
-  def testPartnershipFullJourneyDataWithCompanyProfile(companyProfile: Option[CompanyProfile] = None,
-                                                       identifiersMatch: Boolean = true): PartnershipFullJourneyData =
-    PartnershipFullJourneyData(
-      Some(testPostcode),
-      Some(testSautr),
-      companyProfile,
-      identifiersMatch,
-      Some(BusinessVerificationUnchallenged),
-      RegistrationNotCalled
-    )
-
-  val testDefaultJourneyConfig: JourneyConfigData = JourneyConfigData(
-    journeyId = testJourneyId,
-    internalId = testInternalId,
-    continueUrl = testContinueUrl,
-    businessVerificationCheck = true,
-    optServiceName = Some(testCallingServiceName),
-    deskProServiceId = testDeskProServiceId,
-    signOutUrl = testSignOutUrl,
-    partnershipType = GeneralPartnership
-  )
-
   def testLimitedPartnershipAuditJson(businessType: String): JsObject = Json.obj(
     "SAUTR" -> testSautr,
     "SApostcode" -> testPostcode,
     "isMatch" -> false,
     "businessType" -> businessType,
-    "VerificationStatus" -> "Not Enough Information to challenge",
+    "VerificationStatus" -> "Not Enough Information to call BV",
     "RegisterApiStatus" -> "not called",
     "callingService" -> testDefaultServiceName,
     "companyNumber" -> testCompanyNumber
   )
-
-  final case class JourneyConfigData(journeyId: String,
-                                     internalId: String,
-                                     continueUrl: String,
-                                     businessVerificationCheck: Boolean,
-                                     optServiceName: Option[String],
-                                     deskProServiceId: String,
-                                     signOutUrl: String,
-                                     partnershipType: PartnershipType)
 
 }

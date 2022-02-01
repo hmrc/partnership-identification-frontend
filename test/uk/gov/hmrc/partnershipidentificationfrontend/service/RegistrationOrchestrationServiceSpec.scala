@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.mocks.MockRegistrationConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, LimitedLiabilityPartnership, LimitedPartnership, ScottishLimitedPartnership, ScottishPartnership}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
 import uk.gov.hmrc.partnershipidentificationfrontend.models._
 import uk.gov.hmrc.partnershipidentificationfrontend.service.mocks.MockPartnershipIdentificationService
 
@@ -255,7 +255,7 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec
       "the business entity was not challenged to verify" in {
         mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
         mockRetrieveCompanyProfile(testJourneyId)(Future.successful(None))
-        mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationUnchallenged)))
+        mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationNotEnoughInformationToCallBV)))
         mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
 
         await(TestService.register(testJourneyId, GeneralPartnership, businessVerificationCheck = true, testRegime)) mustBe RegistrationNotCalled

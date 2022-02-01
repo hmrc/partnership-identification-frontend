@@ -26,8 +26,7 @@ import play.api.libs.json.{JsValue, Writes}
 import play.api.libs.ws.{WSClient, WSRequest, WSResponse}
 import play.api.test.Helpers._
 import reactivemongo.api.commands.WriteResult
-import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.JourneyConfigData
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.repositories.JourneyConfigRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global

@@ -19,6 +19,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.testonly.controllers
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
+import uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.JourneyController.writes
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.PartnershipIdentificationConnector
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -36,7 +37,7 @@ class TestRetrieveJourneyDataController @Inject()(messagesControllerComponents: 
       authorised() {
         partnershipIdentificationConnector.retrievePartnershipFullJourneyData(journeyId).map {
           case Some(journeyData) =>
-            Ok(Json.toJsObject(journeyData))
+            Ok(Json.toJsObject(journeyData)(writes))
           case None =>
             NotFound
         }
@@ -44,3 +45,4 @@ class TestRetrieveJourneyDataController @Inject()(messagesControllerComponents: 
   }
 
 }
+

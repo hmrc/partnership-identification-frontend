@@ -69,19 +69,19 @@ class ValidationOrchestrationServiceSpec extends AnyWordSpec
           }
           "the company information registered office postcode fails to match" when {
             "the calling service has requested business verification" should {
-              s"return $IdentifiersMismatch and store $BusinessVerificationUnchallenged" in {
+              "return IdentifiersMismatch and store BusinessVerificationNotEnoughInformationToCallBV" in {
                 mockRetrievePartnershipInformation(testJourneyId)(Future.successful(Some(testPartnershipInformationWithCompanyProfile)))
                 mockValidateIdentifiers(testSautr, testPostcode)(Future.successful(true))
                 mockValidateIdentifiers(testSautr, testRegisteredOfficePostcode)(Future.successful(false))
                 mockStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(Future.successful(SuccessfullyStored))
-                mockStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationUnchallenged)(Future.successful(SuccessfullyStored))
+                mockStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(Future.successful(SuccessfullyStored))
                 mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
 
                 lazy val result = await(TestService.orchestrate(testJourneyId, businessVerificationCheck = true))
 
                 result mustBe IdentifiersMismatch
                 verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
-                verifyStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationUnchallenged)
+                verifyStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)
                 verifyStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)
               }
             }
@@ -103,7 +103,7 @@ class ValidationOrchestrationServiceSpec extends AnyWordSpec
           }
           "the company information contains no registered office address" when {
             "the calling service has requested business verification" should {
-              s"return $IdentifiersMismatch and store $BusinessVerificationUnchallenged" in {
+              "return IdentifiersMismatch and store BusinessVerificationNotEnoughInformationToCallBV" in {
                 mockRetrievePartnershipInformation(testJourneyId)(Future.successful(Some(testPartnershipInformation.copy(
                   optCompanyProfile = Some(testCompanyProfile.copy(
                     unsanitisedCHROAddress = Json.obj()
@@ -111,14 +111,14 @@ class ValidationOrchestrationServiceSpec extends AnyWordSpec
                 ))))
                 mockValidateIdentifiers(testSautr, testPostcode)(Future.successful(true))
                 mockStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(Future.successful(SuccessfullyStored))
-                mockStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationUnchallenged)(Future.successful(SuccessfullyStored))
+                mockStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(Future.successful(SuccessfullyStored))
                 mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
 
                 lazy val result = await(TestService.orchestrate(testJourneyId, businessVerificationCheck = true))
 
                 result mustBe IdentifiersMismatch
                 verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
-                verifyStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationUnchallenged)
+                verifyStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)
                 verifyStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)
               }
             }
@@ -142,18 +142,18 @@ class ValidationOrchestrationServiceSpec extends AnyWordSpec
       }
       "the postcode fails to match" when {
         "the calling service has requested business verification" should {
-          s"return $IdentifiersMismatch and store $BusinessVerificationUnchallenged" in {
+          "return IdentifiersMismatch and store BusinessVerificationNotEnoughInformationToCallBV" in {
             mockRetrievePartnershipInformation(testJourneyId)(Future.successful(Some(testPartnershipInformation)))
             mockValidateIdentifiers(testSautr, testPostcode)(Future.successful(false))
             mockStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(Future.successful(SuccessfullyStored))
-            mockStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationUnchallenged)(Future.successful(SuccessfullyStored))
+            mockStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(Future.successful(SuccessfullyStored))
             mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
 
             lazy val result = await(TestService.orchestrate(testJourneyId, businessVerificationCheck = true))
 
             result mustBe IdentifiersMismatch
             verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
-            verifyStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationUnchallenged)
+            verifyStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)
             verifyStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)
           }
         }
@@ -175,17 +175,17 @@ class ValidationOrchestrationServiceSpec extends AnyWordSpec
     }
     "no Sautr is provided" when {
       "the businessVerificationCheck is enabled" should {
-        s"return $NoSautrProvided and store $BusinessVerificationUnchallenged" in {
+        "return NoSautrProvided and store BusinessVerificationNotEnoughInformationToCallBV" in {
           mockRetrievePartnershipInformation(testJourneyId)(Future.successful(Some(PartnershipInformation(None, None))))
           mockStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(Future.successful(SuccessfullyStored))
-          mockStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationUnchallenged)(Future.successful(SuccessfullyStored))
+          mockStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(Future.successful(SuccessfullyStored))
           mockStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)(Future.successful(SuccessfullyStored))
 
           lazy val result = await(TestService.orchestrate(testJourneyId, businessVerificationCheck = true))
 
           result mustBe NoSautrProvided
           verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
-          verifyStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationUnchallenged)
+          verifyStoreBusinessVerificationResponse(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)
           verifyStoreRegistrationResponse(testJourneyId, RegistrationNotCalled)
         }
       }

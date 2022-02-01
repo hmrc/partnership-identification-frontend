@@ -51,14 +51,14 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
         }
       }
 
-      "store a verification state of UNCHALLENGED and redirect to the registration controller" when {
+      "store a verification state of NOT_ENOUGH_INFORMATION_TO_CHALLENGE and redirect to the registration controller" when {
         "business verification does not have enough information to create a verification journey" in {
           await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
           enable(BusinessVerificationStub)
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(OK, testSautr)
           stubCreateBusinessVerificationJourneyFromStub(testSautr, testJourneyId)(NOT_FOUND)
-          stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)(OK)
+          stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToChallenge)(OK)
 
           lazy val result = get(s"$baseUrl/$testJourneyId/start-business-verification")
 
@@ -66,7 +66,7 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
             httpStatus(SEE_OTHER),
             redirectUri(routes.RegistrationController.register(testJourneyId).url)
           )
-          verifyStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)
+          verifyStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToChallenge)
         }
       }
 
@@ -106,13 +106,13 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
         }
       }
 
-      "store a verification state of UNCHALLENGED and redirect to the registration controller" when {
+      "store a verification state of NOT_ENOUGH_INFORMATION_TO_CHALLENGE and redirect to the registration controller" when {
         "business verification does not have enough information to create a verification journey" in {
           await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(OK, testSautr)
           stubCreateBusinessVerificationJourney(testSautr, testJourneyId)(NOT_FOUND)
-          stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)(OK)
+          stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToChallenge)(OK)
 
           lazy val result = get(s"$baseUrl/$testJourneyId/start-business-verification")
 
@@ -120,7 +120,7 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
             httpStatus(SEE_OTHER),
             redirectUri(routes.RegistrationController.register(testJourneyId).url)
           )
-          verifyStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationUnchallenged)
+          verifyStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToChallenge)
         }
       }
 
