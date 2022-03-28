@@ -16,6 +16,7 @@
 @import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 @import uk.gov.hmrc.partnershipidentificationfrontend.models.PageConfig
 @import uk.gov.hmrc.partnershipidentificationfrontend.views.html.templates.govuk_template
+@import uk.gov.hmrc.partnershipidentificationfrontend.views.helpers.TitleHelper.title
 
 @this(layout: govuk_template,
         govUkHeader: GovukHeader,
@@ -26,7 +27,7 @@
 
 @(journeyId: String, pageConfig: PageConfig, formAction: Call, checkYourAnswersList: Seq[SummaryListRow])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@layout(pageConfig, title = messages("check-your-answers.title")) {
+@layout(pageConfig, title(messages("check-your-answers.title"), pageConfig)) {
 
     @govukFieldset(Fieldset(
         legend = Some(Legend(
