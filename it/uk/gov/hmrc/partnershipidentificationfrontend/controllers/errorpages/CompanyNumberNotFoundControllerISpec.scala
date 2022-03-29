@@ -64,12 +64,12 @@ class CompanyNumberNotFoundControllerISpec extends ComponentSpecHelper
           await(insertJourneyConfig(
             testJourneyId,
             testInternalId,
-            testJourneyConfig(LimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
+            testJourneyConfig(LimitedPartnership, Some(testDefaultServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           get(controllerUrl)
         }
 
-        testCompanyNumberNotFoundView(result, testCallingServiceName)
+        testCompanyNumberNotFoundView(result, testDefaultServiceName)
       }
 
     }

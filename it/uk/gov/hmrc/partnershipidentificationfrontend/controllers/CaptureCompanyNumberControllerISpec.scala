@@ -56,7 +56,7 @@ class CaptureCompanyNumberControllerISpec extends ComponentSpecHelper
       "there is a serviceName passed in the journeyConfig" should {
         lazy val result = {
           val config = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
-            .copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl))
+            .copy(pageConfig = PageConfig(Some(testDefaultServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl))
           await(insertJourneyConfig(
             journeyId = testJourneyId,
             authInternalId = testInternalId,
@@ -66,7 +66,7 @@ class CaptureCompanyNumberControllerISpec extends ComponentSpecHelper
           get(s"$baseUrl/$testJourneyId/company-registration-number")
         }
 
-        testCaptureCompanyNumberView(result, testCallingServiceName)
+        testCaptureCompanyNumberView(result, testDefaultServiceName)
       }
     }
 

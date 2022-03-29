@@ -59,7 +59,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
               journeyId = testJourneyId,
               authInternalId = testInternalId,
               journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true).copy(
-                pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl))
+                pageConfig = PageConfig(Some(testDefaultServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl))
             ))
             stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
             get(s"$baseUrl/$testJourneyId/confirm-company-name")

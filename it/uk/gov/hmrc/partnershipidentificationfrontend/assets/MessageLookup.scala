@@ -43,7 +43,7 @@ object MessageLookup {
   }
 
   object CaptureCompanyNumber {
-    val title = "What is the partnership’s company number?"
+    val title = "What is the partnership’s company number? - Entity Validation Service - GOV.UK"
     val heading = "What is the partnership’s company number?"
     val line_1 = "You can search Companies House for the company registration number (opens in new tab)."
     val link = "https://beta.companieshouse.gov.uk/"
@@ -57,19 +57,19 @@ object MessageLookup {
   }
 
   object ConfirmPartnershipName {
-    val title = "Confirm the partnership name"
+    val title = "Confirm the partnership name - Entity Validation Service - GOV.UK"
     val heading = "Confirm the partnership name"
     val change_company_link = "Change company"
   }
 
   object CompanyNumberNotFound {
-    val title = "We could not confirm your Partnership's company number"
+    val title = "We could not confirm your Partnership's company number - Entity Validation Service - GOV.UK"
     val heading = "We could not confirm your Partnership's company number"
     val paragraph = "The company number is not in our system."
   }
 
   object CaptureSautr {
-    val title = "What is the partnership’s Unique Taxpayer Reference?"
+    val title = "What is the partnership’s Unique Taxpayer Reference? - Entity Validation Service - GOV.UK"
     val heading = "What is the partnership’s Unique Taxpayer Reference?"
     val line_1 = "This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about Self Assessment. It may be called ‘reference’, ‘UTR’ or ‘official use’."
     val line_2 = "I do not have a Unique Taxpayer Reference"
@@ -85,7 +85,7 @@ object MessageLookup {
   }
 
   object CapturePostCode {
-    val title = "What is the postcode where the partnership is registered for Self Assessment?"
+    val title = "What is the postcode where the partnership is registered for Self Assessment? - Entity Validation Service - GOV.UK"
     val heading = "What is the postcode where the partnership is registered for Self Assessment?"
     val hint = "For example, AB1 2YZ"
 
@@ -98,7 +98,7 @@ object MessageLookup {
   }
 
   object CheckYourAnswers {
-    val title = "Check your answers"
+    val title = "Check your answers - Entity Validation Service - GOV.UK"
     val heading = "Check your answers"
     val sautr = "Unique Taxpayers Reference"
     val postCode = "Postcode"

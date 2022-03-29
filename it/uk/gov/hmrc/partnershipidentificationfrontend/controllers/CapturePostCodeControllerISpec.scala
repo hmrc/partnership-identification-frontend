@@ -49,13 +49,13 @@ class CapturePostCodeControllerISpec extends ComponentSpecHelper
       "there is a serviceName passed in the journeyConfig" should {
         lazy val result = {
           val config = testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)
-            .copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl))
+            .copy(pageConfig = PageConfig(Some(testDefaultServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl))
           await(insertJourneyConfig(testJourneyId, testInternalId, config))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           get(s"$baseUrl/$testJourneyId/self-assessment-postcode")
         }
 
-        testCapturePostCodeView(result, testCallingServiceName)
+        testCapturePostCodeView(result, testDefaultServiceName)
       }
     }
 
