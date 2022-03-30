@@ -46,7 +46,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
       "businessType" -> businessType,
       "VerificationStatus" -> verificationStatus,
       "RegisterApiStatus" -> registerStatus,
-      "callingService" -> testDefaultServiceName
+      "callingService" -> testCallingServiceName
     )
 
   "GET /:journeyId/register" should {
@@ -57,7 +57,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(GeneralPartnership, Some(testDefaultServiceName), businessVerificationCheck = true, testRegime)))
+              testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
@@ -81,7 +81,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(GeneralPartnership, Some(testDefaultServiceName), businessVerificationCheck = true, testRegime)))
+              testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
@@ -105,7 +105,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(ScottishPartnership, Some(testDefaultServiceName), businessVerificationCheck = true, testRegime)))
+              testJourneyConfig(ScottishPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
@@ -129,7 +129,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(ScottishPartnership, Some(testDefaultServiceName), businessVerificationCheck = true, testRegime)))
+              testJourneyConfig(ScottishPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
@@ -153,7 +153,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(LimitedPartnership, Some(testDefaultServiceName), businessVerificationCheck = true, testRegime)))
+              testJourneyConfig(LimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
@@ -177,7 +177,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(LimitedPartnership, Some(testDefaultServiceName), businessVerificationCheck = true, testRegime)))
+              testJourneyConfig(LimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
@@ -201,7 +201,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(ScottishLimitedPartnership, Some(testDefaultServiceName), businessVerificationCheck = true, testRegime)))
+              testJourneyConfig(ScottishLimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
@@ -225,7 +225,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(ScottishLimitedPartnership, Some(testDefaultServiceName), businessVerificationCheck = true, testRegime)))
+              testJourneyConfig(ScottishLimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
@@ -249,7 +249,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(LimitedLiabilityPartnership, Some(testDefaultServiceName), businessVerificationCheck = true, testRegime)))
+              testJourneyConfig(LimitedLiabilityPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
@@ -273,7 +273,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(LimitedLiabilityPartnership, Some(testDefaultServiceName), businessVerificationCheck = true, testRegime)))
+              testJourneyConfig(LimitedLiabilityPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
@@ -297,7 +297,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
           await(insertJourneyConfig(
             testJourneyId,
             testInternalId,
-            testJourneyConfig(GeneralPartnership, Some(testDefaultServiceName), businessVerificationCheck = false, testRegime)))
+            testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
@@ -320,7 +320,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(GeneralPartnership, Some(testDefaultServiceName), businessVerificationCheck = false, testRegime)))
+              testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
@@ -343,7 +343,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(ScottishPartnership, Some(testDefaultServiceName), businessVerificationCheck = false, testRegime)))
+              testJourneyConfig(ScottishPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
@@ -366,7 +366,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(ScottishPartnership, Some(testDefaultServiceName), businessVerificationCheck = false, testRegime)))
+              testJourneyConfig(ScottishPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
@@ -389,7 +389,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(LimitedPartnership, Some(testDefaultServiceName), businessVerificationCheck = false, testRegime)))
+              testJourneyConfig(LimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
@@ -412,7 +412,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(LimitedPartnership, Some(testDefaultServiceName), businessVerificationCheck = false, testRegime)))
+              testJourneyConfig(LimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
@@ -435,7 +435,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(LimitedLiabilityPartnership, Some(testDefaultServiceName), businessVerificationCheck = false, testRegime)))
+              testJourneyConfig(LimitedLiabilityPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
@@ -458,7 +458,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(LimitedLiabilityPartnership, Some(testDefaultServiceName), businessVerificationCheck = false, testRegime)))
+              testJourneyConfig(LimitedLiabilityPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
@@ -481,7 +481,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(ScottishLimitedPartnership, Some(testDefaultServiceName), businessVerificationCheck = false, testRegime)))
+              testJourneyConfig(ScottishLimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
@@ -504,7 +504,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
             insertJourneyConfig(
               testJourneyId,
               testInternalId,
-              testJourneyConfig(ScottishLimitedPartnership, Some(testDefaultServiceName), businessVerificationCheck = false, testRegime)))
+              testJourneyConfig(ScottishLimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = false, testRegime)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(status = OK, body = testSautr)
           stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))

@@ -50,13 +50,13 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
         "there is a serviceName passed in the journeyConfig" should {
           lazy val result = {
             val config = testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)
-              .copy(pageConfig = PageConfig(Some(testDefaultServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl))
+              .copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl))
             await(insertJourneyConfig(testJourneyId, testInternalId, config))
             stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
             get(s"$baseUrl/$testJourneyId/sa-utr")
           }
 
-          testCaptureOptionalSautrView(result, testDefaultServiceName)
+          testCaptureOptionalSautrView(result, testCallingServiceName)
         }
       }
 
@@ -105,13 +105,13 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
         "there is a serviceName passed in the journeyConfig" should {
           lazy val result = {
             val config = testScottishLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
-              .copy(pageConfig = PageConfig(Some(testDefaultServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl))
+              .copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl))
             await(insertJourneyConfig(testJourneyId, testInternalId, config))
             stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
             get(s"$baseUrl/$testJourneyId/sa-utr")
           }
 
-          testCaptureSautrView(result, testDefaultServiceName)
+          testCaptureSautrView(result, testCallingServiceName)
         }
       }
     }

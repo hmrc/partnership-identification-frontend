@@ -224,7 +224,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         await(insertJourneyConfig(
           testJourneyId,
           testInternalId,
-          testJourneyConfig(GeneralPartnership, Some(testDefaultServiceName), businessVerificationCheck = true, testRegime)
+          testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)
         ))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(OK,
@@ -261,7 +261,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
             "businessType" -> "General Partnership",
             "VerificationStatus" -> "Not Enough Information to call BV",
             "RegisterApiStatus" -> "not called",
-            "callingService" -> testDefaultServiceName
+            "callingService" -> testCallingServiceName
           ))
         }
       }
@@ -270,7 +270,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         await(insertJourneyConfig(
           testJourneyId,
           testInternalId,
-          testJourneyConfig(GeneralPartnership, Some(testDefaultServiceName), businessVerificationCheck = true, testRegime)
+          testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)
         ))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(OK, Json.obj(
@@ -300,7 +300,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
             "businessType" -> "General Partnership",
             "VerificationStatus" -> "Not Enough Information to call BV",
             "RegisterApiStatus" -> "not called",
-            "callingService" -> testDefaultServiceName
+            "callingService" -> testCallingServiceName
           ))
         }
       }

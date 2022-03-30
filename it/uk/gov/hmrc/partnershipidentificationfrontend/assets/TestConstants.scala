@@ -57,6 +57,7 @@ object TestConstants {
   val testSignOutUrl: String = "Sign out"
   val testAccessibilityUrl: String = "/accessibility"
   val testDefaultServiceName: String = "Entity Validation Service"
+  val testCallingServiceName: String = "Test Service"
 
   def testJourneyConfig(partnershipType: PartnershipType,
                         serviceName: Option[String] = None,
