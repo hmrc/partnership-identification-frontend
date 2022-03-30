@@ -49,7 +49,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
 
       "return a view" when {
         "there is no serviceName passed in the journeyConfig" should {
-          testConfirmPartnershipNameView(result, testCompanyName)
+          testConfirmPartnershipNameView(result, "")
         }
 
         "there is a serviceName passed in the journeyConfig" should {

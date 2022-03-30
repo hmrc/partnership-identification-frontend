@@ -58,6 +58,8 @@ trait CaptureSautrViewTests {
     "have the correct title" in {
       if (hasErrors)
         doc.title mustBe Base.Error.error + messages.title
+      else if (serviceName == "Test Service")
+        doc.title mustBe messages.pageConfigTestTitle
       else
         doc.title mustBe messages.title
     }
@@ -109,6 +111,8 @@ trait CaptureSautrViewTests {
     "have the correct title" in {
       if (hasErrors)
         doc.title mustBe Base.Error.error + messages.title
+      else if (serviceName == "Test Service")
+        doc.title mustBe messages.pageConfigTestTitle
       else
         doc.title mustBe messages.title
     }

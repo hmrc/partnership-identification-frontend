@@ -29,14 +29,19 @@ trait ConfirmPartnershipNameViewTests {
   this: ComponentSpecHelper =>
 
   def testConfirmPartnershipNameView(result: => WSResponse,
-                                     testCompanyName: String): Unit = {
+                                     serviceName: String): Unit = {
 
     lazy val doc: Document = Jsoup.parse(result.body)
 
     lazy val config = app.injector.instanceOf[AppConfig]
 
     "have the correct title" in {
-      doc.title mustBe messages.title
+      if (serviceName == "")
+        doc.title mustBe messages.title
+      else if (serviceName.contains("Test"))
+        doc.title mustBe messages.pageConfigTestTitle
+      else
+        doc.title mustBe messages.title
     }
 
     "have a sign out link in the header" in {

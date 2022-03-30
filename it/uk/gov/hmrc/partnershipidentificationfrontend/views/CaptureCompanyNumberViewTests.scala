@@ -60,7 +60,11 @@ trait CaptureCompanyNumberViewTests {
     }
 
     "have a view with the correct title" in {
-      doc.title mustBe messages.title
+      if (serviceName == "Test Service"){
+        doc.title mustBe messages.pageConfigTestTitle
+      } else {
+        doc.title mustBe messages.title
+      }
     }
 
     "have the correct first line" in {
