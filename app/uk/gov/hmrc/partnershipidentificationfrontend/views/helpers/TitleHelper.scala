@@ -23,10 +23,12 @@ import uk.gov.hmrc.partnershipidentificationfrontend.models.PageConfig
 
 object TitleHelper {
   def title(titleKey: String, pageConfig: PageConfig, form: Form[_])(implicit messages: Messages, appConfig: AppConfig): String = {
-    val titleMessage: String = s"${messages(titleKey)} - ${getServiceName(pageConfig)} - ${messages("service.govuk")}"
-    if (form.hasErrors) messages("error.title-prefix") + titleMessage
-    else titleMessage
+    if (form.hasErrors)
+      messages("error.title-prefix") + title(titleKey, pageConfig)
+    else
+      title(titleKey, pageConfig)
   }
+
   def title(titleKey: String, pageConfig: PageConfig)(implicit messages: Messages, appConfig: AppConfig): String = {
     s"${messages(titleKey)} - ${getServiceName(pageConfig)} - ${messages("service.govuk")}"
   }
