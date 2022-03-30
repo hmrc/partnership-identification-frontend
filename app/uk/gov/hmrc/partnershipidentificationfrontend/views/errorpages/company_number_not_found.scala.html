@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.partnershipidentificationfrontend.models.PageConfig
 @import uk.gov.hmrc.partnershipidentificationfrontend.views.html.helpers.h1
 @import uk.gov.hmrc.partnershipidentificationfrontend.views.html.templates.govuk_template
+@import uk.gov.hmrc.partnershipidentificationfrontend.views.helpers.TitleHelper.title
 
 @this(govukLayout: govuk_template,
       h1: h1,
@@ -27,7 +28,7 @@
 
 @(pageConfig: PageConfig, formAction: Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@govukLayout(pageConfig, messages("company-number-not-found.title")) {
+@govukLayout(pageConfig, title(messages("company-number-not-found.title"), pageConfig)) {
   @h1(messages("company-number-not-found.heading"))
   <p class="govuk-body">@messages("company-number-not-found.paragraph")</p>
 

@@ -19,6 +19,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.views
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.libs.ws.WSResponse
+import uk.gov.hmrc.partnershipidentificationfrontend.assets.MessageLookup.CapturePostCode.pageConfigTestTitle
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.MessageLookup.{Base, BetaBanner, Header, CapturePostCode => messages}
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
@@ -58,6 +59,8 @@ trait CapturePostCodeViewTests {
     "have the correct title" in {
       if (hasErrors)
         doc.title mustBe Base.Error.error + messages.title
+      else if (serviceName == "Test Service")
+        doc.title mustBe pageConfigTestTitle
       else
         doc.title mustBe messages.title
     }

@@ -18,9 +18,22 @@ package uk.gov.hmrc.partnershipidentificationfrontend.views.helpers
 
 import play.api.data.Form
 import play.api.i18n.Messages
+import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PageConfig
 
 object TitleHelper {
-  def title(titleMessage: String, form: Form[_])(implicit messages: Messages): String =
-    if (form.hasErrors) messages("error.title-prefix") + titleMessage
-    else titleMessage
+  def title(titleKey: String, pageConfig: PageConfig, form: Form[_])(implicit messages: Messages, appConfig: AppConfig): String = {
+    if (form.hasErrors)
+      messages("error.title-prefix") + title(titleKey, pageConfig)
+    else
+      title(titleKey, pageConfig)
+  }
+
+  def title(titleKey: String, pageConfig: PageConfig)(implicit messages: Messages, appConfig: AppConfig): String = {
+    s"${messages(titleKey)} - ${getServiceName(pageConfig)} - ${messages("service.govuk")}"
+  }
+
+  private def getServiceName(pageConfig: PageConfig)(implicit appConfig: AppConfig) =
+    pageConfig.optServiceName.getOrElse(appConfig.defaultServiceName)
+
 }
