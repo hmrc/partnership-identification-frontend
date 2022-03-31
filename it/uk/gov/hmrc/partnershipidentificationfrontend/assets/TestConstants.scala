@@ -56,6 +56,7 @@ object TestConstants {
   val testDeskProServiceId: String = "vrs"
   val testSignOutUrl: String = "Sign out"
   val testAccessibilityUrl: String = "/accessibility"
+  val testTechnicalHelpUrl: String = "/contact/report-technical-problem?newTab=true&service=vrs"
   val testDefaultServiceName: String = "Entity Validation Service"
   val testCallingServiceName: String = "Test Service"
 

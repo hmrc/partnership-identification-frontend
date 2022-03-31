@@ -77,6 +77,11 @@ trait CompanyNumberNotFoundViewTests {
       doc.getSubmitButton.first.text mustBe Base.tryAgain
     }
 
+    "have the corect technical help link and text" in {
+      doc.getTechnicalHelpLinkText mustBe Base.getHelp
+      doc.getTechnicalHelpLink mustBe testTechnicalHelpUrl
+    }
+
     "have accessibility statement link redirecting to accessibilityUrl from journey config" in {
       doc.getAccessibilityLink mustBe testAccessibilityUrl
     }

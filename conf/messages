@@ -14,7 +14,6 @@ feedback.after                                              = (opens in new tab)
 
 base.back                                                   = Back
 base.save_and_continue                                      = Save and continue
-base.getpagehelp.linkText                                   = Is this page not working properly?
 base.confirm_and_continue                                   = Confirm and continue
 base.change                                                 = Change
 base.try-again                                              = Try again

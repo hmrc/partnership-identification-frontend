@@ -52,12 +52,6 @@ class AppConfig @Inject()(config: Configuration,
 
   def betaFeedbackUrl(serviceIdentifier: String): String = s"$contactHost/contact/beta-feedback?service=$serviceIdentifier"
 
-  def reportAProblemPartialUrl(serviceIdentifier: String): String =
-    s"$contactHost/contact/problem_reports_ajax?service=$serviceIdentifier"
-
-  def reportAProblemNonJSUrl(serviceIdentifier: String): String =
-    s"$contactHost/contact/problem_reports_nonjs?service=$serviceIdentifier"
-
   private lazy val feedbackUrl: String = servicesConfig.getString("feedback.host")
   lazy val vatRegExitSurveyOrigin = "vat-registration"
   lazy val vatRegFeedbackUrl = s"$feedbackUrl/feedback/$vatRegExitSurveyOrigin"
