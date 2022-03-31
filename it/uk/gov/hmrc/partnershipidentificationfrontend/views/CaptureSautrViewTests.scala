@@ -80,6 +80,11 @@ trait CaptureSautrViewTests {
       doc.getSubmitButton.first.text mustBe Base.saveAndContinue
     }
 
+    "have the corect technical help link and text" in {
+      doc.getTechnicalHelpLinkText mustBe Base.getHelp
+      doc.getTechnicalHelpLink mustBe testTechnicalHelpUrl
+    }
+
   }
 
   def testCaptureOptionalSautrView(result: => WSResponse, serviceName: String = testDefaultServiceName, hasErrors: Boolean = false): Unit = {

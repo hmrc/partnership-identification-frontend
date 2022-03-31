@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *@
+
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcHeader
 @import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 @import uk.gov.hmrc.partnershipidentificationfrontend.models.PageConfig
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcTrackingConsentSnippet, HmrcLayout, HmrcTimeoutDialogHelper}
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.reporttechnicalissue.ReportTechnicalIssue
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcReportTechnicalIssue
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import views.html.helper.CSPNonce
 
@@ -26,7 +29,8 @@
     appConfig: AppConfig,
     hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
     standardBetaBanner: StandardBetaBanner,
-    hmrcTimeoutDialogHelper: HmrcTimeoutDialogHelper
+    hmrcTimeoutDialogHelper: HmrcTimeoutDialogHelper,
+    hmrcReportTechnicalIssue: HmrcReportTechnicalIssue
 )
 
 @(pageConfig: PageConfig, title: String, timeout: Boolean = true, showBackLink: Boolean = true)(contentBlock: Html)(implicit messages: Messages, appConfig: AppConfig, request: RequestHeader)
@@ -44,11 +48,9 @@
         @contentBlock
     </div>
 
-    <div class="govuk-body">
-        <a lang="en" hreflang="en" class="govuk-link " target="_blank" href="@{appConfig.reportAProblemNonJSUrl(pageConfig.deskProServiceId)}">
-            @messages("base.getpagehelp.linkText")
-        </a>
-    </div>
+    @hmrcReportTechnicalIssue(ReportTechnicalIssue(
+        serviceId = pageConfig.deskProServiceId
+    ))
 }
 
 
@@ -68,4 +70,3 @@
     backLinkUrl = Some("#"),
     additionalScriptsBlock = Some(scripts)
 )(content)
-

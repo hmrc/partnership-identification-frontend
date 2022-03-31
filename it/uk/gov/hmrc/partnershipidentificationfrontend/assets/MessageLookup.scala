@@ -23,7 +23,7 @@ object MessageLookup {
     val change = "Change"
     val saveAndContinue = "Save and continue"
     val saveAndComeBack = "Save and come back later"
-    val getHelp = "Is this page not working properly?"
+    val getHelp = "Is this page not working properly? (opens in new tab)"
     val back = "Back"
     val tryAgain = "Try again"
 
