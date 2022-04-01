@@ -34,7 +34,7 @@ class AppConfig @Inject()(config: Configuration,
   lazy val timeToLiveSeconds: Long = servicesConfig.getString("mongodb.timeToLiveSeconds").toLong
 
   private lazy val backendUrl: String = servicesConfig.baseUrl("partnership-identification")
-  private lazy val contactHost: String = servicesConfig.getString("contact-frontend.host")
+  lazy val contactHost: String = servicesConfig.getString("contact-frontend.host")
 
   def createJourneyUrl: String = s"$backendUrl/partnership-identification/journey"
 
