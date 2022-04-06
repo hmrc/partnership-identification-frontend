@@ -28,6 +28,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(publishingSettings: _*)
   .configs(IntegrationTest)
   .settings(DefaultBuildSettings.integrationTestSettings())
+  .settings(calculateITTestsGroupingSettings(System.getProperty("isADevMachine")): _*)
   .settings(resolvers += Resolver.jcenterRepo)
   .disablePlugins(JUnitXmlReportPlugin)
 
@@ -37,7 +38,23 @@ parallelExecution in Test := true
 addTestReportOption(Test, "test-reports")
 
 Keys.fork in IntegrationTest := true
-unmanagedSourceDirectories in IntegrationTest := (baseDirectory in IntegrationTest) (base => Seq(base / "it")).value
 javaOptions in IntegrationTest += "-Dlogger.resource=logback-test.xml"
-addTestReportOption(IntegrationTest, "int-test-reports")
-parallelExecution in IntegrationTest := false
+
+def calculateITTestsGroupingSettings(isADevMachineProperty: String): Seq[sbt.Setting[_]] = {
+  IntegrationTest / testGrouping := {
+    if ("true".equals(isADevMachineProperty))
+      onlyOneJvmForAllISpecTestsTestGroup.value
+    else
+      (IntegrationTest / testGrouping).value
+  }
+}
+
+lazy val onlyOneJvmForAllISpecTestsTestGroup = taskKey[Seq[Tests.Group]]("Default test group that run all the tests in only one JVM - (much faster!)")
+
+onlyOneJvmForAllISpecTestsTestGroup := Seq(new Tests.Group(
+  "<default>",
+  (IntegrationTest / definedTests).value,
+  Tests.InProcess,
+  Seq.empty
+))
+
