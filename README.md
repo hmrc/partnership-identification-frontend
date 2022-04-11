@@ -13,7 +13,30 @@ This is a Scala/Play frontend to allow Partnerships to provide their information
 3. Run the frontend locally using
    `sbt 'run 9722 -Dapplication.router=testOnlyDoNotUseInAppConf.Routes'`
 
-### Testing
+### Unit Testing 
+
+ From the terminal console open an `sbt` shell and run `test` task   
+
+### Integration Testing
+
+From a terminal console open an `sbt` shell and run the `IntegrationTest / test` task.  
+```
+sbt
+
+[partnership-identification-frontend] $ IntegrationTest / test
+```
+
+By default, for each ISpec test a new JVM will run and all tests will run sequentially.  
+To run all ISpec tests in a single JVM start sbt with the -DisADevMachine=true property and then run `IntegrationTest / test` task:
+
+```
+sbt -DisADevMachine=true
+
+[partnership-identification-frontend] $ IntegrationTest / test
+```
+
+### Testing Endpoints
+
 See the TestREADME for more information on how to use our stubs for testing
 
 # End-Points
