@@ -23,7 +23,7 @@ import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, CompanyProfile, PartnershipInformation, RegistrationStatus}
+import uk.gov.hmrc.partnershipidentificationfrontend.models._
 import uk.gov.hmrc.partnershipidentificationfrontend.service.PartnershipIdentificationService
 
 import scala.concurrent.Future
@@ -67,14 +67,14 @@ trait MockPartnershipIdentificationService extends MockitoSugar with BeforeAndAf
     )(ArgumentMatchers.any[HeaderCarrier])
     ).thenReturn(response)
 
-  def mockStoreIdentifiersMatch(journeyId: String, identifiersMatch: Boolean)(response: Future[SuccessfullyStored.type]): OngoingStubbing[_] =
+  def mockStoreIdentifiersMatch(journeyId: String, identifiersMatch: ValidationResponse)(response: Future[SuccessfullyStored.type]): OngoingStubbing[_] =
     when(mockPartnershipIdentificationService.storeIdentifiersMatch(
       ArgumentMatchers.eq(journeyId),
       ArgumentMatchers.eq(identifiersMatch)
     )(ArgumentMatchers.any[HeaderCarrier])
     ).thenReturn(response)
 
-  def verifyStoreIdentifiersMatch(journeyId: String, identifiersMatch: Boolean): Unit =
+  def verifyStoreIdentifiersMatch(journeyId: String, identifiersMatch: ValidationResponse): Unit =
     verify(mockPartnershipIdentificationService).storeIdentifiersMatch(
       ArgumentMatchers.eq(journeyId),
       ArgumentMatchers.eq(identifiersMatch)

@@ -16,10 +16,49 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.models
 
+import play.api.libs.json._
+
 sealed trait ValidationResponse
 
 case object IdentifiersMatched extends ValidationResponse
 
 case object IdentifiersMismatch extends ValidationResponse
 
-case object NoSautrProvided extends ValidationResponse
+case object UnMatchable extends ValidationResponse
+
+object ValidationResponse {
+
+  val IdentifiersMatchKey: String = "identifiersMatch"
+  val IdentifiersMatchedKey: String = "IdentifiersMatched"
+
+  private val IdentifiersMismatchKey: String = "IdentifiersMismatch"
+  private val UnMatchableKey: String = "UnMatchable"
+
+  implicit val format: Format[ValidationResponse] = new Format[ValidationResponse] {
+
+    override def reads(jsValue: JsValue): JsResult[ValidationResponse] = jsValue.validate[String] match {
+      case JsSuccess(validationResponseAsString, _) => validationResponseAsString match {
+        case IdentifiersMatchedKey => JsSuccess(IdentifiersMatched)
+        case IdentifiersMismatchKey => JsSuccess(IdentifiersMismatch)
+        case UnMatchableKey => JsSuccess(UnMatchable)
+      }
+      case JsError(_) =>
+        jsValue.validate[Boolean] match {
+          case JsSuccess(identifiersMatch, _) => if(identifiersMatch) JsSuccess(IdentifiersMatched) else JsSuccess(IdentifiersMismatch)
+          case JsError(_) => JsError("Invalid validation response")
+        }
+    }
+
+    override def writes(validationResponse: ValidationResponse): JsValue = {
+      val validationResponseAsString: String = validationResponse match {
+        case IdentifiersMatched => IdentifiersMatchedKey
+        case IdentifiersMismatch => IdentifiersMismatchKey
+        case UnMatchable => UnMatchableKey
+      }
+
+      JsString(validationResponseAsString)
+    }
+
+  }
+
+}

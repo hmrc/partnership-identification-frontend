@@ -29,44 +29,48 @@ class ValidationOrchestrationService @Inject()(partnershipIdentificationService:
 
   def orchestrate(journeyId: String, businessVerificationCheck: Boolean)(implicit hc: HeaderCarrier): Future[ValidationResponse] = {
     partnershipIdentificationService.retrievePartnershipInformation(journeyId).flatMap {
-      case Some(PartnershipInformation(optSaInformation, optCompanyProfile)) => for {
-        identifiersMatch <- (optSaInformation, optCompanyProfile) match {
-          case (Some(SaInformation(sautr, postcode)), None) =>
-            validatePartnershipInformationService.validateIdentifiers(sautr, postcode)
-          case (Some(SaInformation(sautr, postcode)), Some(companyProfile)) =>
-            companyProfile.optRegisteredOfficePostcode match {
-              case Some(registeredOfficePostcode) => for {
-                saPostcodeMatches <- validatePartnershipInformationService.validateIdentifiers(sautr, postcode)
-                registeredOfficePostcodeMatches <- validatePartnershipInformationService.validateIdentifiers(sautr, registeredOfficePostcode)
-              } yield saPostcodeMatches && registeredOfficePostcodeMatches
-              case None =>
-                Future.successful(false) //If there is no address held on Companies House, fail to match
-            }
-          case (None, _) =>
-            Future.successful(false)
-        }
-        _ <- partnershipIdentificationService.storeIdentifiersMatch(journeyId, identifiersMatch = identifiersMatch)
-        _ <- if (businessVerificationCheck && !identifiersMatch) {
-          partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationNotEnoughInformationToCallBV)
-        } else {
-          Future.successful(())
-        }
-        _ <- if (!identifiersMatch) {
-          partnershipIdentificationService.storeRegistrationStatus(journeyId, RegistrationNotCalled)
-        } else {
-          Future.successful(())
-        }
-      } yield if (optSaInformation.isDefined) {
-        if (identifiersMatch) {
-          IdentifiersMatched
-        } else {
-          IdentifiersMismatch
-        }
-      } else {
-        NoSautrProvided
+        case Some(PartnershipInformation(optSaInformation, optCompanyProfile)) => for {
+          identifiersMatch <- matchTrustDetails(optSaInformation, optCompanyProfile)
+
+          _ <- partnershipIdentificationService.storeIdentifiersMatch(journeyId, identifiersMatch = identifiersMatch)
+
+          _ <- if (businessVerificationCheck && (identifiersMatch != IdentifiersMatched)) {
+            partnershipIdentificationService.storeBusinessVerificationStatus(journeyId, BusinessVerificationNotEnoughInformationToCallBV)
+          } else {
+            Future.successful(())
+          }
+
+          _ <- if (identifiersMatch != IdentifiersMatched) {
+            partnershipIdentificationService.storeRegistrationStatus(journeyId, RegistrationNotCalled)
+          } else {
+            Future.successful(())
+          }
+
+        } yield identifiersMatch
+        case _ => Future.failed(new InternalServerException(s"No data stored for journeyId: $journeyId"))
       }
-      case _ =>
-        throw new InternalServerException(s"No data stored for journeyId: $journeyId")
+  }
+
+  private def matchTrustDetails(optSaInformation: Option[SaInformation], optCompanyProfile: Option[CompanyProfile])
+                       (implicit hc: HeaderCarrier): Future[ValidationResponse] = {
+    (optSaInformation, optCompanyProfile) match {
+      case (Some(SaInformation(sautr, postcode)), None) =>
+        validatePartnershipInformationService
+        .validateIdentifiers(sautr, postcode)
+          .map(toValidationResponse)
+      case (Some(SaInformation(sautr, postcode)), Some(companyProfile)) =>
+        companyProfile.optRegisteredOfficePostcode match {
+          case Some(registeredOfficePostcode) => for {
+            saPostcodeMatches <- validatePartnershipInformationService.validateIdentifiers(sautr, postcode)
+            registeredOfficePostcodeMatches <- validatePartnershipInformationService.validateIdentifiers(sautr, registeredOfficePostcode)
+          } yield toValidationResponse(saPostcodeMatches && registeredOfficePostcodeMatches)
+          case None =>
+            Future.successful(IdentifiersMismatch) //If there is no address held on Companies House, fail to match
+        }
+      case (None, _) =>
+        Future.successful(UnMatchable)
     }
   }
+
+  private def toValidationResponse(bool: Boolean): ValidationResponse = if(bool) IdentifiersMatched else IdentifiersMismatch
 }

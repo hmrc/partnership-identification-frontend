@@ -18,7 +18,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.stubs
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.{JsObject, JsString, JsValue, Json, OFormat}
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, CompanyProfile, RegistrationStatus}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, CompanyProfile, RegistrationStatus, ValidationResponse}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.{WiremockHelper, WiremockMethods}
 
 trait PartnershipIdentificationStub extends WiremockMethods {
@@ -64,9 +64,10 @@ trait PartnershipIdentificationStub extends WiremockMethods {
       status = status
     )
 
-  def stubStoreIdentifiersMatch(journeyId: String, identifiersMatch: Boolean)(status: Int): StubMapping =
+  def stubStoreIdentifiersMatch(journeyId: String, identifiersMatch: ValidationResponse)(status: Int): StubMapping =
     when(method = PUT,
-      uri = s"/partnership-identification/journey/$journeyId/identifiersMatch", body = identifiersMatch
+      uri = s"/partnership-identification/journey/$journeyId/identifiersMatch",
+      body = Json.toJson(identifiersMatch)
     ).thenReturn(
       status = status
     )
@@ -93,7 +94,7 @@ trait PartnershipIdentificationStub extends WiremockMethods {
       optBody = Some(Json.toJson(businessVerificationStatus).toString())
     )
 
-  def verifyStoreIdentifiersMatch(journeyId: String, identifiersMatch: Boolean): Unit =
+  def verifyStoreIdentifiersMatch(journeyId: String, identifiersMatch: ValidationResponse): Unit =
     WiremockHelper.verifyPut(
       uri = s"/partnership-identification/journey/$journeyId/identifiersMatch",
       optBody = Some(Json.toJson(identifiersMatch).toString())

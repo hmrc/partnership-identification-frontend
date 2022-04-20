@@ -337,7 +337,21 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
         lazy val result = get(s"/partnership-identification/api/journey/$testJourneyId")
 
         result.status mustBe OK
-        result.json mustBe Json.toJsObject(testPartnershipFullJourneyData)
+
+        val testJson: JsObject =  Json.obj(
+          "sautr" -> testSautr,
+          "postcode" -> testPostcode,
+          "identifiersMatch" -> true,
+          "businessVerification" -> Json.obj(
+            "verificationStatus" -> "PASS"
+          ),
+          "registration" -> Json.obj(
+            "registrationStatus" -> "REGISTERED",
+            "registeredBusinessPartnerId" -> testSafeId
+          )
+        )
+
+        result.json mustBe testJson
       }
       "the Company Profile exists" in {
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))

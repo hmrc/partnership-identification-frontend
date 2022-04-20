@@ -20,7 +20,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.PartnershipIdentificationConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.RemovePartnershipDetailsHttpParser.SuccessfullyRemoved
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, CompanyProfile, PartnershipFullJourneyData, PartnershipInformation, RegistrationStatus}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationStatus, CompanyProfile, PartnershipFullJourneyData, PartnershipInformation}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{RegistrationStatus, ValidationResponse}
 import uk.gov.hmrc.partnershipidentificationfrontend.service.PartnershipIdentificationService._
 
 import javax.inject.{Inject, Singleton}
@@ -45,9 +46,9 @@ class PartnershipIdentificationService @Inject()(connector: PartnershipIdentific
     connector.storeData[BusinessVerificationStatus](journeyId, VerificationStatusKey, businessVerification)
 
   def storeIdentifiersMatch(journeyId: String,
-                            identifiersMatch: Boolean
+                            identifiersMatch: ValidationResponse
                            )(implicit hc: HeaderCarrier): Future[SuccessfullyStored.type] =
-    connector.storeData[Boolean](journeyId, IdentifiersMatchKey, identifiersMatch)
+    connector.storeData[ValidationResponse](journeyId, IdentifiersMatchKey, identifiersMatch)
 
   def storeRegistrationStatus(journeyId: String,
                               registrationStatus: RegistrationStatus
