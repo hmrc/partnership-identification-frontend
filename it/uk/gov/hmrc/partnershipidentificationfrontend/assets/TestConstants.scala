@@ -40,7 +40,8 @@ object TestConstants {
   val testCompanyNumber: String = "12345678"
   val testCompanyName: String = "Test Company Ltd"
   val testCtutr: String = "1234567890"
-  val testDateOfIncorporation: String = LocalDate.of(2000, 1, 1).toString
+  val testDOIYear: Int = 2000
+  val testDateOfIncorporation: String = LocalDate.of( testDOIYear, 1, 1).toString
   val testAddress: JsObject = Json.obj(
     "address_line_1" -> "testLine1",
     "address_line_2" -> "test town",
@@ -115,11 +116,12 @@ object TestConstants {
       )
     )
 
+
   val testPartnershipFullJourneyDataJson: JsObject = {
     Json.obj(
       "sautr" -> testSautr,
       "postcode" -> testPostcode,
-      "identifiersMatch" -> true,
+      "identifiersMatch" -> "IdentifiersMatched",
       "businessVerification" -> Json.obj(
         "verificationStatus" -> "PASS"
       ),
@@ -134,7 +136,7 @@ object TestConstants {
     Json.obj(
       "sautr" -> testSautr,
       "postcode" -> testPostcode,
-      "identifiersMatch" -> true,
+      "identifiersMatch" -> "IdentifiersMatched",
       "businessVerification" -> Json.obj(
         "verificationStatus" -> "PASS"
       ),
@@ -148,7 +150,7 @@ object TestConstants {
     Json.obj(
       "sautr" -> testSautr,
       "postcode" -> testPostcode,
-      "identifiersMatch" -> false,
+      "identifiersMatch" -> "IdentifiersMismatch",
       "businessVerification" -> Json.obj(
         "verificationStatus" -> "NOT_ENOUGH_INFORMATION_TO_CALL_BV"
       ),
@@ -174,19 +176,20 @@ object TestConstants {
     )
   }
 
+
   val testPartnershipFullJourneyData: PartnershipFullJourneyData =
     PartnershipFullJourneyData(
       Some(testPostcode),
       Some(testSautr),
       None,
-      identifiersMatch = true,
+      identifiersMatch = IdentifiersMatched,
       Some(BusinessVerificationPass),
       Registered(testSafeId))
 
   def testLimitedPartnershipAuditJson(businessType: String): JsObject = Json.obj(
     "SAUTR" -> testSautr,
     "SApostcode" -> testPostcode,
-    "isMatch" -> false,
+    "isMatch" -> "false",
     "businessType" -> businessType,
     "VerificationStatus" -> "Not Enough Information to call BV",
     "RegisterApiStatus" -> "not called",

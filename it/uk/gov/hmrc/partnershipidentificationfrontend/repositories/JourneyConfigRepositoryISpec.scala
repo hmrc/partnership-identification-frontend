@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.repositories
 
-import org.scalatest.Assertion
 import org.scalatest.concurrent.{AbstractPatienceConfiguration, Eventually}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._

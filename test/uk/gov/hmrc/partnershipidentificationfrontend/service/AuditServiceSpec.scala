@@ -24,8 +24,8 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants._
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
 import uk.gov.hmrc.partnershipidentificationfrontend.models._
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -39,7 +39,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
       optPostcode = Some(testPostcode),
       optSautr = Some(testSautr),
       companyProfile = Some(testCompanyProfile),
-      identifiersMatch = false,
+      identifiersMatch = IdentifiersMismatch,
       businessVerification = Some(BusinessVerificationNotEnoughInformationToCallBV),
       registrationStatus = RegistrationNotCalled
     )
@@ -68,7 +68,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               optPostcode = Some(testPostcode),
               optSautr = Some(testSautr),
               companyProfile = None,
-              identifiersMatch = true,
+              identifiersMatch = IdentifiersMatched,
               businessVerification = Some(BusinessVerificationPass),
               registrationStatus = Registered(testBusinessPartnerId)
             )
@@ -91,7 +91,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               optPostcode = Some(testPostcode),
               optSautr = Some(testSautr),
               companyProfile = None,
-              identifiersMatch = true,
+              identifiersMatch = IdentifiersMatched,
               businessVerification = Some(BusinessVerificationNotEnoughInformationToChallenge),
               registrationStatus = RegistrationNotCalled
             )
@@ -113,7 +113,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               optPostcode = Some(testPostcode),
               optSautr = Some(testSautr),
               companyProfile = None,
-              identifiersMatch = true,
+              identifiersMatch = IdentifiersMatched,
               businessVerification = Some(BusinessVerificationFail),
               registrationStatus = RegistrationNotCalled
             )
@@ -135,7 +135,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               optPostcode = Some(testPostcode),
               optSautr = Some(testSautr),
               companyProfile = None,
-              identifiersMatch = true,
+              identifiersMatch = IdentifiersMatched,
               businessVerification = Some(BusinessVerificationPass),
               registrationStatus = RegistrationFailed
             )
@@ -157,7 +157,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               optPostcode = Some(testPostcode),
               optSautr = Some(testSautr),
               companyProfile = None,
-              identifiersMatch = true,
+              identifiersMatch = IdentifiersMatched,
               businessVerification = None,
               registrationStatus = RegistrationFailed
             )
@@ -180,7 +180,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             optPostcode = None,
             optSautr = None,
             companyProfile = None,
-            identifiersMatch = false,
+            identifiersMatch = UnMatchable,
             businessVerification = Some(BusinessVerificationNotEnoughInformationToCallBV),
             registrationStatus = RegistrationNotCalled
           )
@@ -188,7 +188,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
         mockAppConfig.defaultServiceName returns testServiceName
 
         val expectedAuditModel: JsObject = Json.obj(
-          "isMatch" -> false,
+          "isMatch" -> "unmatchable",
           "businessType" -> "General Partnership",
           "VerificationStatus" -> "Not Enough Information to call BV",
           "RegisterApiStatus" -> "not called",
@@ -210,7 +210,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               optPostcode = Some(testPostcode),
               optSautr = Some(testSautr),
               companyProfile = None,
-              identifiersMatch = true,
+              identifiersMatch = IdentifiersMatched,
               businessVerification = Some(BusinessVerificationPass),
               registrationStatus = Registered(testBusinessPartnerId)
             )
@@ -233,7 +233,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               optPostcode = Some(testPostcode),
               optSautr = Some(testSautr),
               companyProfile = None,
-              identifiersMatch = true,
+              identifiersMatch = IdentifiersMatched,
               businessVerification = Some(BusinessVerificationFail),
               registrationStatus = RegistrationNotCalled
             )
@@ -255,7 +255,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               optPostcode = Some(testPostcode),
               optSautr = Some(testSautr),
               companyProfile = None,
-              identifiersMatch = true,
+              identifiersMatch = IdentifiersMatched,
               businessVerification = Some(BusinessVerificationPass),
               registrationStatus = RegistrationFailed
             )
@@ -277,7 +277,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               optPostcode = Some(testPostcode),
               optSautr = Some(testSautr),
               companyProfile = None,
-              identifiersMatch = true,
+              identifiersMatch = IdentifiersMatched,
               businessVerification = None,
               registrationStatus = RegistrationFailed
             )
@@ -300,7 +300,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
             optPostcode = None,
             optSautr = None,
             companyProfile = None,
-            identifiersMatch = false,
+            identifiersMatch = UnMatchable,
             businessVerification = Some(BusinessVerificationNotEnoughInformationToCallBV),
             registrationStatus = RegistrationNotCalled
           )
@@ -308,7 +308,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
         mockAppConfig.defaultServiceName returns testServiceName
 
         val expectedAuditModel: JsObject = Json.obj(
-          "isMatch" -> false,
+          "isMatch" -> "unmatchable",
           "businessType" -> "Scottish Partnership",
           "VerificationStatus" -> "Not Enough Information to call BV",
           "RegisterApiStatus" -> "not called",
@@ -453,7 +453,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
   private def expectedNonLimitedPartnershipAuditJson(partnershipType: String,
                                                      verificationStatus: String,
                                                      registerStatus: String,
-                                                     isMatch: Boolean = true): JsObject = Json.obj(
+                                                     isMatch: String = "true"): JsObject = Json.obj(
     "SAUTR" -> testSautr,
     "SApostcode" -> testPostcode,
     "isMatch" -> isMatch,
@@ -467,7 +467,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
     partnershipType = partnershipType,
     verificationStatus = "Not Enough Information to call BV",
     registerStatus = "not called",
-    isMatch = false
+    isMatch = "false"
   ) ++ Json.obj("companyNumber" -> testCompanyProfile.companyNumber)
 
 }

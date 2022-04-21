@@ -42,7 +42,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
     Json.obj(
       "SAUTR" -> testSautr,
       "SApostcode" -> testPostcode,
-      "isMatch" -> true,
+      "isMatch" -> "true",
       "businessType" -> businessType,
       "VerificationStatus" -> verificationStatus,
       "RegisterApiStatus" -> registerStatus,
@@ -293,6 +293,7 @@ class RegistrationControllerISpec extends ComponentSpecHelper with AuthStub with
         }
       }
       "Business Verification is disabled" when {
+
         "a General Partnership registration is successful and registration status is successfully stored" in {
           await(insertJourneyConfig(
             testJourneyId,

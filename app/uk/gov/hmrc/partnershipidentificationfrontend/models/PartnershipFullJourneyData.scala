@@ -19,10 +19,13 @@ package uk.gov.hmrc.partnershipidentificationfrontend.models
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
+import uk.gov.hmrc.partnershipidentificationfrontend.models.BusinessVerificationStatus._
+import uk.gov.hmrc.partnershipidentificationfrontend.models.ValidationResponse.IdentifiersMatchedKey
+
 case class PartnershipFullJourneyData(optPostcode: Option[String],
                                       optSautr: Option[String],
                                       companyProfile: Option[CompanyProfile],
-                                      identifiersMatch: Boolean,
+                                      identifiersMatch: ValidationResponse,
                                       businessVerification: Option[BusinessVerificationStatus],
                                       registrationStatus: RegistrationStatus
                                      )
@@ -36,11 +39,13 @@ object PartnershipFullJourneyData {
   private val RegistrationStatusKey = "registration"
   private val CompanyProfileKey = "companyProfile"
 
+  private val BusinessVerificationUnchallengedKey = "UNCHALLENGED"
+
   val reads: Reads[PartnershipFullJourneyData] = (
     (JsPath \ PostcodeKey).readNullable[String] and
       (JsPath \ SautrKey).readNullable[String] and
       (JsPath \ CompanyProfileKey).readNullable[CompanyProfile] and
-      (JsPath \ IdentifiersMatchKey).read[Boolean] and
+      (JsPath \ IdentifiersMatchKey).read[ValidationResponse] and
       (JsPath \ BusinessVerificationKey).readNullable[BusinessVerificationStatus] and
       (JsPath \ RegistrationStatusKey).read[RegistrationStatus](RegistrationStatus.format)
     ) (PartnershipFullJourneyData.apply _)
@@ -49,11 +54,31 @@ object PartnershipFullJourneyData {
     (JsPath \ PostcodeKey).writeNullable[String] and
       (JsPath \ SautrKey).writeNullable[String] and
       (JsPath \ CompanyProfileKey).writeNullable[CompanyProfile] and
-      (JsPath \ IdentifiersMatchKey).write[Boolean] and
+      (JsPath \ IdentifiersMatchKey).write[ValidationResponse] and
       (JsPath \ BusinessVerificationKey).writeNullable[BusinessVerificationStatus] and
       (JsPath \ RegistrationStatusKey).write[RegistrationStatus](RegistrationStatus.format)
     ) (unlift(PartnershipFullJourneyData.unapply))
 
   implicit val format: OFormat[PartnershipFullJourneyData] = OFormat(reads, writes)
 
+  val jsonWriterForCallingServices: Writes[PartnershipFullJourneyData] =
+    (partnershipFullJourneyData: PartnershipFullJourneyData) =>
+      format.writes(partnershipFullJourneyData) ++
+        newIdentifiersBlock(partnershipFullJourneyData) ++
+        newBusinessVerificationBlock(partnershipFullJourneyData)
+
+  private def newIdentifiersBlock(partnershipFullJourneyData: PartnershipFullJourneyData): JsObject =
+    Json.obj(IdentifiersMatchKey -> partnershipFullJourneyData.identifiersMatch.toString.contains(IdentifiersMatchedKey))
+
+  private def newBusinessVerificationBlock(partnershipFullJourneyData: PartnershipFullJourneyData): JsObject =
+    partnershipFullJourneyData.businessVerification.map(businessVerification => {
+      val businessVerificationStatusForCallingServices: String = businessVerification match {
+        case BusinessVerificationNotEnoughInformationToCallBV |
+             BusinessVerificationNotEnoughInformationToChallenge => BusinessVerificationUnchallengedKey
+        case BusinessVerificationPass => BusinessVerificationPassKey
+        case BusinessVerificationFail => BusinessVerificationFailKey
+      }
+      Json.obj(BusinessVerificationKey -> Json.obj(BusinessVerificationStatusKey -> businessVerificationStatusForCallingServices))
+    })
+      .getOrElse(Json.obj())
 }

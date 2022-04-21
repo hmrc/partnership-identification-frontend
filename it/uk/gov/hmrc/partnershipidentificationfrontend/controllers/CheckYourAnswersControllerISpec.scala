@@ -16,12 +16,14 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
+import com.github.tomakehurst.wiremock.client.WireMock
 import org.scalatest.concurrent.Eventually.eventually
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.FeatureSwitching
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{IdentifiersMatched, IdentifiersMismatch, UnMatchable}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationNotEnoughInformationToCallBV, RegistrationNotCalled}
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuditStub, AuthStub, PartnershipIdentificationStub, ValidatePartnershipInformationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
@@ -43,7 +45,13 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
 
   override def beforeEach(): Unit = {
     super.beforeEach()
+    WireMock.resetAllScenarios()
     stubAudit()
+  }
+
+  override protected def afterEach(): Unit = {
+    WireMock.resetAllScenarios()
+    super.afterEach()
   }
 
   "GET /check-your-answers-business" when {
@@ -99,7 +107,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJson)
         stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> true))
-        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(OK)
+        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMatched)(OK)
 
         lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
@@ -108,7 +116,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           redirectUri(routes.BusinessVerificationController.startBusinessVerificationJourney(testJourneyId).url)
         }
 
-        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)
+        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMatched)
       }
       "the applicant's known facts successfully match for an incorporated partnership" in {
         await(insertJourneyConfig(testJourneyId, testInternalId, testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)))
@@ -116,7 +124,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile)
         stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> true))
         stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> true))
-        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(OK)
+        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMatched)(OK)
 
         lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
@@ -125,7 +133,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           redirectUri(routes.BusinessVerificationController.startBusinessVerificationJourney(testJourneyId).url)
         }
 
-        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)
+        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMatched)
       }
     }
 
@@ -136,7 +144,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJson)
           stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> true))
-          stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(OK)
+          stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMatched)(OK)
 
           lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
@@ -145,14 +153,14 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
             redirectUri(routes.RegistrationController.register(testJourneyId).url)
           }
 
-          verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)
+          verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMatched)
         }
         "the business entity is Scottish Partnership" in {
           await(insertJourneyConfig(testJourneyId, testInternalId, testScottishPartnershipJourneyConfig(businessVerificationCheck = false)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJson)
           stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> true))
-          stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(OK)
+          stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMatched)(OK)
 
           lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
@@ -161,7 +169,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
             redirectUri(routes.RegistrationController.register(testJourneyId).url)
           }
 
-          verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)
+          verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMatched)
         }
         "the business entity is a limited Partnership" in {
           await(insertJourneyConfig(testJourneyId, testInternalId, testLimitedPartnershipJourneyConfig(businessVerificationCheck = false)))
@@ -169,7 +177,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile)
           stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> true))
           stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> true))
-          stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(OK)
+          stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMatched)(OK)
 
           lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
@@ -178,7 +186,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
             redirectUri(routes.RegistrationController.register(testJourneyId).url)
           }
 
-          verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)
+          verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMatched)
         }
 
         "the business entity is a limited liability Partnership" in {
@@ -187,7 +195,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile)
           stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> true))
           stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> true))
-          stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(OK)
+          stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMatched)(OK)
 
           lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
@@ -196,7 +204,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
             redirectUri(routes.RegistrationController.register(testJourneyId).url)
           }
 
-          verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)
+          verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMatched)
         }
 
         "the business entity is a Scottish limited Partnership" in {
@@ -205,7 +213,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile)
           stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> true))
           stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> true))
-          stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)(OK)
+          stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMatched)(OK)
 
           lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
@@ -214,7 +222,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
             redirectUri(routes.RegistrationController.register(testJourneyId).url)
           }
 
-          verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = true)
+          verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMatched)
         }
       }
     }
@@ -227,11 +235,16 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)
         ))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationJson).setNewScenarioState("auditing")
+        stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> false))
+        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMismatch)(OK)
+        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(OK)
+        stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
         stubRetrievePartnershipDetails(testJourneyId)(OK,
           Json.obj(
             "sautr" -> testSautr,
             "postcode" -> testPostcode,
-            "identifiersMatch" -> false,
+            "identifiersMatch" -> "IdentifiersMismatch",
             "businessVerification" -> Json.obj(
               "verificationStatus" -> "NOT_ENOUGH_INFORMATION_TO_CALL_BV"
             ),
@@ -239,11 +252,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
               "registrationStatus" -> "REGISTRATION_NOT_CALLED"
             )
           )
-        )
-        stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> false))
-        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
-        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(OK)
-        stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
+        ).setRequiredScenarioState("auditing")
 
         lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
@@ -252,12 +261,12 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
         }
 
-        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
+        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMismatch)
         eventually {
           verifyAuditDetail(Json.obj(
             "SAUTR" -> testSautr,
             "SApostcode" -> testPostcode,
-            "isMatch" -> false,
+            "isMatch" -> "false",
             "businessType" -> "General Partnership",
             "VerificationStatus" -> "Not Enough Information to call BV",
             "RegisterApiStatus" -> "not called",
@@ -273,18 +282,21 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)
         ))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-        stubRetrievePartnershipDetails(testJourneyId)(OK, Json.obj(
-          "identifiersMatch" -> false,
-          "businessVerification" -> Json.obj(
-            "verificationStatus" -> "NOT_ENOUGH_INFORMATION_TO_CALL_BV"
-          ),
-          "registration" -> Json.obj(
-            "registrationStatus" -> "REGISTRATION_NOT_CALLED"
-          )
-        ))
-        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
+        stubRetrievePartnershipDetails(testJourneyId)(OK, Json.obj()).setNewScenarioState("auditing")
+        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = UnMatchable)(OK)
         stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(OK)
         stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
+        stubRetrievePartnershipDetails(testJourneyId)(OK,
+          Json.obj(
+            "identifiersMatch" -> "UnMatchable",
+            "businessVerification" -> Json.obj(
+              "verificationStatus" -> "NOT_ENOUGH_INFORMATION_TO_CALL_BV"
+            ),
+            "registration" -> Json.obj(
+              "registrationStatus" -> "REGISTRATION_NOT_CALLED"
+            )
+          )
+        ).setRequiredScenarioState("auditing")
 
         lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
@@ -293,10 +305,10 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
         }
 
-        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
+        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = UnMatchable)
         eventually {
           verifyAuditDetail(Json.obj(
-            "isMatch" -> false,
+            "isMatch" -> "unmatchable",
             "businessType" -> "General Partnership",
             "VerificationStatus" -> "Not Enough Information to call BV",
             "RegisterApiStatus" -> "not called",
@@ -312,12 +324,13 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           testLimitedPartnershipJourneyConfig(businessVerificationCheck = true))
         )
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile)
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationWithCompanyProfile).setNewScenarioState("auditing")
         stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> false))
         stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> false))
-        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
+        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMismatch)(OK)
         stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(OK)
         stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile).setRequiredScenarioState("auditing")
 
         lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
@@ -326,7 +339,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
         }
 
-        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
+        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMismatch)
         eventually {
           verifyAuditDetail(expectedAudit = testLimitedPartnershipAuditJson(businessType = "Limited Partnership"))
         }
@@ -339,12 +352,13 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           testLimitedLiabilityPartnershipJourneyConfig(businessVerificationCheck = true)
         ))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile)
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationWithCompanyProfile).setNewScenarioState("auditing")
         stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> false))
         stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> false))
-        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
+        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMismatch)(OK)
         stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(OK)
         stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile).setRequiredScenarioState("auditing")
 
         lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
@@ -353,7 +367,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
         }
 
-        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
+        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMismatch)
         eventually {
           verifyAuditDetail(expectedAudit = testLimitedPartnershipAuditJson(businessType = "Limited Liability Partnership"))
         }
@@ -366,12 +380,13 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           testScottishLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
         ))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile)
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationWithCompanyProfile).setNewScenarioState("auditing")
         stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> false))
         stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> false))
-        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)(OK)
+        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMismatch)(OK)
         stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(OK)
         stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile).setRequiredScenarioState("auditing")
 
         lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
 
@@ -380,7 +395,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
         }
 
-        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = false)
+        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMismatch)
         eventually {
           verifyAuditDetail(expectedAudit = testLimitedPartnershipAuditJson(businessType = "Scottish LTD Partnership"))
         }

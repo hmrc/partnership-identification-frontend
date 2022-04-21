@@ -21,7 +21,7 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{IdentifiersMatched, IdentifiersMismatch, NoSautrProvided}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{IdentifiersMatched, IdentifiersMismatch, UnMatchable}
 import uk.gov.hmrc.partnershipidentificationfrontend.service.{AuditService, JourneyService, PartnershipIdentificationService, ValidationOrchestrationService}
 import uk.gov.hmrc.partnershipidentificationfrontend.views.helpers.CheckYourAnswersListBuilder
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.check_your_answers_page
@@ -76,7 +76,7 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
                   Future.successful(Redirect(routes.BusinessVerificationController.startBusinessVerificationJourney(journeyId)))
                 case IdentifiersMatched =>
                   Future.successful(Redirect(routes.RegistrationController.register(journeyId)))
-                case NoSautrProvided | IdentifiersMismatch =>
+                case UnMatchable | IdentifiersMismatch =>
                   auditService.auditPartnershipInformation(journeyId, journeyConfig).map {
                     _ => Redirect(routes.JourneyRedirectController.redirectToContinueUrl(journeyId))
                   }

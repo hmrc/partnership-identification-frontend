@@ -126,7 +126,16 @@ class AuditService @Inject()(auditConnector: AuditConnector,
     )
   }
 
-  private def identifiersMatchJson(identifiersMatch: Boolean): JsObject = Json.obj {
-    "isMatch" -> identifiersMatch
+  private def identifiersMatchJson(identifiersMatch: ValidationResponse): JsObject = {
+
+    val matchStatus: String = identifiersMatch match {
+      case IdentifiersMatched => "true"
+      case IdentifiersMismatch => "false"
+      case UnMatchable => "unmatchable"
+    }
+
+    Json.obj {
+      "isMatch" -> matchStatus
+    }
   }
 }

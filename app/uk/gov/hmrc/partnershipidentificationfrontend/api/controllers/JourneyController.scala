@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.api.controllers
 
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
@@ -25,7 +24,7 @@ import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.JourneyController._
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.controllers.{routes => controllerRoutes}
-import uk.gov.hmrc.partnershipidentificationfrontend.models.BusinessVerificationStatus.{BusinessVerificationFailKey, BusinessVerificationPassKey, BusinessVerificationStatusKey}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipFullJourneyData.jsonWriterForCallingServices
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
 import uk.gov.hmrc.partnershipidentificationfrontend.models._
 import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipIdentificationService}
@@ -96,7 +95,7 @@ class JourneyController @Inject()(controllerComponents: ControllerComponents,
       authorised() {
         partnershipIdentificationService.retrievePartnershipFullJourneyData(journeyId).map {
           case Some(journeyData) =>
-            Ok(Json.toJson(journeyData)(writes))
+            Ok(Json.toJson(journeyData)(jsonWriterForCallingServices))
           case None =>
             NotFound
         }
@@ -113,32 +112,4 @@ object JourneyController {
   val signOutUrlKey = "signOutUrl"
   val accessibilityUrlKey = "accessibilityUrl"
   val regimeKey = "regime"
-  val BusinessVerificationUnchallengedKey = "UNCHALLENGED"
-
-  val businessVerificationWriter: Writes[BusinessVerificationStatus] = (businessVerificationStatus: BusinessVerificationStatus) => {
-    val formattedBusinessVerificationStatus: String = businessVerificationStatus match {
-      case BusinessVerificationNotEnoughInformationToChallenge | BusinessVerificationNotEnoughInformationToCallBV => BusinessVerificationUnchallengedKey
-      case BusinessVerificationPass => BusinessVerificationPassKey
-      case BusinessVerificationFail => BusinessVerificationFailKey
-    }
-
-    Json.obj(BusinessVerificationStatusKey -> formattedBusinessVerificationStatus)
-  }
-
-  private val SautrKey = "sautr"
-  private val PostcodeKey = "postcode"
-  private val IdentifiersMatchKey = "identifiersMatch"
-  private val BusinessVerificationKey = "businessVerification"
-  private val RegistrationStatusKey = "registration"
-  private val CompanyProfileKey = "companyProfile"
-
-  val writes: OWrites[PartnershipFullJourneyData] = (
-    (JsPath \ PostcodeKey).writeNullable[String] and
-      (JsPath \ SautrKey).writeNullable[String] and
-      (JsPath \ CompanyProfileKey).writeNullable[CompanyProfile] and
-      (JsPath \ IdentifiersMatchKey).write[Boolean] and
-      (JsPath \ BusinessVerificationKey).writeNullable[BusinessVerificationStatus](businessVerificationWriter) and
-      (JsPath \ RegistrationStatusKey).write[RegistrationStatus](RegistrationStatus.format)
-    ) (unlift(PartnershipFullJourneyData.unapply))
-
 }
