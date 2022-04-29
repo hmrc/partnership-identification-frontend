@@ -19,17 +19,11 @@ package uk.gov.hmrc.partnershipidentificationfrontend.models
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json._
-
 import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants._
 
-/**
- * Note, this is a temporary test class checking the deserialization
- * of the ValidationResponse property when represented by String or
- * Boolean value.
- */
 class PartnershipFullJourneyDataSpec extends AnyWordSpec with Matchers {
 
-  val currentFullJourneyJson: JsValue = Json.parse(
+  val rawValidJson: String =
     s"""{
        |  "sautr" : "$testSautr",
        |  "postcode" : "$testPostcode",
@@ -42,83 +36,48 @@ class PartnershipFullJourneyDataSpec extends AnyWordSpec with Matchers {
        |      "registeredBusinessPartnerId" : "$testSafeId"
        |    }
        |}""".stripMargin
-  )
-
-  val previousFullJourneyJson: JsValue = Json.parse(
-    s"""{
-       |  "sautr" : "$testSautr",
-       |  "postcode" : "$testPostcode",
-       |  "identifiersMatch" : true,
-       |  "businessVerification" : {
-       |    "verificationStatus" : "PASS"
-       |    },
-       |    "registration" : {
-       |      "registrationStatus" : "REGISTERED",
-       |      "registeredBusinessPartnerId" : "$testSafeId"
-       |    }
-       |}""".stripMargin
-  )
-
-  val erroneousFullJourneyJson: JsValue = Json.parse(
-    s"""{
-       |  "sautr" : "$testSautr",
-       |  "postcode" : "$testPostcode",
-       |  "identifiersMatch" : 10,
-       |  "businessVerification" : {
-       |    "verificationStatus" : "PASS"
-       |    },
-       |    "registration" : {
-       |      "registrationStatus" : "REGISTERED",
-       |      "registeredBusinessPartnerId" : "$testSafeId"
-       |    }
-       |}""".stripMargin
-  )
-
-  val expectedCurrentFullJourneyData: PartnershipFullJourneyData =
-    PartnershipFullJourneyData(
-      Some(testPostcode),
-      Some(testSautr),
-      None,
-      IdentifiersMatched,
-      Some(BusinessVerificationPass),
-      Registered(testSafeId)
-    )
 
   "reading a valid current representation of a full partnership journey" should {
 
     "return journey data with a validation response of IdentifiersMatched when the identifiers have been matched" in {
+
+      val currentFullJourneyJson: JsValue = Json.parse(rawValidJson)
+
+      val expectedCurrentFullJourneyData: PartnershipFullJourneyData =
+        PartnershipFullJourneyData(
+          Some(testPostcode),
+          Some(testSautr),
+          None,
+          IdentifiersMatched,
+          Some(BusinessVerificationPass),
+          Registered(testSafeId)
+        )
 
       currentFullJourneyJson.validate[PartnershipFullJourneyData] match {
         case JsSuccess(journeyData, _) => journeyData mustBe expectedCurrentFullJourneyData
         case e: JsError => fail(s"Current full journey data could not be parsed : ${e.toString}")
       }
     }
-    
+
   }
 
-  "reading a valid previous representation of a full partnership journey" should {
-
-    "return journey data with a validation response of IdentifiersMatched when the identifiers have been matched" in {
-
-      previousFullJourneyJson.validate[PartnershipFullJourneyData] match {
-        case JsSuccess(journeyData, _) => journeyData mustBe expectedCurrentFullJourneyData
-        case e: JsError => fail(s"Previous full journey data could not be parsed : ${e.toString}")
+  "full partnership journey" should {
+    "not support boolean values for identifiersMatch" in {
+      Json
+        .parse(rawValidJson.replace("\"IdentifiersMatched\"", "true"))
+        .validate[PartnershipFullJourneyData] match {
+        case JsSuccess(_, _) => fail("should have failed")
+        case e: JsError => e.toString must include("true not supported as ValidationResponse")
       }
-
     }
-  }
-
-  "reading an invalid representation of a full partnership journey" should {
-
-    "raise a JsError" in {
-
-      erroneousFullJourneyJson.validate[PartnershipFullJourneyData] match {
-        case JsSuccess(_,_) => fail(s"Invalid journey data should not have been parsed")
-        case e: JsError => e.errors.head._2.head.message mustBe "Invalid validation response"
+    "not support all string values for identifiersMatch" in {
+      Json
+        .parse(rawValidJson.replace("IdentifiersMatched", "crap"))
+        .validate[PartnershipFullJourneyData] match {
+        case JsSuccess(_, _) => fail("should have failed")
+        case e: JsError => e.toString must include("\"crap\" not supported as ValidationResponse")
       }
-
     }
-
   }
 
 }
