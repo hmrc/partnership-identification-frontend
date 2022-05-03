@@ -41,12 +41,9 @@ object ValidationResponse {
         case IdentifiersMatchedKey => JsSuccess(IdentifiersMatched)
         case IdentifiersMismatchKey => JsSuccess(IdentifiersMismatch)
         case UnMatchableKey => JsSuccess(UnMatchable)
+        case _ => notSupportedJsError(jsValue)
       }
-      case JsError(_) =>
-        jsValue.validate[Boolean] match {
-          case JsSuccess(identifiersMatch, _) => if(identifiersMatch) JsSuccess(IdentifiersMatched) else JsSuccess(IdentifiersMismatch)
-          case JsError(_) => JsError("Invalid validation response")
-        }
+      case JsError(_) => notSupportedJsError(jsValue)
     }
 
     override def writes(validationResponse: ValidationResponse): JsValue = {
@@ -61,4 +58,5 @@ object ValidationResponse {
 
   }
 
+  private def notSupportedJsError(jsValue: JsValue): JsError = JsError(s"$jsValue not supported as ValidationResponse")
 }
