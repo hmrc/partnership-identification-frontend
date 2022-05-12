@@ -19,12 +19,14 @@ package uk.gov.hmrc.partnershipidentificationfrontend.stubs
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.partnershipidentificationfrontend.controllers.routes
+import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.WiremockMethods
 
 trait BusinessVerificationStub extends WiremockMethods {
 
   def stubCreateBusinessVerificationJourney(sautr: String,
-                                            journeyId: String
+                                            journeyId: String,
+                                            journeyConfig: JourneyConfig
                                            )(status: Int,
                                              body: JsObject = Json.obj()): StubMapping = {
 
@@ -36,7 +38,8 @@ trait BusinessVerificationStub extends WiremockMethods {
         )
       ),
       "entityType" -> "PARTNERSHIP",
-      "continueUrl" -> routes.BusinessVerificationController.retrieveBusinessVerificationResult(journeyId).url
+      "continueUrl" -> routes.BusinessVerificationController.retrieveBusinessVerificationResult(journeyId).url,
+      "accessibilityStatementUrl" -> journeyConfig.pageConfig.accessibilityUrl
     )
 
     when(method = POST, uri = "/business-verification/journey", postBody)
@@ -56,7 +59,8 @@ trait BusinessVerificationStub extends WiremockMethods {
       )
 
   def stubCreateBusinessVerificationJourneyFromStub(sautr: String,
-                                                    journeyId: String
+                                                    journeyId: String,
+                                                    journeyConfig: JourneyConfig
                                                    )(status: Int,
                                                      body: JsObject = Json.obj()): StubMapping = {
 
@@ -68,7 +72,8 @@ trait BusinessVerificationStub extends WiremockMethods {
         )
       ),
       "entityType" -> "PARTNERSHIP",
-      "continueUrl" -> routes.BusinessVerificationController.retrieveBusinessVerificationResult(journeyId).url
+      "continueUrl" -> routes.BusinessVerificationController.retrieveBusinessVerificationResult(journeyId).url,
+      "accessibilityStatementUrl" -> journeyConfig.pageConfig.accessibilityUrl
     )
 
     when(method = POST, uri = "/identify-your-partnership/test-only/business-verification/journey", postBody)

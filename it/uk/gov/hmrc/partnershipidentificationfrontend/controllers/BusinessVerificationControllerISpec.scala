@@ -38,9 +38,14 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
       "redirect to business verification redirectUri" when {
         "business verification returns a journey to redirect to" in {
           enable(BusinessVerificationStub)
+          await(journeyConfigRepository.insertJourneyConfig(
+            journeyId = testJourneyId,
+            authInternalId = testInternalId,
+            journeyConfig = testGeneralPartnershipJourneyConfig(true)
+          ))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(OK, testSautr)
-          stubCreateBusinessVerificationJourneyFromStub(testSautr, testJourneyId)(CREATED, Json.obj("redirectUri" -> testContinueUrl))
+          stubCreateBusinessVerificationJourneyFromStub(testSautr, testJourneyId, testGeneralPartnershipJourneyConfig(true))(CREATED, Json.obj("redirectUri" -> testContinueUrl))
 
           lazy val result = get(s"$baseUrl/$testJourneyId/start-business-verification")
 
@@ -57,7 +62,7 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
           enable(BusinessVerificationStub)
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(OK, testSautr)
-          stubCreateBusinessVerificationJourneyFromStub(testSautr, testJourneyId)(NOT_FOUND)
+          stubCreateBusinessVerificationJourneyFromStub(testSautr, testJourneyId, testGeneralPartnershipJourneyConfig(true))(NOT_FOUND)
           stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToChallenge)(OK)
 
           lazy val result = get(s"$baseUrl/$testJourneyId/start-business-verification")
@@ -76,7 +81,7 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
           enable(BusinessVerificationStub)
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(OK, testSautr)
-          stubCreateBusinessVerificationJourneyFromStub(testSautr, testJourneyId)(FORBIDDEN)
+          stubCreateBusinessVerificationJourneyFromStub(testSautr, testJourneyId, testGeneralPartnershipJourneyConfig(true))(FORBIDDEN)
           stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationFail)(OK)
 
           lazy val result = get(s"$baseUrl/$testJourneyId/start-business-verification")
@@ -94,8 +99,13 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
       "redirect to business verification redirectUri" when {
         "business verification returns a journey to redirect to" in {
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+          await(journeyConfigRepository.insertJourneyConfig(
+            journeyId = testJourneyId,
+            authInternalId = testInternalId,
+            journeyConfig = testGeneralPartnershipJourneyConfig(true)
+          ))
           stubRetrieveSautr(testJourneyId)(OK, testSautr)
-          stubCreateBusinessVerificationJourney(testSautr, testJourneyId)(CREATED, Json.obj("redirectUri" -> testContinueUrl))
+          stubCreateBusinessVerificationJourney(testSautr, testJourneyId, testGeneralPartnershipJourneyConfig(true))(CREATED, Json.obj("redirectUri" -> testContinueUrl))
 
           lazy val result = get(s"$baseUrl/$testJourneyId/start-business-verification")
 
@@ -111,7 +121,7 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
           await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(OK, testSautr)
-          stubCreateBusinessVerificationJourney(testSautr, testJourneyId)(NOT_FOUND)
+          stubCreateBusinessVerificationJourney(testSautr, testJourneyId, testGeneralPartnershipJourneyConfig(true))(NOT_FOUND)
           stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToChallenge)(OK)
 
           lazy val result = get(s"$baseUrl/$testJourneyId/start-business-verification")
@@ -129,7 +139,7 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
           await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           stubRetrieveSautr(testJourneyId)(OK, testSautr)
-          stubCreateBusinessVerificationJourney(testSautr, testJourneyId)(FORBIDDEN)
+          stubCreateBusinessVerificationJourney(testSautr, testJourneyId, testGeneralPartnershipJourneyConfig(true))(FORBIDDEN)
           stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationFail)(OK)
 
           lazy val result = get(s"$baseUrl/$testJourneyId/start-business-verification")

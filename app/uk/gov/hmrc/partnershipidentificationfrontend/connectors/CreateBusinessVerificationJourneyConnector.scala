@@ -33,7 +33,8 @@ class CreateBusinessVerificationJourneyConnector @Inject()(http: HttpClient,
                                                           )(implicit ec: ExecutionContext) {
 
   def createBusinessVerificationJourney(journeyId: String,
-                                        sautr: String
+                                        sautr: String,
+                                        journeyConfig: JourneyConfig
                                        )(implicit hc: HeaderCarrier): Future[Either[JourneyCreationFailure, JourneyCreated]] = {
 
     val jsonBody: JsObject =
@@ -45,7 +46,8 @@ class CreateBusinessVerificationJourneyConnector @Inject()(http: HttpClient,
             "saUtr" -> sautr
           )),
         "entityType" -> "PARTNERSHIP",
-        "continueUrl" -> routes.BusinessVerificationController.retrieveBusinessVerificationResult(journeyId).url
+        "continueUrl" -> routes.BusinessVerificationController.retrieveBusinessVerificationResult(journeyId).url,
+        "accessibilityStatementUrl" -> journeyConfig.pageConfig.accessibilityUrl
       )
 
     http.POST[JsObject, Either[JourneyCreationFailure, JourneyCreated]](appConfig.createBusinessVerificationJourneyUrl, jsonBody)(

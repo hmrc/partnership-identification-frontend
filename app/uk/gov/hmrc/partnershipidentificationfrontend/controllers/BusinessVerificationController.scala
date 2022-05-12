@@ -17,9 +17,10 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
-import uk.gov.hmrc.partnershipidentificationfrontend.service.{BusinessVerificationService, PartnershipIdentificationService}
+import uk.gov.hmrc.partnershipidentificationfrontend.service.{BusinessVerificationService, JourneyService, PartnershipIdentificationService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -28,24 +29,30 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class BusinessVerificationController @Inject()(mcc: MessagesControllerComponents,
                                                val authConnector: AuthConnector,
+                                               journeyService: JourneyService,
                                                businessVerificationService: BusinessVerificationService,
                                                partnershipIdentificationService: PartnershipIdentificationService
                                               )(implicit val executionContext: ExecutionContext) extends FrontendController(mcc) with AuthorisedFunctions {
 
   def startBusinessVerificationJourney(journeyId: String): Action[AnyContent] = Action.async {
     implicit request =>
-      authorised() {
-        partnershipIdentificationService.retrieveSautr(journeyId).flatMap {
-          case Some(sautr) =>
-            businessVerificationService.createBusinessVerificationJourney(journeyId, sautr).flatMap {
-              case Some(redirectUri) =>
-                Future.successful(Redirect(redirectUri))
-              case None =>
-                Future.successful(Redirect(routes.RegistrationController.register(journeyId)))
-            }
-          case None =>
-            throw new InternalServerException(s"There is no SAUTR for $journeyId")
-        }
+      authorised().retrieve(internalId) {
+        case Some(authInternalId) =>
+          journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
+            journeyConfig =>
+              partnershipIdentificationService.retrieveSautr(journeyId).flatMap {
+                case Some(sautr) =>
+                  businessVerificationService.createBusinessVerificationJourney(journeyId, sautr, journeyConfig).flatMap {
+                    case Some(redirectUri) =>
+                      Future.successful(Redirect(redirectUri))
+                    case None =>
+                      Future.successful(Redirect(routes.RegistrationController.register(journeyId)))
+                  }
+                case None =>
+                  throw new InternalServerException(s"There is no SAUTR for $journeyId")
+              }
+          }
+        case None => throw new InternalServerException("Internal ID could not be retrieved from Auth")
       }
   }
 

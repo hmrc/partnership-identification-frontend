@@ -29,8 +29,8 @@ class BusinessVerificationService @Inject()(createBusinessVerificationJourneyCon
                                             partnershipIdentificationService: PartnershipIdentificationService
                                            )(implicit val executionContext: ExecutionContext) {
 
-  def createBusinessVerificationJourney(journeyId: String, sautr: String)(implicit hc: HeaderCarrier): Future[Option[String]] =
-    createBusinessVerificationJourneyConnector.createBusinessVerificationJourney(journeyId, sautr).flatMap {
+  def createBusinessVerificationJourney(journeyId: String, sautr: String, journeyConfig: JourneyConfig)(implicit hc: HeaderCarrier): Future[Option[String]] =
+    createBusinessVerificationJourneyConnector.createBusinessVerificationJourney(journeyId, sautr, journeyConfig).flatMap {
       case Right(JourneyCreated(redirectUrl)) => Future.successful(Option(redirectUrl))
       case Left(failureReason) =>
         val bvStatus = failureReason match {
