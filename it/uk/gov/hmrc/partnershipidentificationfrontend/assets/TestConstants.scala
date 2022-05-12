@@ -41,7 +41,7 @@ object TestConstants {
   val testCompanyName: String = "Test Company Ltd"
   val testCtutr: String = "1234567890"
   val testDOIYear: Int = 2000
-  val testDateOfIncorporation: String = LocalDate.of( testDOIYear, 1, 1).toString
+  val testDateOfIncorporation: String = LocalDate.of(testDOIYear, 1, 1).toString
   val testAddress: JsObject = Json.obj(
     "address_line_1" -> "testLine1",
     "address_line_2" -> "test town",
