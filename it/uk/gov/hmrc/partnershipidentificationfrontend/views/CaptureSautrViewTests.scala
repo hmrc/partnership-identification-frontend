@@ -40,7 +40,7 @@ trait CaptureSautrViewTests {
     }
 
     "have sign out link redirecting to signOutUrl from journey config" in {
-      doc.getSignOutText mustBe testSignOutUrl
+      doc.getSignOutLink mustBe testSignOutUrl
     }
 
     "have the correct beta banner" in {

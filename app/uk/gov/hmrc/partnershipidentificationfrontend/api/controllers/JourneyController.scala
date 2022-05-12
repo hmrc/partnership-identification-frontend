@@ -28,16 +28,18 @@ import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipFullJourn
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
 import uk.gov.hmrc.partnershipidentificationfrontend.models._
 import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipIdentificationService}
+import uk.gov.hmrc.partnershipidentificationfrontend.utils.UrlHelper
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class JourneyController @Inject()(controllerComponents: ControllerComponents,
                                   journeyService: JourneyService,
                                   val authConnector: AuthConnector,
                                   appConfig: AppConfig,
+                                  urlHelper: UrlHelper,
                                   partnershipIdentificationService: PartnershipIdentificationService
                                  )(implicit ec: ExecutionContext) extends BackendController(controllerComponents) with AuthorisedFunctions {
 
@@ -72,19 +74,21 @@ class JourneyController @Inject()(controllerComponents: ControllerComponents,
       implicit req =>
         authorised().retrieve(internalId) {
           case Some(authInternalId) =>
-            journeyService.createJourney(req.body, authInternalId).map {
-              journeyId =>
-                partnershipType match {
-                  case GeneralPartnership | ScottishPartnership =>
-                    Created(Json.obj(
-                      "journeyStartUrl" -> s"${appConfig.selfUrl}${controllerRoutes.CaptureSautrController.show(journeyId).url}"
-                    ))
-                  case _ =>
-                    Created(Json.obj(
-                      "journeyStartUrl" -> s"${appConfig.selfUrl}${controllerRoutes.CaptureCompanyNumberController.show(journeyId).url}"
-                    ))
-                }
-            }
+            if(urlHelper.containsRelativeOrAcceptedUrlsOnly(req.body)) {
+              journeyService.createJourney(req.body, authInternalId).map {
+                journeyId =>
+                  partnershipType match {
+                    case GeneralPartnership | ScottishPartnership =>
+                      Created(Json.obj(
+                        "journeyStartUrl" -> s"${appConfig.selfUrl}${controllerRoutes.CaptureSautrController.show(journeyId).url}"
+                      ))
+                    case _ =>
+                      Created(Json.obj(
+                        "journeyStartUrl" -> s"${appConfig.selfUrl}${controllerRoutes.CaptureCompanyNumberController.show(journeyId).url}"
+                      ))
+                  }
+              }
+            } else Future.successful(BadRequest(Json.toJson("JourneyConfig contained non-relative urls")))
           case _ =>
             throw new InternalServerException("Internal ID could not be retrieved from Auth")
         }
