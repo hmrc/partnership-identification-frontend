@@ -365,7 +365,7 @@ Response body:
 ```
 {
   "journeyType": "BUSINESS_VERIFICATION",
-  "origin": vat,
+  "origin": vatc,
   "identifier": {
     "saUtr" -> "1234567890"
   },

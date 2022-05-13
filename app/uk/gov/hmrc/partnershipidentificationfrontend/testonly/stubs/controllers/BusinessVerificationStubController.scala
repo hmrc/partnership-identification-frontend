@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.testonly.stubs.controllers
 
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, InjectedController}
 
 import java.util.UUID
@@ -30,12 +30,21 @@ class BusinessVerificationStubController extends InjectedController {
 
   def createBusinessVerificationJourney: Action[JsValue] = Action.async(parse.json) {
     implicit request =>
-      val continueUrl: String = (request.body \ "continueUrl").as[String]
-
-      Future.successful {
-        Created(Json.obj(
-          "redirectUri" -> (continueUrl + s"?journeyId=$businessVerificationJourneyId")
-        ))
+      val jsonBody = for {
+        origin <- (request.body \ "origin").validate[String]
+        continueUrl <- (request.body \ "continueUrl").validate[String]
+      } yield (origin, continueUrl)
+      jsonBody match {
+        case JsSuccess((origin, _), _) if !origin.equals(origin.toLowerCase) =>
+          Future.failed(new IllegalArgumentException(s"origin value $origin has to be lower case, but it was not"))
+        case JsSuccess((_, continueUrl), _) =>
+          Future.successful {
+            Created(Json.obj(
+              "redirectUri" -> (continueUrl + s"?journeyId=$businessVerificationJourneyId")
+            ))
+          }
+        case _ =>
+          Future.failed(new IllegalArgumentException(s"Request body for CreateBusinessVerification stub failed verification"))
       }
   }
 
@@ -43,7 +52,7 @@ class BusinessVerificationStubController extends InjectedController {
     Future.successful {
       Ok(Json.obj(
         "journeyType" -> "BUSINESS_VERIFICATION",
-        "origin" -> "vat",
+        "origin" -> "vatc",
         "identifier" -> {
           "saUtr" -> "1234567890"
         },
