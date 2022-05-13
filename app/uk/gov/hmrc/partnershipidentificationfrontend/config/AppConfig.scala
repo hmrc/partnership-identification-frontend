@@ -94,4 +94,5 @@ class AppConfig @Inject()(config: Configuration,
       s"$incorporationInformationUrl/incorporation-information/$companyNumber/incorporated-company-profile"
   }
 
+  lazy val allowedHosts: Set[String] = config.get[Seq[String]]("microservice.hosts.allowList").toSet
 }

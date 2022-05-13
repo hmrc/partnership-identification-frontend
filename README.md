@@ -57,6 +57,9 @@ for the field.
 
 All other fields must be provided.
 
+All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out to Business
+Verification (rather than stub it) all non-relative urls will cause the handover to Business Verification to fail.
+
 ```
 {
    "continueUrl" : "/test",
@@ -95,6 +98,9 @@ for the field.
 
 All other fields must be provided.
 
+All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out to Business
+Verification (rather than stub it) all non-relative urls will cause the handover to Business Verification to fail.
+
 ```
 {
    "continueUrl" : "/test",
@@ -130,6 +136,9 @@ For incorporated partnerships the matching check result is "false" and consequen
 
 All other fields must be provided.
 
+All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out to Business
+Verification (rather than stub it) all non-relative urls will cause the handover to Business Verification to fail.
+
 ```
 {
    "continueUrl" : "/test",
@@ -160,6 +169,9 @@ optServiceName will default to `Entity Validation Service` if the field is not p
 For incorporated partnerships the matching check result is "false" and consequently business verification and registration are not performed. As such the business verification flag has no effect and can be omitted.
 
 All other fields must be provided.
+
+All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out to Business
+Verification (rather than stub it) all non-relative urls will cause the handover to Business Verification to fail.
 
 ```
 {
@@ -194,6 +206,9 @@ optServiceName will default to `Entity Validation Service` if the field is not p
 For incorporated partnerships the matching check result is "false" and consequently business verification and registration are not performed. As such the business verification flag has no effect and can be omitted.
 
 All other fields must be provided.
+
+All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out to Business
+Verification (rather than stub it) all non-relative urls will cause the handover to Business Verification to fail.
 
 ```
 {

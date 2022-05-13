@@ -16,12 +16,14 @@
 @import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 @import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, PageConfig}
 @import uk.gov.hmrc.partnershipidentificationfrontend.views.html.helpers.inputText
+@import uk.gov.hmrc.partnershipidentificationfrontend.views.html.helpers.p
 @import uk.gov.hmrc.partnershipidentificationfrontend.views.html.templates.govuk_template
 
 @this(layout: govuk_template,
         govukFieldset: GovukFieldset,
         govukButton: GovukButton,
         inputText: inputText,
+        paragraph: p,
         formWithCSRF: FormWithCSRF,
         govukCheckboxes: GovukCheckboxes
 )
@@ -44,6 +46,8 @@
 @html = {
     @formWithCSRF(action = formAction) {
 
+        @paragraph(Html("All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out to Business Verification (rather than stub it) all absolute urls will fail."))
+
         @inputText(
             form = form,
             id = "continueUrl",
@@ -51,7 +55,8 @@
             label = "Continue URL",
             isPageHeading = false,
             hasFieldTitle = true,
-            classes = "govuk-input--width-10"
+            classes = "govuk-input--width-10",
+            hint = Some(Html("Must be relative for staging, qa and production"))
         )
 
         @inputText(
@@ -81,7 +86,8 @@
             label = "Sign Out Url",
             isPageHeading = false,
             hasFieldTitle = true,
-            classes = "govuk-input--width-20"
+            classes = "govuk-input--width-20",
+            hint = Some(Html("Must be relative for staging, qa and production"))
         )
 
         @govukCheckboxes(Checkboxes(
@@ -110,7 +116,8 @@
             label = "Accessibility Url",
             isPageHeading = false,
             hasFieldTitle = true,
-            classes = "govuk-input--width-20"
+            classes = "govuk-input--width-20",
+            hint = Some(Html("Must be relative for staging, qa and production"))
         )
 
         @inputText(

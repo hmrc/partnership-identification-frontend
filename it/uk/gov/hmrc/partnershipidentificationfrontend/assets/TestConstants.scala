@@ -30,7 +30,7 @@ object TestConstants {
   val testPostcode: String = "AA11AA"
   val testRegime = "VATC"
   val testRegisteredOfficePostcode: String = "BB11BB"
-  val testContinueUrl: String = "/test"
+  val testContinueUrl: String = "/continue"
   val testCredentialId: String = UUID.randomUUID().toString
   val GGProviderId: String = UUID.randomUUID().toString
   val testGroupId: String = UUID.randomUUID().toString
@@ -55,7 +55,7 @@ object TestConstants {
   )
   val testCompanyProfile: CompanyProfile = CompanyProfile(testCompanyName, testCompanyNumber, testDateOfIncorporation, testAddress)
   val testDeskProServiceId: String = "vrs"
-  val testSignOutUrl: String = "Sign out"
+  val testSignOutUrl: String = "/Signout"
   val testAccessibilityUrl: String = "/accessibility"
   val testTechnicalHelpUrl: String = "http://localhost:9250/contact/report-technical-problem?newTab=true&service=vrs"
   val testDefaultServiceName: String = "Entity Validation Service"

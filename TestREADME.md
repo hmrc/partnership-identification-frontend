@@ -34,6 +34,10 @@ Shows all feature switches:
 ---
 This is a test entry point which simulates a service by triggering the initial POST call to set up a journey for General Partnerships.
 
+All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out
+to Business Verification (rather than stub it) all non-relative urls will cause the handover to Business Verification to fail.
+
+
 1. Continue URL (Required)
 
     - Where to redirect the user after the journey has been completed
@@ -74,6 +78,9 @@ This is a test entry point which simulates a service by triggering the initial P
 
 ---
 This is a test entry point which simulates a service by triggering the initial POST call to set up a journey for Scottish Partnerships.
+
+All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out
+to Business Verification (rather than stub it) all non-relative urls will cause the handover to Business Verification to fail.
 
 1. Continue URL (Required)
 
@@ -116,6 +123,9 @@ This is a test entry point which simulates a service by triggering the initial P
 ---
 This is a test entry point which simulates a service by triggering the initial POST call to set up a journey for Limited Partnership.
 
+All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out
+to Business Verification (rather than stub it) all non-relative urls will cause the handover to Business Verification to fail.
+
 1. Continue URL (Required)
 
     - Where to redirect the user after the journey has been completed
@@ -156,6 +166,9 @@ This is a test entry point which simulates a service by triggering the initial P
 ---
 This is a test entry point which simulates a service by triggering the initial POST call to set up a journey for Scottish Limited Partnerships.
 
+All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out
+to Business Verification (rather than stub it) all non-relative urls will cause the handover to Business Verification to fail.
+
 1. Continue URL (Required)
 
    - Where to redirect the user after the journey has been completed
@@ -194,6 +207,9 @@ This is a test entry point which simulates a service by triggering the initial P
 
 ---
 This is a test entry point which simulates a service by triggering the initial POST call to set up a journey for Limited Liability Partnerships.
+
+All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out
+to Business Verification (rather than stub it) all non-relative urls will cause the handover to Business Verification to fail.
 
 1. Continue URL (Required)
 

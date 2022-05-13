@@ -179,6 +179,78 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
         )
       }
     }
+
+    "allow journey creation for all partnership types" when {
+      "the incoming journey configuration contains a continue url with the host set to localhost" in {
+
+        def assertJourneyConfigWithAllowedHostIsAccepted(postToApiUrlSuffix: String,
+                                                         expectedJourneyStartUrl: Call): Unit = {
+
+          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+          stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
+
+          val incomingJson = testJourneyConfigJson ++
+            Json.obj((JourneyController.continueUrlKey -> "http://localhost:9000/continue"))
+
+          lazy val result = post(s"/partnership-identification/api/$postToApiUrlSuffix", incomingJson)
+
+          (result.json \ "journeyStartUrl").as[String] must include(expectedJourneyStartUrl.url)
+
+          await(journeyConfigRepository.drop)
+        }
+
+        assertJourneyConfigWithAllowedHostIsAccepted(
+          postToApiUrlSuffix = "general-partnership-journey",
+          expectedJourneyStartUrl = appRoutes.CaptureSautrController.show(testJourneyId)
+        )
+
+        assertJourneyConfigWithAllowedHostIsAccepted(
+          postToApiUrlSuffix = "scottish-partnership-journey",
+          expectedJourneyStartUrl = appRoutes.CaptureSautrController.show(testJourneyId)
+        )
+
+        assertJourneyConfigWithAllowedHostIsAccepted(
+          postToApiUrlSuffix = "scottish-limited-partnership-journey",
+          expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
+        )
+
+        assertJourneyConfigWithAllowedHostIsAccepted(
+          postToApiUrlSuffix = "limited-partnership-journey",
+          expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
+        )
+
+        assertJourneyConfigWithAllowedHostIsAccepted(
+          postToApiUrlSuffix = "limited-liability-partnership-journey",
+          expectedJourneyStartUrl = appRoutes.CaptureCompanyNumberController.show(testJourneyId)
+        )
+
+      }
+    }
+
+    "return a bad request for all partnership types" when {
+      "the incoming journey configuration contains a disallowed host in the continue url field" in {
+
+        def assertIllegalJourneyConfigIsRejected(postToApiUrlSuffix: String): Unit = {
+
+          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+
+          val incomingJson = testJourneyConfigJson ++
+            Json.obj(JourneyController.continueUrlKey -> "http://somehost:9000")
+
+          lazy val result = post(s"/partnership-identification/api/$postToApiUrlSuffix", incomingJson)
+
+          result.status mustBe BAD_REQUEST
+
+          result.json mustBe Json.toJson("JourneyConfig contained non-relative urls")
+        }
+
+        assertIllegalJourneyConfigIsRejected(postToApiUrlSuffix = "general-partnership-journey")
+        assertIllegalJourneyConfigIsRejected(postToApiUrlSuffix = "scottish-partnership-journey")
+        assertIllegalJourneyConfigIsRejected(postToApiUrlSuffix = "scottish-limited-partnership-journey")
+        assertIllegalJourneyConfigIsRejected(postToApiUrlSuffix = "limited-partnership-journey")
+        assertIllegalJourneyConfigIsRejected(postToApiUrlSuffix = "limited-liability-partnership-journey")
+      }
+    }
   }
 
   "POST /api/general-partnership-journey" should {

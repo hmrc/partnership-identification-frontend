@@ -19,7 +19,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.testonly.connectors
 import play.api.http.Status.CREATED
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.Call
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, InternalServerException}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.{JourneyController, routes}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
@@ -55,6 +55,8 @@ class TestCreateJourneyConnector @Inject()(httpClient: HttpClient,
     httpClient.POST(url, journeyConfig).map {
       case response@HttpResponse(CREATED, _, _) =>
         (response.json \ "journeyStartUrl").as[String]
+      case response =>
+        throw new InternalServerException(s"Invalid response from Destination : ${destination.url}  Status : ${response.status}")
     }
   }
 
