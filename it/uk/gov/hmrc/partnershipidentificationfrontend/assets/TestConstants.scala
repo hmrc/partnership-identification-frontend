@@ -75,6 +75,13 @@ object TestConstants {
   def testGeneralPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =
     testJourneyConfig(GeneralPartnership, businessVerificationCheck = businessVerificationCheck, regime = testRegime)
 
+  def testGeneralPartnershipJourneyConfigWithCallingService(businessVerificationCheck: Boolean): JourneyConfig =
+    testJourneyConfig(
+      GeneralPartnership,
+      serviceName = Some(testCallingServiceName),
+      businessVerificationCheck = businessVerificationCheck,
+      regime = testRegime)
+
   def testScottishPartnershipJourneyConfig(businessVerificationCheck: Boolean): JourneyConfig =
     testJourneyConfig(ScottishPartnership, businessVerificationCheck = businessVerificationCheck, regime = testRegime)
 
