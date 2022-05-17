@@ -106,6 +106,17 @@ class UrlHelperSpec extends AnyWordSpec with Matchers with IdiomaticMockito with
       target.containsRelativeOrAcceptedUrlsOnly(testJourneyConfig) mustBe false
     }
 
+    "reject journey configuration when the continue url is '/'" in {
+
+      mockAppConfig.allowedHosts returns allowedHosts
+
+      val testJourneyConfig: JourneyConfig = testDefaultGeneralPartnershipJourneyConfig.copy(
+        continueUrl = "/"
+      )
+
+      target.containsRelativeOrAcceptedUrlsOnly(testJourneyConfig) mustBe false
+    }
+
     "reject journey configuration when all urls are absolute and the allowed hosts list is empty" in {
 
         mockAppConfig.allowedHosts returns Set()

@@ -34,12 +34,20 @@ class UrlHelper @Inject()(appConfig: AppConfig) {
   }
 
   private def areRelativeOrAcceptedUrls(urls: String*): Boolean = {
-    val allowedUrls = urls.map(url =>
-      RedirectUrl(url).getEither(OnlyRelative | AbsoluteWithHostnameFromAllowlist(appConfig.allowedHosts)) match {
-        case Right(_) => true
-        case Left(_) => false
-      })
+    val allowedUrls = urls.map(url => isRelativeOrAcceptedUrl(url))
+
     !allowedUrls.contains(false)
+  }
+
+  private def isRelativeOrAcceptedUrl(url: String): Boolean = {
+    try {
+      RedirectUrl(url).getEither(OnlyRelative | AbsoluteWithHostnameFromAllowlist(appConfig.allowedHosts)) match {
+          case Right(_) => true
+          case Left(_) => false
+        }
+      } catch {
+        case _: IllegalArgumentException => false
+      }
   }
 
 }
