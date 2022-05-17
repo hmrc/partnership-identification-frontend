@@ -56,7 +56,7 @@ class TestCreateJourneyConnector @Inject()(httpClient: HttpClient,
       case response@HttpResponse(CREATED, _, _) =>
         (response.json \ "journeyStartUrl").as[String]
       case response =>
-        throw new InternalServerException(s"Invalid response from Destination : ${destination.url}  Status : ${response.status}")
+        throw new InternalServerException(s"Invalid response from Destination : ${destination.url}  Status : ${response.status} Body : ${response.body}")
     }
   }
 
