@@ -50,7 +50,8 @@ class CreateBusinessVerificationJourneyConnector @Inject()(http: HttpClient,
         "entityType" -> "PARTNERSHIP",
         "continueUrl" -> routes.BusinessVerificationController.retrieveBusinessVerificationResult(journeyId).url,
         "accessibilityStatementUrl" -> journeyConfig.pageConfig.accessibilityUrl,
-        "pageTitle" -> callingService
+        "pageTitle" -> callingService,
+        "deskproServiceName" -> journeyConfig.pageConfig.deskProServiceId
       )
 
     http.POST[JsObject, Either[JourneyCreationFailure, JourneyCreated]](appConfig.createBusinessVerificationJourneyUrl, jsonBody)(

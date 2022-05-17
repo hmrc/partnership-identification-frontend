@@ -30,29 +30,14 @@ trait BusinessVerificationStub extends WiremockMethods {
                                             appConfig: AppConfig,
                                             journeyConfig: JourneyConfig
                                            )(status: Int,
-                                             body: JsObject = Json.obj()): StubMapping = {
+                                             body: JsObject = Json.obj()): StubMapping =
 
-    val callingService: String = journeyConfig.pageConfig.optServiceName.getOrElse(appConfig.defaultServiceName)
-
-    val postBody = Json.obj("journeyType" -> "BUSINESS_VERIFICATION",
-      "origin" -> journeyConfig.regime.toLowerCase,
-      "identifiers" -> Json.arr(
-        Json.obj(
-          "saUtr" -> sautr
-        )
-      ),
-      "entityType" -> "PARTNERSHIP",
-      "continueUrl" -> routes.BusinessVerificationController.retrieveBusinessVerificationResult(journeyId).url,
-      "accessibilityStatementUrl" -> journeyConfig.pageConfig.accessibilityUrl,
-      "pageTitle" -> callingService
-    )
-
-    when(method = POST, uri = "/business-verification/journey", postBody)
-      .thenReturn(
-        status = status,
-        body = body
-      )
-  }
+    internalStubCreateBusinessVerificationJourney(
+      sautr,
+      journeyId,
+      appConfig,
+      journeyConfig,
+      "/business-verification/journey")(status, body)
 
   def stubRetrieveBusinessVerificationResult(journeyId: String)
                                             (status: Int,
@@ -68,7 +53,30 @@ trait BusinessVerificationStub extends WiremockMethods {
                                                     appConfig: AppConfig,
                                                     journeyConfig: JourneyConfig
                                                    )(status: Int,
-                                                     body: JsObject = Json.obj()): StubMapping = {
+                                                     body: JsObject = Json.obj()): StubMapping =
+
+    internalStubCreateBusinessVerificationJourney(
+      sautr,
+      journeyId,
+      appConfig,
+      journeyConfig, "/identify-your-partnership/test-only/business-verification/journey")(status, body)
+
+  def stubRetrieveBusinessVerificationResultFromStub(journeyId: String)
+                                                    (status: Int,
+                                                     body: JsObject = Json.obj()): StubMapping =
+    when(method = GET, uri = s"/identify-your-partnership/test-only/business-verification/journey/$journeyId/status")
+      .thenReturn(
+        status = status,
+        body = body
+      )
+
+  private def internalStubCreateBusinessVerificationJourney(sautr: String,
+                                                            journeyId: String,
+                                                            appConfig: AppConfig,
+                                                            journeyConfig: JourneyConfig,
+                                                            uri: String
+                                                           )(status: Int,
+                                                             body: JsObject = Json.obj()): StubMapping = {
 
     val callingService: String = journeyConfig.pageConfig.optServiceName.getOrElse(appConfig.defaultServiceName)
 
@@ -82,24 +90,16 @@ trait BusinessVerificationStub extends WiremockMethods {
       "entityType" -> "PARTNERSHIP",
       "continueUrl" -> routes.BusinessVerificationController.retrieveBusinessVerificationResult(journeyId).url,
       "accessibilityStatementUrl" -> journeyConfig.pageConfig.accessibilityUrl,
-      "pageTitle" -> callingService
+      "pageTitle" -> callingService,
+      "deskproServiceName" -> journeyConfig.pageConfig.deskProServiceId
     )
 
-    when(method = POST, uri = "/identify-your-partnership/test-only/business-verification/journey", postBody)
+    when(method = POST, uri = uri, postBody)
       .thenReturn(
         status = status,
         body = body
       )
   }
-
-  def stubRetrieveBusinessVerificationResultFromStub(journeyId: String)
-                                                    (status: Int,
-                                                     body: JsObject = Json.obj()): StubMapping =
-    when(method = GET, uri = s"/identify-your-partnership/test-only/business-verification/journey/$journeyId/status")
-      .thenReturn(
-        status = status,
-        body = body
-      )
 
 }
 
