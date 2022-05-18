@@ -1,2 +1,69 @@
-service.name=partnership-identification-frontend
-service.text=Dyma'ch gwasanaeth newydd
+service.name.default                                        = Gwasanaeth Dilysu Endid
+service.text                                                = Dyma'ch gwasanaeth newydd
+service.govuk                                               = GOV.UK
+
+## Footer Links
+footer.links.help_page.text                                 = Help wrth ddefnyddio GOV.UK
+footer.links.cookies.text                                   = Cwcis
+footer.links.privacy_policy.text                            = Polisi preifatrwydd
+footer.links.terms_and_conditions.text                      = Telerau ac amodau
+
+feedback.before                                             = Gwasanaeth newydd yw hwn – bydd eich
+feedback.link                                               = adborth
+feedback.after                                              = (yn agor tab newydd) yn ein helpu i’w wella.
+
+base.back                                                   = Yn ôl
+base.save_and_continue                                      = Cadw ac yn eich blaen
+base.confirm_and_continue                                   = Cadarnhau ac yn eich blaen
+base.change                                                 = Newid
+base.try-again                                              = Rhowch gynnig arall arni
+
+error.summary.title                                         = Mae problem wedi codi
+error.title-prefix                                          = ‘Gwall: ’
+
+## Capture Company Number
+capture-company-number.title                                = Beth yw rhif cwmni’r bartneriaeth?
+capture-company-number.heading                              = Beth yw rhif cwmni’r bartneriaeth?
+capture-company-number.line_1                               = Gallwch <a id="companiesHouse" href={0} target="_blank"> chwilio yn Nhŷ’r Cwmnïau am rif cofrestru’r cwmni (yn agor tab newydd)</a>.
+capture-company-number.hint                                 = Er enghraifft, 01234567
+capture-company-number-empty.error                          = Nodwch rif cofrestru cwmni’r bartneriaeth
+capture-company-number-length.error                         = Nodwch rif cofrestru cwmni’r bartneriaeth gan ddefnyddio 8 o gymeriadau neu lai
+capture-company-number-format.error                         = Nodwch rif cofrestru cwmni’r bartneriaeth yn y fformat cywir
+
+# Confirm Partnership Page
+confirm-partnership.title                                   = Cadarnhewch enw’r bartneriaeth
+confirm-partnership.heading                                 = Cadarnhewch enw’r bartneriaeth
+confirm-partnership.change_company                          = Newid y cwmni
+
+## Capture SA-UTR Page
+capture-sa-utr.title                                        = Beth yw Cyfeirnod Unigryw y Trethdalwr ar gyfer y bartneriaeth?
+capture-sa-utr.heading                                      = Beth yw Cyfeirnod Unigryw y Trethdalwr ar gyfer y bartneriaeth?
+capture-sa-utr.line_1                                       = Rhif 10 digid yw hwn, er enghraifft 1234567890. Bydd i’w weld ar Ffurflenni Treth a llythyrau eraill ynghylch Hunanasesiad. Efallai y cyfeirir ato gan ddefnyddio’r geiriau ‘cyfeirnod’, ‘UTR’ neu ‘defnydd swyddogol’.
+capture-sa-utr.line_2                                       = Nid oes gennyf Gyfeirnod Unigryw y Trethdalwr
+capture-sa-utr.details.line_1                               = Mae’ch UTR yn ein helpu i ddod o hyd i’ch partneriaeth.
+capture-sa-utr.details.line_2                               = Ni allaf ddod o hyd i’m Cyfeirnod Unigryw y Trethdalwr (UTR)
+capture-sa-utr.details.line_3                               = Nid oes gan fy mhartneriaeth UTR
+capture-sa-utr.link_1                                       = Ni allaf ddod o hyd i’m Cyfeirnod Unigryw y Trethdalwr (UTR)
+capture-sa-utr.error                                        = Nodwch Gyfeirnod Unigryw y Trethdalwr yn y fformat cywir
+
+## Capture PostCode Page
+capture-postcode.title                                      = Beth yw’r cod post lle mae’r bartneriaeth wedi’i chofrestru ar gyfer Hunanasesiad?
+capture-postcode.heading                                    = Beth yw’r cod post lle mae’r bartneriaeth wedi’i chofrestru ar gyfer Hunanasesiad?
+capture-postcode.hint_text                                  = Er enghraifft, AB1 2YZ
+capture-postcode.error.not_entered                          = Nodwch y cod post lle mae’r bartneriaeth wedi’i chofrestru ar gyfer Hunanasesiad
+capture-postcode.error.invalid_format                       = Nodwch god post dilys
+capture-postcode.error.invalid_characters                   = Nodwch god post gan ddefnyddio llythrennau a rhifau yn unig
+
+## Check Your Answers Page
+check-your-answers.title                                    = Gwirio’ch atebion
+check-your-answers.heading                                  = Gwirio’ch atebion
+check-your-answers.sautr                                    = Cyfeirnod Unigryw y Trethdalwr
+check-your-answers.postcode                                 = Cod post
+check-your-answers.no-sautr                                 = Nid oes gan y busnes UTR
+check-your-answers.companyNumber                            = Rhif y cwmni
+
+## Partnership's company number not found
+company-number-not-found.title                              = Doedd dim modd cadarnhau rhif cwmni eich Partneriaeth
+company-number-not-found.heading                            = Doedd dim modd cadarnhau rhif cwmni eich Partneriaeth
+company-number-not-found.paragraph                          = Dydy rhif y cwmni ddim ar ein system.
+

@@ -1,6 +1,6 @@
-service.name = partnership-identification-frontend
-service.text = This is your new service
-service.govuk = GOV.UK
+service.name.default                                        = Entity Validation Service
+service.text                                                = This is your new service
+service.govuk                                               = GOV.UK
 
 ## Footer Links
 footer.links.help_page.text                                 = Help using GOV.UK
