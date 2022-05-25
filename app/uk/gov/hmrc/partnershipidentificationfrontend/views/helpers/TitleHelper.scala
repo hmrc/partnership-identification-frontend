@@ -33,7 +33,7 @@ object TitleHelper {
     s"${messages(titleKey)} - ${getServiceName(pageConfig)} - ${messages("service.govuk")}"
   }
 
-  private def getServiceName(pageConfig: PageConfig)(implicit appConfig: AppConfig) =
-    pageConfig.optServiceName.getOrElse(appConfig.defaultServiceName)
+  private def getServiceName(pageConfig: PageConfig)(implicit messages: Messages, appConfig: AppConfig) =
+    pageConfig.optServiceName.getOrElse(messages("service.name.default"))
 
 }
