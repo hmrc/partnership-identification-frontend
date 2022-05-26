@@ -26,6 +26,9 @@ object MessageLookup {
     val getHelp = "Is this page not working properly? (opens in new tab)"
     val back = "Back"
     val tryAgain = "Try again"
+    val yes = "Yes"
+    val no = "No"
+    val continue = "Continue"
 
     object Error {
       val title = "There is a problem"
@@ -98,6 +101,18 @@ object MessageLookup {
       val noPostCodeEntered = "Enter the postcode where the partnership is registered for Self Assessment"
       val invalidPostCodeEntered = "Enter a valid postcode"
       val invalidCharactersEntered = "Enter a postcode using only letters and numbers"
+    }
+
+  }
+
+  object CannotConfirmBusiness {
+    val title = "The details you provided do not match records held by HMRC - Entity Validation Service - GOV.UK"
+    val heading = "The details you provided do not match records held by HMRC"
+    val line_1 = "If these details are correct, you can still register. If you entered the wrong details, go back and make changes."
+    val radio = "Do you want to continue registering with the details you provided?"
+
+    object Error {
+      val no_selection = "Select yes if you want to continue registering with the details you provided"
     }
 
   }

@@ -28,6 +28,7 @@ import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificatio
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuditStub, AuthStub, PartnershipIdentificationStub, ValidatePartnershipInformationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.views.CheckYourAnswersViewTests
+import uk.gov.hmrc.partnershipidentificationfrontend.controllers.errorpages.{routes => errorRoutes}
 
 class CheckYourAnswersControllerISpec extends ComponentSpecHelper
   with CheckYourAnswersViewTests
@@ -227,7 +228,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
       }
     }
 
-    "redirect to the continueUrl" when {
+    "redirect to the cannot confirm business page" when {
       "the applicant's known facts do not match" in {
         await(insertJourneyConfig(
           testJourneyId,
@@ -258,7 +259,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
 
         result must have {
           httpStatus(SEE_OTHER)
-          redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
+          redirectUri(errorRoutes.CannotConfirmBusinessErrorController.show(testJourneyId).url)
         }
 
         verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMismatch)
@@ -302,7 +303,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
 
         result must have {
           httpStatus(SEE_OTHER)
-          redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
+          redirectUri(errorRoutes.CannotConfirmBusinessErrorController.show(testJourneyId).url)
         }
 
         verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = UnMatchable)
@@ -336,7 +337,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
 
         result must have {
           httpStatus(SEE_OTHER)
-          redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
+          redirectUri(errorRoutes.CannotConfirmBusinessErrorController.show(testJourneyId).url)
         }
 
         verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMismatch)
@@ -364,7 +365,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
 
         result must have {
           httpStatus(SEE_OTHER)
-          redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
+          redirectUri(errorRoutes.CannotConfirmBusinessErrorController.show(testJourneyId).url)
         }
 
         verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMismatch)
@@ -392,7 +393,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
 
         result must have {
           httpStatus(SEE_OTHER)
-          redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
+          redirectUri(errorRoutes.CannotConfirmBusinessErrorController.show(testJourneyId).url)
         }
 
         verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMismatch)

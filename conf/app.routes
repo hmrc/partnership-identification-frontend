@@ -28,3 +28,6 @@ GET         /:journeyId/business-verification-result        uk.gov.hmrc.partners
 GET         /:journeyId/register                            uk.gov.hmrc.partnershipidentificationfrontend.controllers.RegistrationController.register(journeyId)
 
 GET         /journey/redirect/:journeyId                    uk.gov.hmrc.partnershipidentificationfrontend.controllers.JourneyRedirectController.redirectToContinueUrl(journeyId)
+
+GET         /:journeyId/cannot-confirm-business             uk.gov.hmrc.partnershipidentificationfrontend.controllers.errorpages.CannotConfirmBusinessErrorController.show(journeyId: String)
+POST        /:journeyId/cannot-confirm-business             uk.gov.hmrc.partnershipidentificationfrontend.controllers.errorpages.CannotConfirmBusinessErrorController.submit(journeyId: String)

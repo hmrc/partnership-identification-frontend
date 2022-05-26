@@ -17,9 +17,13 @@ base.save_and_continue                                      = Cadw ac yn eich bl
 base.confirm_and_continue                                   = Cadarnhau ac yn eich blaen
 base.change                                                 = Newid
 base.try-again                                              = Rhowch gynnig arall arni
+base.continue                                               = Yn eich blaen
 
 error.summary.title                                         = Mae problem wedi codi
 error.title-prefix                                          = ‘Gwall: ’
+
+app.common.yes                                              = Iawn
+app.common.no                                               = Na
 
 ## Capture Company Number
 capture-company-number.title                                = Beth yw rhif cwmni’r bartneriaeth?
@@ -54,6 +58,20 @@ capture-postcode.error.not_entered                          = Nodwch y cod post 
 capture-postcode.error.invalid_format                       = Nodwch god post dilys
 capture-postcode.error.invalid_characters                   = Nodwch god post gan ddefnyddio llythrennau a rhifau yn unig
 
+## Partnership's company number not found
+company-number-not-found.title                              = Doedd dim modd cadarnhau rhif cwmni eich Partneriaeth
+company-number-not-found.heading                            = Doedd dim modd cadarnhau rhif cwmni eich Partneriaeth
+company-number-not-found.paragraph                          = Dydy rhif y cwmni ddim ar ein system.
+
+## Cannot Confirm Business Error Page
+cannot-confirm-business.title                               = Nid yw’r manylion a roesoch yn cyd-fynd â’r cofnodion sydd gan CThEM
+cannot-confirm-business.heading                             = Nid yw’r manylion a roesoch yn cyd-fynd â’r cofnodion sydd gan CThEM
+cannot-confirm-business.line_1                              = Os yw’r manylion hyn yn gywir, gallwch gofrestru o hyd. Os gwnaethoch nodi’r manylion anghywir, ewch yn ôl i wneud newidiadau.
+cannot-confirm-business.radio                               = A hoffech barhau i gofrestru gyda’r manylion a roesoch?
+
+## Errors
+error.no_selection                                          = Dewiswch ‘Iawn’ os hoffech barhau i gofrestru gyda’r manylion a roesoch
+
 ## Check Your Answers Page
 check-your-answers.title                                    = Gwirio’ch atebion
 check-your-answers.heading                                  = Gwirio’ch atebion
@@ -61,9 +79,3 @@ check-your-answers.sautr                                    = Cyfeirnod Unigryw 
 check-your-answers.postcode                                 = Cod post
 check-your-answers.no-sautr                                 = Nid oes gan y busnes UTR
 check-your-answers.companyNumber                            = Rhif y cwmni
-
-## Partnership's company number not found
-company-number-not-found.title                              = Doedd dim modd cadarnhau rhif cwmni eich Partneriaeth
-company-number-not-found.heading                            = Doedd dim modd cadarnhau rhif cwmni eich Partneriaeth
-company-number-not-found.paragraph                          = Dydy rhif y cwmni ddim ar ein system.
-

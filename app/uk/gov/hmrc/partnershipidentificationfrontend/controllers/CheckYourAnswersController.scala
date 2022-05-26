@@ -26,6 +26,7 @@ import uk.gov.hmrc.partnershipidentificationfrontend.service.{AuditService, Jour
 import uk.gov.hmrc.partnershipidentificationfrontend.views.helpers.CheckYourAnswersListBuilder
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.check_your_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.partnershipidentificationfrontend.controllers.errorpages.{routes => errorRoutes}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -78,7 +79,7 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
                   Future.successful(Redirect(routes.RegistrationController.register(journeyId)))
                 case UnMatchable | IdentifiersMismatch =>
                   auditService.auditPartnershipInformation(journeyId, journeyConfig).map {
-                    _ => Redirect(routes.JourneyRedirectController.redirectToContinueUrl(journeyId))
+                    _ => Redirect(errorRoutes.CannotConfirmBusinessErrorController.show(journeyId))
                   }
               }
           }
