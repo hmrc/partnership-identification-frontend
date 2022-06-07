@@ -112,7 +112,7 @@ class AuditService @Inject()(auditConnector: AuditConnector,
     "RegisterApiStatus" -> (registrationStatus match {
       case Registered(_) =>
         "success"
-      case RegistrationFailed =>
+      case RegistrationFailed(_) =>
         "fail"
       case RegistrationNotCalled =>
         "not called"

@@ -74,13 +74,13 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec
         mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
         mockRetrieveCompanyProfile(testJourneyId)(Future.successful(None))
         mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
-        mockRegisterGeneralPartnership(testSautr, testRegime)(Future.successful(RegistrationFailed))
-        mockStoreRegistrationResponse(testJourneyId, RegistrationFailed)(Future.successful(SuccessfullyStored))
+        mockRegisterGeneralPartnership(testSautr, testRegime)(Future.successful(RegistrationFailed(Some(testRegistrationFailure))))
+        mockStoreRegistrationResponse(testJourneyId, RegistrationFailed(Some(testRegistrationFailure)))(Future.successful(SuccessfullyStored))
 
-        await(TestService.register(testJourneyId, GeneralPartnership, businessVerificationCheck = true, testRegime)) mustBe RegistrationFailed
+        await(TestService.register(testJourneyId, GeneralPartnership, businessVerificationCheck = true, testRegime)) mustBe RegistrationFailed(Some(testRegistrationFailure))
 
         verifyRegisterGeneralPartnership(testSautr, testRegime)
-        verifyStoreRegistrationResponse(testJourneyId, RegistrationFailed)
+        verifyStoreRegistrationResponse(testJourneyId, RegistrationFailed(Some(testRegistrationFailure)))
       }
 
       "the Scottish Partnership is successfully verified and then registered" when {
@@ -113,13 +113,13 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec
         mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
         mockRetrieveCompanyProfile(testJourneyId)(Future.successful(None))
         mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
-        mockRegisterScottishPartnership(testSautr, testRegime)(Future.successful(RegistrationFailed))
-        mockStoreRegistrationResponse(testJourneyId, RegistrationFailed)(Future.successful(SuccessfullyStored))
+        mockRegisterScottishPartnership(testSautr, testRegime)(Future.successful(RegistrationFailed(Some(testRegistrationFailure))))
+        mockStoreRegistrationResponse(testJourneyId, RegistrationFailed(Some(testRegistrationFailure)))(Future.successful(SuccessfullyStored))
 
-        await(TestService.register(testJourneyId, ScottishPartnership, businessVerificationCheck = true, testRegime)) mustBe RegistrationFailed
+        await(TestService.register(testJourneyId, ScottishPartnership, businessVerificationCheck = true, testRegime)) mustBe RegistrationFailed(Some(testRegistrationFailure))
 
         verifyRegisterScottishPartnership(testSautr, testRegime)
-        verifyStoreRegistrationResponse(testJourneyId, RegistrationFailed)
+        verifyStoreRegistrationResponse(testJourneyId, RegistrationFailed(Some(testRegistrationFailure)))
       }
     }
 
@@ -153,13 +153,13 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec
       mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
       mockRetrieveCompanyProfile(testJourneyId)(Future.successful(Some(testCompanyProfile)))
       mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
-      mockRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(Future.successful(RegistrationFailed))
-      mockStoreRegistrationResponse(testJourneyId, RegistrationFailed)(Future.successful(SuccessfullyStored))
+      mockRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(Future.successful(RegistrationFailed(Some(testRegistrationFailure))))
+      mockStoreRegistrationResponse(testJourneyId, RegistrationFailed(Some(testRegistrationFailure)))(Future.successful(SuccessfullyStored))
 
-      await(TestService.register(testJourneyId, LimitedPartnership, businessVerificationCheck = true, testRegime)) mustBe RegistrationFailed
+      await(TestService.register(testJourneyId, LimitedPartnership, businessVerificationCheck = true, testRegime)) mustBe RegistrationFailed(Some(testRegistrationFailure))
 
       verifyRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)
-      verifyStoreRegistrationResponse(testJourneyId, RegistrationFailed)
+      verifyStoreRegistrationResponse(testJourneyId, RegistrationFailed(Some(testRegistrationFailure)))
     }
 
     "the Limited Liability Partnership is successfully verified and then registered" when {
@@ -192,13 +192,13 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec
       mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
       mockRetrieveCompanyProfile(testJourneyId)(Future.successful(Some(testCompanyProfile)))
       mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
-      mockRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(Future.successful(RegistrationFailed))
-      mockStoreRegistrationResponse(testJourneyId, RegistrationFailed)(Future.successful(SuccessfullyStored))
+      mockRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(Future.successful(RegistrationFailed(Some(testRegistrationFailure))))
+      mockStoreRegistrationResponse(testJourneyId, RegistrationFailed(Some(testRegistrationFailure)))(Future.successful(SuccessfullyStored))
 
-      await(TestService.register(testJourneyId, LimitedLiabilityPartnership, businessVerificationCheck = true, testRegime)) mustBe RegistrationFailed
+      await(TestService.register(testJourneyId, LimitedLiabilityPartnership, businessVerificationCheck = true, testRegime)) mustBe RegistrationFailed(Some(testRegistrationFailure))
 
       verifyRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)
-      verifyStoreRegistrationResponse(testJourneyId, RegistrationFailed)
+      verifyStoreRegistrationResponse(testJourneyId, RegistrationFailed(Some(testRegistrationFailure)))
     }
 
     "the Scottish Limited Partnership is successfully verified and then registered" when {
@@ -231,13 +231,13 @@ class RegistrationOrchestrationServiceSpec extends AnyWordSpec
       mockRetrieveSautr(testJourneyId)(Future.successful(Some(testSautr)))
       mockRetrieveCompanyProfile(testJourneyId)(Future.successful(Some(testCompanyProfile)))
       mockRetrieveBusinessVerificationResponse(testJourneyId)(Future.successful(Some(BusinessVerificationPass)))
-      mockRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(Future.successful(RegistrationFailed))
-      mockStoreRegistrationResponse(testJourneyId, RegistrationFailed)(Future.successful(SuccessfullyStored))
+      mockRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(Future.successful(RegistrationFailed(Some(testRegistrationFailure))))
+      mockStoreRegistrationResponse(testJourneyId, RegistrationFailed(Some(testRegistrationFailure)))(Future.successful(SuccessfullyStored))
 
-      await(TestService.register(testJourneyId, ScottishLimitedPartnership, businessVerificationCheck = true, testRegime)) mustBe RegistrationFailed
+      await(TestService.register(testJourneyId, ScottishLimitedPartnership, businessVerificationCheck = true, testRegime)) mustBe RegistrationFailed(Some(testRegistrationFailure))
 
       verifyRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)
-      verifyStoreRegistrationResponse(testJourneyId, RegistrationFailed)
+      verifyStoreRegistrationResponse(testJourneyId, RegistrationFailed(Some(testRegistrationFailure)))
     }
 
     "store a registration state of registration not called" when {
