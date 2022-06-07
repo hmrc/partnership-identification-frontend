@@ -148,7 +148,17 @@ object TestConstants {
         "verificationStatus" -> "PASS"
       ),
       "registration" -> Json.obj(
-        "registrationStatus" -> "REGISTRATION_FAILED"
+        "registrationStatus" -> "REGISTRATION_FAILED",
+        "failures" ->  Json.arr(
+          Json.obj(
+            "code" -> "INVALID_REGIME",
+            "reason" -> "Request has not passed validation. Invalid regime"
+          ),
+          Json.obj(
+            "code" -> "INVALID_PAYLOAD",
+            "reason" -> "Request has not passed validation. Invalid payload."
+          )
+        )
       )
     )
   }
@@ -204,4 +214,6 @@ object TestConstants {
     "companyNumber" -> testCompanyNumber
   )
 
+  val testRegistrationFailure: Array[Failure] = Array(Failure("PARTY_TYPE_MISMATCH", "The remote endpoint has indicated there is Party Type mismatch"))
+  val testMultipleRegistrationFailure: Array[Failure] = Array(Failure("INVALID_REGIME", "Request has not passed validation. Invalid regime"), Failure("INVALID_PAYLOAD", "Request has not passed validation. Invalid payload."))
 }
