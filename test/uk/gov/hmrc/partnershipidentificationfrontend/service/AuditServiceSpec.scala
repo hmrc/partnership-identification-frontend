@@ -137,7 +137,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               companyProfile = None,
               identifiersMatch = IdentifiersMatched,
               businessVerification = Some(BusinessVerificationPass),
-              registrationStatus = RegistrationFailed(Some(testRegistrationFailure))
+              registrationStatus = testRegistrationFailedWithSingleFailure
             )
           ))
 
@@ -159,7 +159,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               companyProfile = None,
               identifiersMatch = IdentifiersMatched,
               businessVerification = None,
-              registrationStatus = RegistrationFailed(Some(testRegistrationFailure))
+              registrationStatus = testRegistrationFailedWithSingleFailure
             )
           ))
 
@@ -257,7 +257,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               companyProfile = None,
               identifiersMatch = IdentifiersMatched,
               businessVerification = Some(BusinessVerificationPass),
-              registrationStatus = RegistrationFailed(Some(testRegistrationFailure))
+              registrationStatus = testRegistrationFailedWithSingleFailure
             )
           ))
 
@@ -279,7 +279,7 @@ class AuditServiceSpec extends AnyWordSpec with Matchers with IdiomaticMockito {
               companyProfile = None,
               identifiersMatch = IdentifiersMatched,
               businessVerification = None,
-              registrationStatus = RegistrationFailed(Some(testRegistrationFailure))
+              registrationStatus = testRegistrationFailedWithSingleFailure
             )
           ))
 

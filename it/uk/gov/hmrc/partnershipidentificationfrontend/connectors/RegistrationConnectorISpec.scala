@@ -19,7 +19,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{Registered, RegistrationFailed}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{Registered, RegistrationFailed, RegistrationStatus}
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.RegisterStub
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 
@@ -42,24 +42,20 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
     "return RegistrationFailed" when {
       "the registration has not been successful" in {
-        stubRegisterGeneralPartnership(testSautr, testRegime)(OK, RegistrationFailed(Some(testRegistrationFailure)))
+        stubRegisterGeneralPartnership(testSautr, testRegime)(OK, testRegistrationFailedWith1Failure)
 
-        val result = await(registrationConnector.registerGeneralPartnership(testSautr, testRegime))
+        val result: RegistrationStatus = await(registrationConnector.registerGeneralPartnership(testSautr, testRegime))
 
-        result match {
-          case RegistrationFailed(Some(failures)) => failures mustBe testRegistrationFailure
-          case _ => fail("Incorrect RegistrationStatus has been returned")
-        }
+        assertRegistrationStatusIsCorrect(actual = result,expected = testRegistrationFailedWith1Failure)
+
       }
       "multiple failures have been returned" in {
-        stubRegisterGeneralPartnership(testSautr, testRegime)(OK, RegistrationFailed(Some(testMultipleRegistrationFailure)))
+        stubRegisterGeneralPartnership(testSautr, testRegime)(OK, testRegistrationFailedWithMultipleFailures)
 
-        val result = await(registrationConnector.registerGeneralPartnership(testSautr, testRegime))
+        val result: RegistrationStatus = await(registrationConnector.registerGeneralPartnership(testSautr, testRegime))
 
-        result match {
-          case RegistrationFailed(Some(failures)) => failures mustBe testMultipleRegistrationFailure
-          case _ => fail("Incorrect RegistrationStatus has been returned")
-        }
+        assertRegistrationStatusIsCorrect(actual = result, expected = testRegistrationFailedWithMultipleFailures)
+
       }
     }
   }
@@ -77,24 +73,20 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
     "return RegistrationFailed" when {
       "the registration has not been successful" in {
-        stubRegisterScottishPartnership(testSautr, testRegime)(OK, RegistrationFailed(Some(testRegistrationFailure)))
+        stubRegisterScottishPartnership(testSautr, testRegime)(OK, testRegistrationFailedWith1Failure)
 
-        val result = await(registrationConnector.registerScottishPartnership(testSautr, testRegime))
+        val result: RegistrationStatus = await(registrationConnector.registerScottishPartnership(testSautr, testRegime))
 
-        result match {
-          case RegistrationFailed(Some(failures)) => failures mustBe testRegistrationFailure
-          case _ => fail("Incorrect RegistrationStatus has been returned")
-        }
+        assertRegistrationStatusIsCorrect(actual = result, expected = testRegistrationFailedWith1Failure)
+
       }
       "multiple failures have been returned" in {
-        stubRegisterScottishPartnership(testSautr, testRegime)(OK, RegistrationFailed(Some(testMultipleRegistrationFailure)))
+        stubRegisterScottishPartnership(testSautr, testRegime)(OK, testRegistrationFailedWithMultipleFailures)
 
-        val result = await(registrationConnector.registerScottishPartnership(testSautr, testRegime))
+        val result: RegistrationStatus = await(registrationConnector.registerScottishPartnership(testSautr, testRegime))
 
-        result match {
-          case RegistrationFailed(Some(failures)) => failures mustBe testMultipleRegistrationFailure
-          case _ => fail("Incorrect RegistrationStatus has been returned")
-        }
+        assertRegistrationStatusIsCorrect(actual = result, expected = testRegistrationFailedWithMultipleFailures)
+
       }
     }
   }
@@ -112,24 +104,22 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
     "return RegistrationFailed" when {
       "the registration has not been successful" in {
-        stubRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, RegistrationFailed(Some(testRegistrationFailure)))
+        stubRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, testRegistrationFailedWith1Failure)
 
-        val result = await(registrationConnector.registerLimitedPartnership(testSautr, testCompanyNumber, testRegime))
+        val result: RegistrationStatus = await(registrationConnector.registerLimitedPartnership(testSautr, testCompanyNumber, testRegime))
 
-        result match {
-          case RegistrationFailed(Some(failures)) => failures mustBe testRegistrationFailure
-          case _ => fail("Incorrect RegistrationStatus has been returned")
-        }
+        assertRegistrationStatusIsCorrect(actual = result, expected = testRegistrationFailedWith1Failure)
+
       }
+
       "multiple failures have been returned" in {
-        stubRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, RegistrationFailed(Some(testMultipleRegistrationFailure)))
+        stubRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, testRegistrationFailedWithMultipleFailures)
 
-        val result = await(registrationConnector.registerLimitedPartnership(testSautr, testCompanyNumber, testRegime))
+        val result: RegistrationStatus = await(registrationConnector.registerLimitedPartnership(testSautr, testCompanyNumber, testRegime))
 
-        result match {
-          case RegistrationFailed(Some(failures)) => failures mustBe testMultipleRegistrationFailure
-          case _ => fail("Incorrect RegistrationStatus has been returned")
-        }      }
+        assertRegistrationStatusIsCorrect(actual = result, expected = testRegistrationFailedWithMultipleFailures)
+
+      }
     }
   }
 
@@ -146,24 +136,22 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
     "return RegistrationFailed" when {
       "the registration has not been successful" in {
-        stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(OK, RegistrationFailed(Some(testRegistrationFailure)))
+        stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(OK, testRegistrationFailedWith1Failure)
 
-        val result = await(registrationConnector.registerLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime))
+        val result: RegistrationStatus = await(registrationConnector.registerLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime))
 
-        result match {
-          case RegistrationFailed(Some(failures)) => failures mustBe testRegistrationFailure
-          case _ => fail("Incorrect RegistrationStatus has been returned")
-        }
+        assertRegistrationStatusIsCorrect(actual = result, expected = testRegistrationFailedWith1Failure)
+
       }
+
       "multiple failures have been returned" in {
-        stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(OK, RegistrationFailed(Some(testMultipleRegistrationFailure)))
+        stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(OK, testRegistrationFailedWithMultipleFailures)
 
-        val result = await(registrationConnector.registerLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime))
+        val result: RegistrationStatus = await(registrationConnector.registerLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime))
 
-        result match {
-          case RegistrationFailed(Some(failures)) => failures mustBe testMultipleRegistrationFailure
-          case _ => fail("Incorrect RegistrationStatus has been returned")
-        }      }
+        assertRegistrationStatusIsCorrect(actual = result, expected = testRegistrationFailedWithMultipleFailures)
+
+      }
     }
   }
 
@@ -180,24 +168,28 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
     "return RegistrationFailed" when {
       "the registration has not been successful" in {
-        stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, RegistrationFailed(Some(testRegistrationFailure)))
+        stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, testRegistrationFailedWith1Failure)
 
-        val result = await(registrationConnector.registerScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime))
+        val result: RegistrationStatus = await(registrationConnector.registerScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime))
 
-        result match {
-          case RegistrationFailed(Some(failures)) => failures mustBe testRegistrationFailure
-          case _ => fail("Incorrect RegistrationStatus has been returned")
-        }
+        assertRegistrationStatusIsCorrect(actual = result, expected = testRegistrationFailedWith1Failure)
+
       }
+
       "multiple failures have been returned" in {
-        stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, RegistrationFailed(Some(testMultipleRegistrationFailure)))
+        stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, testRegistrationFailedWithMultipleFailures)
 
-        val result = await(registrationConnector.registerScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime))
+        val result: RegistrationStatus = await(registrationConnector.registerScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime))
 
-        result match {
-          case RegistrationFailed(Some(failures)) => failures mustBe testMultipleRegistrationFailure
-          case _ => fail("Incorrect RegistrationStatus has been returned")
-        }      }
+        assertRegistrationStatusIsCorrect(actual = result, expected = testRegistrationFailedWithMultipleFailures)
+
+      }
     }
   }
+
+  private def assertRegistrationStatusIsCorrect(actual: RegistrationStatus, expected: RegistrationFailed): Any =   actual match {
+    case RegistrationFailed(failures) => failures mustBe expected.registrationFailures
+    case _ => fail(s"Incorrect RegistrationStatus has been returned: actual $actual expected $expected")
+  }
+
 }
