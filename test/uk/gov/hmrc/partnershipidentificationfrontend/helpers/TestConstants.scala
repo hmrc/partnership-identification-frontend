@@ -68,6 +68,8 @@ object TestConstants {
     testRegime
   )
 
-  val testRegistrationFailure: Array[Failure] = Array(Failure("PARTY_TYPE_MISMATCH", "The remote endpoint has indicated there is Party Type mismatch"))
+  val testRegistrationFailedWithSingleFailure: RegistrationFailed = RegistrationFailed(registrationFailures = Array(
+    Failure("PARTY_TYPE_MISMATCH", "The remote endpoint has indicated there is Party Type mismatch"))
+  )
 
 }

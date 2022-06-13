@@ -214,6 +214,17 @@ object TestConstants {
     "companyNumber" -> testCompanyNumber
   )
 
-  val testRegistrationFailure: Array[Failure] = Array(Failure("PARTY_TYPE_MISMATCH", "The remote endpoint has indicated there is Party Type mismatch"))
-  val testMultipleRegistrationFailure: Array[Failure] = Array(Failure("INVALID_REGIME", "Request has not passed validation. Invalid regime"), Failure("INVALID_PAYLOAD", "Request has not passed validation. Invalid payload."))
+  val testRegistrationFailedWithMultipleFailures: RegistrationFailed =  RegistrationFailed(
+    Array(
+      Failure("INVALID_REGIME", "Request has not passed validation. Invalid regime"),
+      Failure("INVALID_PAYLOAD", "Request has not passed validation. Invalid payload.")
+    )
+  )
+
+  val testRegistrationFailedWith1Failure: RegistrationFailed =  RegistrationFailed(
+    Array(
+      Failure("PARTY_TYPE_MISMATCH", "The remote endpoint has indicated there is Party Type mismatch")
+    ))
+
+
 }
