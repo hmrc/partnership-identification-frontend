@@ -37,6 +37,33 @@ class JourneyRedirectControllerISpec extends ComponentSpecHelper with AuthStub {
       result.status mustBe SEE_OTHER
       result.header(LOCATION) mustBe Some(testContinueUrl + s"?journeyId=$testJourneyId")
     }
+
+    "redirect to sign in page" when {
+      "the user is not logged in" in {
+        lazy val result = {
+          stubAuthFailure()
+          get(s"$baseUrl/journey/redirect/$testJourneyId")
+        }
+
+        val signInUrl = s"/bas-gateway/sign-in?continue_url=%2Fidentify-your-partnership%2Fjourney%2Fredirect%2F$testJourneyId&origin=partnership-identification-frontend"
+
+        result must have {
+          httpStatus(SEE_OTHER)
+          redirectUri(signInUrl)
+        }
+      }
+    }
+
+    "throw an InternalServerException" when {
+      "an internal id cannot be retrieved from auth" in {
+        lazy val result = {
+          stubAuth(OK, successfulAuthResponse(None))
+          get(s"$baseUrl/journey/redirect/$testJourneyId")
+        }
+
+        result.status mustBe INTERNAL_SERVER_ERROR
+      }
+    }
   }
 
 }
