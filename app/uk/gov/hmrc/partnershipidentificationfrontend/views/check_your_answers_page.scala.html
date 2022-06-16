@@ -27,7 +27,7 @@
 
 @(journeyId: String, pageConfig: PageConfig, formAction: Call, checkYourAnswersList: Seq[SummaryListRow])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@layout(pageConfig, title(messages("check-your-answers.title"), pageConfig)) {
+@layout(pageConfig, title(messages("check-your-answers.title"))) {
 
     @govukFieldset(Fieldset(
         legend = Some(Legend(

@@ -21,8 +21,8 @@ import play.api.data.Forms.{boolean, mapping, text}
 import play.api.data.validation.Constraint
 import uk.gov.hmrc.partnershipidentificationfrontend.forms.utils.MappingUtil.optText
 import uk.gov.hmrc.partnershipidentificationfrontend.forms.utils.ValidationHelper.validate
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.PartnershipType
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, JourneyLabels, PageConfig}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.PartnershipType
 
 
 object TestCreateJourneyForm {
@@ -51,7 +51,13 @@ object TestCreateJourneyForm {
       JourneyConfig(
         continueUrl,
         businessVerificationCheck,
-        pageConfig = PageConfig(serviceName, deskProServiceId, signOutUrl, accessibilityUrl, optWelshServiceName.map(welshServiceName => JourneyLabels(welshServiceName))),
+        pageConfig = PageConfig(
+          optServiceName = serviceName,
+          deskProServiceId = deskProServiceId,
+          signOutUrl = signOutUrl,
+          accessibilityUrl = accessibilityUrl,
+          optLabels = optWelshServiceName.map(welshServiceName => JourneyLabels(welshServiceName))
+        ),
         partnershipType = partnershipType,
         regime
       ))(journeyConfig =>

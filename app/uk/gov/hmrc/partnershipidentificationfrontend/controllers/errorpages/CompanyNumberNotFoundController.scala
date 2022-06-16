@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.controllers.errorpages
 
+import play.api.i18n.Messages
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
@@ -23,6 +24,7 @@ import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.controllers.{routes => appRoutes}
 import uk.gov.hmrc.partnershipidentificationfrontend.service.JourneyService
+import uk.gov.hmrc.partnershipidentificationfrontend.utils.MessagesHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.errorpages.company_number_not_found
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -33,7 +35,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class CompanyNumberNotFoundController @Inject()(messagesControllerComponents: MessagesControllerComponents,
                                                 journeyService: JourneyService,
                                                 view: company_number_not_found,
-                                                val authConnector: AuthConnector
+                                                val authConnector: AuthConnector,
+                                                messagesHelper: MessagesHelper
                                                )(implicit val appConfig: AppConfig, ec: ExecutionContext)
                                                extends FrontendController(messagesControllerComponents) with AuthorisedFunctions {
 
@@ -43,7 +46,8 @@ class CompanyNumberNotFoundController @Inject()(messagesControllerComponents: Me
       case Some(authInternalId) =>
       journeyService.getJourneyConfig(journeyId, authInternalId).map {
         journeyConfig =>
-        Ok(view(journeyConfig.pageConfig, routes.CompanyNumberNotFoundController.submit(journeyId)))
+          implicit val messages: Messages = messagesHelper.getRemoteMessagesApi(journeyConfig).preferred(request)
+          Ok(view(journeyConfig.pageConfig, routes.CompanyNumberNotFoundController.submit(journeyId)))
       }
       case None => throw new InternalServerException("Internal ID could not be retrieved from Auth")
     }

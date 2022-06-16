@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
+import play.api.i18n.Messages
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
@@ -27,6 +28,7 @@ import uk.gov.hmrc.partnershipidentificationfrontend.views.helpers.CheckYourAnsw
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.check_your_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.partnershipidentificationfrontend.controllers.errorpages.{routes => errorRoutes}
+import uk.gov.hmrc.partnershipidentificationfrontend.utils.MessagesHelper
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,7 +41,8 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
                                            partnershipIdentificationService: PartnershipIdentificationService,
                                            validationOrchestrationService: ValidationOrchestrationService,
                                            checkYourAnswersListBuilder: CheckYourAnswersListBuilder,
-                                           auditService: AuditService
+                                           auditService: AuditService,
+                                           messagesHelper: MessagesHelper
                                           )(implicit val config: AppConfig,
                                             executionContext: ExecutionContext) extends FrontendController(mcc) with AuthorisedFunctions {
 
@@ -51,6 +54,7 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
             journeyConfig =>
               partnershipIdentificationService.retrievePartnershipInformation(journeyId).map {
                 case Some(partnershipInformation) =>
+                  implicit val messages: Messages = messagesHelper.getRemoteMessagesApi(journeyConfig).preferred(request)
                   Ok(view(
                     journeyId,
                     journeyConfig.pageConfig,

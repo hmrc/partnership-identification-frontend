@@ -16,12 +16,14 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
+import play.api.i18n.Messages
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipIdentificationService}
+import uk.gov.hmrc.partnershipidentificationfrontend.utils.MessagesHelper
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.confirm_partnership_name_page
 
@@ -33,7 +35,8 @@ class ConfirmPartnershipNameController @Inject()(mcc: MessagesControllerComponen
                                                  val authConnector: AuthConnector,
                                                  journeyService: JourneyService,
                                                  partnershipIdentificationService: PartnershipIdentificationService,
-                                                 view: confirm_partnership_name_page
+                                                 view: confirm_partnership_name_page,
+                                                 messagesHelper: MessagesHelper
                                                 )(implicit val executionContext: ExecutionContext,
                                                   appConfig: AppConfig) extends FrontendController(mcc) with AuthorisedFunctions {
 
@@ -45,6 +48,7 @@ class ConfirmPartnershipNameController @Inject()(mcc: MessagesControllerComponen
             journeyConfig =>
               partnershipIdentificationService.retrieveCompanyProfile(journeyId).map {
                 case Some(companiesHouseInformation) =>
+                  implicit val messages: Messages = messagesHelper.getRemoteMessagesApi(journeyConfig).preferred(request)
                   Ok(view(journeyConfig.pageConfig,
                     routes.ConfirmPartnershipNameController.submit(journeyId),
                     companiesHouseInformation.companyName,

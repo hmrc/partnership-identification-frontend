@@ -23,6 +23,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import views.html.helper.CSPNonce
 @import uk.gov.hmrc.hmrcfrontend.views.Aliases.{Cy, En}
+@import uk.gov.hmrc.partnershipidentificationfrontend.views.helpers.TitleHelper
 
 @this(
     hmrcLayout: HmrcLayout,
@@ -69,7 +70,7 @@
     accessibilityStatementUrl = Some(pageConfig.accessibilityUrl),
     nonce = CSPNonce.get,
     phaseBanner = Some(standardBetaBanner(url = appConfig.betaFeedbackUrl(pageConfig.deskProServiceId))),
-    serviceName = Some(pageConfig.optServiceName.getOrElse(messages("service.name.default"))),
+    serviceName = Some(TitleHelper.getServiceName(messages)),
     backLinkUrl = Some("#"),
     additionalScriptsBlock = Some(scripts)
 )(content)

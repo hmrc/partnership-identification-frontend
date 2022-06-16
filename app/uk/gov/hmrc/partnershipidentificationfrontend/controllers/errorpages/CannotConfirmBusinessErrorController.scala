@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.controllers.errorpages
 
+import play.api.i18n.Messages
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
@@ -27,6 +28,7 @@ import uk.gov.hmrc.partnershipidentificationfrontend.views.html.errorpages.canno
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.partnershipidentificationfrontend.controllers.{routes => appRoutes}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
+import uk.gov.hmrc.partnershipidentificationfrontend.utils.MessagesHelper
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -35,7 +37,8 @@ import scala.concurrent.ExecutionContext
 class CannotConfirmBusinessErrorController @Inject()(mcc: MessagesControllerComponents,
                                                      view: cannot_confirm_business_error_page,
                                                      val authConnector: AuthConnector,
-                                                     journeyService: JourneyService
+                                                     journeyService: JourneyService,
+                                                     messagesHelper: MessagesHelper
                                                     )(implicit val config: AppConfig,
                                                       executionContext: ExecutionContext) extends FrontendController(mcc) with AuthorisedFunctions {
 
@@ -45,6 +48,7 @@ class CannotConfirmBusinessErrorController @Inject()(mcc: MessagesControllerComp
         case Some(authInternalId) =>
         journeyService.getJourneyConfig(journeyId, authInternalId).map {
           journeyConfig =>
+            implicit val messages: Messages = messagesHelper.getRemoteMessagesApi(journeyConfig).preferred(request)
             Ok(view(
               pageConfig = journeyConfig.pageConfig,
               formAction = routes.CannotConfirmBusinessErrorController.submit(journeyId),
@@ -64,6 +68,7 @@ class CannotConfirmBusinessErrorController @Inject()(mcc: MessagesControllerComp
               formWithErrors =>
                 journeyService.getJourneyConfig(journeyId, authInternalId).map {
                   journeyConfig =>
+                    implicit val messages: Messages = messagesHelper.getRemoteMessagesApi(journeyConfig).preferred(request)
                     BadRequest(view(
                       pageConfig = journeyConfig.pageConfig,
                       formAction = routes.CannotConfirmBusinessErrorController.submit(journeyId),
