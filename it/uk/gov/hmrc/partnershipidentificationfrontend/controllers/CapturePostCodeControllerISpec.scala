@@ -68,7 +68,7 @@ class CapturePostCodeControllerISpec extends ComponentSpecHelper
 
         result must have {
           httpStatus(SEE_OTHER)
-          redirectUri(s"/bas-gateway/sign-in?continue_url=%2Fidentify-your-partnership%2F$testJourneyId%2Fself-assessment-postcode&origin=partnership-identification-frontend")
+          redirectUri(signInRedirectUrl(testJourneyId, "self-assessment-postcode"))
         }
       }
     }
@@ -128,6 +128,31 @@ class CapturePostCodeControllerISpec extends ComponentSpecHelper
       }
 
       testCapturePostCodeViewWithInvalidPostCodeErrorMessages(result)
+    }
+
+    "the user is not logged in" should {
+      "redirect to sign in page" in {
+        lazy val result = {
+          stubAuthFailure()
+          post(s"$baseUrl/$testJourneyId/self-assessment-postcode")("postcode" -> testPostcode)
+        }
+
+        result must have {
+          httpStatus(SEE_OTHER)
+          redirectUri(signInRedirectUrl(testJourneyId, "self-assessment-postcode"))
+        }
+      }
+    }
+
+    "an internal id cannot be retrieved from auth" should {
+      "throw an InternalServerException" in {
+        lazy val result = {
+          stubAuth(OK, successfulAuthResponse(None))
+          post(s"$baseUrl/$testJourneyId/self-assessment-postcode")("postcode" -> testPostcode)
+        }
+
+        result.status mustBe INTERNAL_SERVER_ERROR
+      }
     }
   }
 

@@ -69,7 +69,7 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
 
           result must have {
             httpStatus(SEE_OTHER)
-            redirectUri(s"/bas-gateway/sign-in?continue_url=%2Fidentify-your-partnership%2F$testJourneyId%2Fsa-utr&origin=partnership-identification-frontend")
+            redirectUri(signInRedirectUrl(testJourneyId, "sa-utr"))
           }
         }
       }
@@ -161,6 +161,31 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
 
       testCaptureSautrViewWithErrorMessages(result)
     }
+
+    "the user is not logged in" should {
+      "redirect to sign in page" in {
+        lazy val result = {
+          stubAuthFailure()
+          post(s"$baseUrl/$testJourneyId/sa-utr")("sa-utr" -> testSautr)
+        }
+
+        result must have {
+          httpStatus(SEE_OTHER)
+          redirectUri(signInRedirectUrl(testJourneyId, "sa-utr"))
+        }
+      }
+    }
+
+    "an internal id cannot be retrieved from auth" when {
+      "throw an InternalServerException" in {
+        lazy val result = {
+          stubAuth(OK, successfulAuthResponse(None))
+          post(s"$baseUrl/$testJourneyId/sa-utr")("sa-utr" -> testSautr)
+        }
+
+        result.status mustBe INTERNAL_SERVER_ERROR
+      }
+    }
   }
 
 
@@ -188,6 +213,31 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
         stubRemoveSautr(testJourneyId)(INTERNAL_SERVER_ERROR, "Failed to remove field")
 
         val result = get(s"$baseUrl/$testJourneyId/no-sa-utr")
+
+        result.status mustBe INTERNAL_SERVER_ERROR
+      }
+    }
+
+    "redirect to sign in page" when {
+      "the user is not logged in" in {
+        lazy val result = {
+          stubAuthFailure()
+          get(s"$baseUrl/$testJourneyId/no-sa-utr")
+        }
+
+        result must have {
+          httpStatus(SEE_OTHER)
+          redirectUri(signInRedirectUrl(testJourneyId, "no-sa-utr"))
+        }
+      }
+    }
+
+    "throw an InternalServerException" when {
+      "an internal id cannot be retrieved from auth" in {
+        lazy val result = {
+          stubAuth(OK, successfulAuthResponse(None))
+          get(s"$baseUrl/$testJourneyId/no-sa-utr")
+        }
 
         result.status mustBe INTERNAL_SERVER_ERROR
       }

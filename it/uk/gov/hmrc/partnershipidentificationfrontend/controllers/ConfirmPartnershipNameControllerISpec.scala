@@ -95,8 +95,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
         }
 
         result.status mustBe SEE_OTHER
-        result.header(LOCATION) mustBe
-          Some(s"/bas-gateway/sign-in?continue_url=%2Fidentify-your-partnership%2F$testJourneyId%2Fconfirm-company-name&origin=partnership-identification-frontend")
+        result.header(LOCATION) mustBe Some(signInRedirectUrl(testJourneyId, "confirm-company-name"))
       }
     }
 
@@ -185,6 +184,17 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
         }
 
         result.status mustBe INTERNAL_SERVER_ERROR
+      }
+    }
+    "redirect to sign in page" when {
+      "the user is not logged in" in {
+        lazy val result = {
+          stubAuthFailure()
+          post(s"$baseUrl/$testJourneyId/confirm-company-name")()
+        }
+
+        result.status mustBe SEE_OTHER
+        result.header(LOCATION) mustBe Some(signInRedirectUrl(testJourneyId, "confirm-company-name"))
       }
     }
   }

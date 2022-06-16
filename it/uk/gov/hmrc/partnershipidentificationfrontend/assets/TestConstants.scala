@@ -226,5 +226,9 @@ object TestConstants {
       Failure("PARTY_TYPE_MISMATCH", "The remote endpoint has indicated there is Party Type mismatch")
     ))
 
+  val signInRedirectUrl: (String, String) => String = (journeyId, currentPageUrl) =>
+    "/bas-gateway/sign-in" +
+      s"?continue_url=%2Fidentify-your-partnership%2F$journeyId%2F$currentPageUrl" +
+      "&origin=partnership-identification-frontend"
 
 }

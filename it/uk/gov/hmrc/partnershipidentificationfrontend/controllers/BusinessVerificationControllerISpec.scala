@@ -199,6 +199,25 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
         }
       }
     }
+
+    "the user is Unauthorised" in {
+      stubAuthFailure()
+
+      lazy val result = get(s"$baseUrl/$testJourneyId/start-business-verification")
+
+      result.status mustBe SEE_OTHER
+      result.header(LOCATION) mustBe Some(signInRedirectUrl(testJourneyId, "start-business-verification"))
+    }
+
+    "the user does not have an internal ID" should {
+      "throw an Internal Server Exception" in {
+        stubAuth(OK, successfulAuthResponse(None))
+
+        lazy val result = get(s"$baseUrl/$testJourneyId/start-business-verification")
+
+        result.status mustBe INTERNAL_SERVER_ERROR
+      }
+    }
   }
 
   "GET /business-verification-result" when {
@@ -252,6 +271,25 @@ class BusinessVerificationControllerISpec extends ComponentSpecHelper with Featu
         stubRetrieveBusinessVerificationResult(testBusinessVerificationJourneyId)(OK, Json.obj("verificationStatus" -> "PASS"))
 
         lazy val result = get(s"$baseUrl/$testJourneyId/business-verification-result")
+
+        result.status mustBe INTERNAL_SERVER_ERROR
+      }
+    }
+
+    "the user is Unauthorised" in {
+      stubAuthFailure()
+
+      lazy val result = get(s"$baseUrl/$testJourneyId/business-verification-result" + s"?journeyId=$testBusinessVerificationJourneyId")
+
+      result.status mustBe SEE_OTHER
+      result.header(LOCATION) mustBe Some(signInRedirectUrl(testJourneyId, "business-verification-result"))
+    }
+
+    "the user does not have an internal ID" should {
+      "throw an Internal Server Exception" in {
+        stubAuth(OK, successfulAuthResponse(None))
+
+        lazy val result = get(s"$baseUrl/$testJourneyId/business-verification-result" + s"?journeyId=$testBusinessVerificationJourneyId")
 
         result.status mustBe INTERNAL_SERVER_ERROR
       }

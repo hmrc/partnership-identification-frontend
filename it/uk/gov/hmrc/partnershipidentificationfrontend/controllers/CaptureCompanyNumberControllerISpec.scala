@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
-import play.api.test.Helpers.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER, await, defaultAwaitTimeout}
+import play.api.test.Helpers.{BAD_REQUEST, INTERNAL_SERVER_ERROR, LOCATION, NOT_FOUND, OK, SEE_OTHER, await, defaultAwaitTimeout}
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.{CompaniesHouseStub, FeatureSwitching}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PageConfig
@@ -128,8 +128,20 @@ class CaptureCompanyNumberControllerISpec extends ComponentSpecHelper
       }
     }
 
-    "throw an Internal Server Exception" when {
-      "the user does not have an internal ID" in {
+    "redirect to the sign in page" when {
+      "the user is not logged in" in {
+        lazy val result = {
+          stubAuthFailure()
+          get(s"$baseUrl/$testJourneyId/company-registration-number")
+        }
+
+        result.status mustBe SEE_OTHER
+        result.header(LOCATION) mustBe Some(signInRedirectUrl(testJourneyId, "company-registration-number"))
+      }
+    }
+
+    "throw an InternalServerException" when {
+      "an internal id cannot be retrieved from auth" in {
         lazy val result = {
           stubAuth(OK, successfulAuthResponse(None))
           get(s"$baseUrl/$testJourneyId/company-registration-number")
@@ -269,13 +281,25 @@ class CaptureCompanyNumberControllerISpec extends ComponentSpecHelper
       }
     }
 
-    "throw an Internal Server Exception" when {
-      "the user does not have an internal ID" in {
+    "the user does not have an internal ID" should {
+      "throw an Internal Server Exception" in {
         stubAuth(OK, successfulAuthResponse(None))
 
         lazy val result = post(s"$baseUrl/$testJourneyId/company-registration-number")(companyNumberKey -> testCompanyNumber)
 
         result.status mustBe INTERNAL_SERVER_ERROR
+      }
+    }
+
+    "the user is not logged in" should {
+      "redirect to the sign in page" in {
+        lazy val result = {
+          stubAuthFailure()
+          post(s"$baseUrl/$testJourneyId/company-registration-number")(companyNumberKey -> testCompanyNumber)
+        }
+
+        result.status mustBe SEE_OTHER
+        result.header(LOCATION) mustBe Some(signInRedirectUrl(testJourneyId, "company-registration-number"))
       }
     }
   }
