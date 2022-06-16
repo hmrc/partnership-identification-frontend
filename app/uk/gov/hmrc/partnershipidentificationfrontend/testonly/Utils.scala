@@ -34,7 +34,8 @@ object Utils {
     optServiceName = None,
     deskProServiceId = "vrs",
     signOutUrl = appConfig.vatRegFeedbackUrl,
-    accessibilityUrl = "/accessibility"
+    accessibilityUrl = "/accessibility",
+    optLabels = None
   )
 
 }

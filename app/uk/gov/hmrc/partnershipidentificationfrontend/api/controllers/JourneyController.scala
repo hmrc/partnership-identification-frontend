@@ -63,10 +63,11 @@ class JourneyController @Inject()(controllerComponents: ControllerComponents,
         signOutUrl <- (json \ signOutUrlKey).validate[String]
         accessibilityUrl <- (json \ accessibilityUrlKey).validate[String]
         regime <- (json \ regimeKey).validate[String]
+        labels <- (json \ labelsKey ).validateOpt[JourneyLabels]
       } yield JourneyConfig(
         continueUrl,
         businessVerificationCheck.getOrElse(true),
-        PageConfig(optServiceName, deskProServiceId, signOutUrl, accessibilityUrl),
+        PageConfig(optServiceName, deskProServiceId, signOutUrl, accessibilityUrl, labels),
         partnershipType,
         regime
       )
@@ -116,4 +117,5 @@ object JourneyController {
   val signOutUrlKey = "signOutUrl"
   val accessibilityUrlKey = "accessibilityUrl"
   val regimeKey = "regime"
+  val labelsKey = "labels"
 }

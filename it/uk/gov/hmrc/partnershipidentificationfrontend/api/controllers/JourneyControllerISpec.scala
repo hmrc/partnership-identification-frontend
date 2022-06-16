@@ -16,11 +16,14 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.api.controllers
 
+import org.scalatest.prop.TableDrivenPropertyChecks.forAll
+import org.scalatest.prop.{TableFor2, Tables}
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.controllers.{routes => appRoutes}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyLabels
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuthStub, JourneyStub, PartnershipIdentificationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
@@ -250,6 +253,47 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
         assertIllegalJourneyConfigIsRejected(postToApiUrlSuffix = "limited-partnership-journey")
         assertIllegalJourneyConfigIsRejected(postToApiUrlSuffix = "limited-liability-partnership-journey")
       }
+    }
+  }
+
+  "POST a correct json with labels to /api/<url suffix PartnershipType specific>" should {
+
+    val labelsScenarios: TableFor2[String, PartnershipType] =
+      Tables.Table(
+        ("apiUrlSuffix", "expectedPartnershipType"),
+        ("general-partnership-journey", GeneralPartnership),
+        ("scottish-partnership-journey", ScottishPartnership),
+        ("scottish-limited-partnership-journey", ScottishLimitedPartnership),
+        ("limited-partnership-journey", LimitedPartnership),
+        ("limited-liability-partnership-journey", LimitedLiabilityPartnership)
+      )
+
+    "return (for all PartnershipType) a JourneyConfig with correct labels" in {
+
+      val testIncomingJsonWelshLabels: JsObject = Json.obj(
+        "labels" -> Json.obj("cy" -> Json.obj("optServiceName" -> "This is a welsh service name"))
+      )
+
+      forAll(labelsScenarios) { (apiUrlSuffix: String, expectedPartnershipType: PartnershipType) => {
+
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+
+        stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
+
+        post("/partnership-identification/api/" + apiUrlSuffix, testJourneyConfigJson ++ testIncomingJsonWelshLabels)
+
+        val expectedWelshLabels = Some(JourneyLabels("This is a welsh service name"))
+
+        await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(
+          testDefaultJourneyConfig
+            .copy(partnershipType = expectedPartnershipType)
+            .copy(pageConfig = testDefaultPageConfig.copy(optLabels = expectedWelshLabels))
+        )
+
+        await(journeyConfigRepository.drop)
+
+      }}
+
     }
   }
 

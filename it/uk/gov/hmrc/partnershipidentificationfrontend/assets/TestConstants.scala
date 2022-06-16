@@ -61,6 +61,22 @@ object TestConstants {
   val testDefaultServiceName: String = "Entity Validation Service"
   val testCallingServiceName: String = "Test Service"
 
+  val testDefaultPageConfig: PageConfig =  PageConfig(
+    optServiceName = None,
+    deskProServiceId = testDeskProServiceId,
+    signOutUrl = testSignOutUrl,
+    accessibilityUrl = testAccessibilityUrl,
+    optLabels = None
+  )
+
+  val testDefaultJourneyConfig: JourneyConfig = JourneyConfig(
+    testContinueUrl,
+    businessVerificationCheck = true,
+    testDefaultPageConfig,
+    partnershipType = GeneralPartnership,
+    regime = testRegime
+  )
+
   def testJourneyConfig(partnershipType: PartnershipType,
                         serviceName: Option[String] = None,
                         businessVerificationCheck: Boolean,
