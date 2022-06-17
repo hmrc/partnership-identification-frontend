@@ -55,6 +55,10 @@ business verification check will be performed before registration. This check ca
 the field businessVerificationCheck with a value of false. If not provided, a default value of true is set
 for the field.
 
+labels enables custom welsh translations for the service name to be provided by the calling service.
+If the labels property is omitted or present, but the "cy" property is not fully defined, the service's default values will be
+used for the undefined properties.
+
 All other fields must be provided.
 
 All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out to Business
@@ -62,13 +66,18 @@ Verification (rather than stub it) all non-relative urls will cause the handover
 
 ```
 {
-   "continueUrl" : "/test",
-   "businessVerificationCheck": false,
-   "optServiceName" : "Service Name",
-   "deskProServiceId" : "abc",
-   "signOutUrl" : "/sign-out",
-   "accessibilityUrl" : "/accessibility-statement/my-service",
-   "regime" : "VATC"
+  "continueUrl": "/test",
+  "businessVerificationCheck": false,
+  "optServiceName": "Service Name",
+  "deskProServiceId": "abc",
+  "signOutUrl": "/sign-out",
+  "accessibilityUrl": "/accessibility-statement/my-service",
+  "regime": "VATC",
+  "labels": {
+    "cy": {
+      "optServiceName": "Service name translated into welsh"
+    }
+  }
 }
 ```
 
@@ -95,6 +104,9 @@ business verification check will be performed before registration. This check ca
 the field businessVerificationCheck with a value of false. If not provided, a default value of true is set
 for the field.
 
+labels enables custom welsh translations for the service name to be provided by the calling service.
+If the labels property is omitted or present, but the "cy" property is not fully defined, the service's default values will be
+used for the undefined properties.
 
 All other fields must be provided.
 
@@ -103,13 +115,18 @@ Verification (rather than stub it) all non-relative urls will cause the handover
 
 ```
 {
-   "continueUrl" : "/test",
-   "businessVerificationCheck": false,
-   "optServiceName" : "Service Name",
-   "deskProServiceId" : "abc",
-   "signOutUrl" : "/sign-out",
-   "accessibilityUrl" : "/accessibility-statement/my-service",
-   "regime" : "VATC"
+  "continueUrl": "/test",
+  "businessVerificationCheck": false,
+  "optServiceName": "Service Name",
+  "deskProServiceId": "abc",
+  "signOutUrl": "/sign-out",
+  "accessibilityUrl": "/accessibility-statement/my-service",
+  "regime": "VATC",
+  "labels": {
+    "cy": {
+      "optServiceName": "Service name translated into welsh"
+    }
+  }
 }
 ```
 
@@ -134,6 +151,10 @@ optServiceName will default to `Entity Validation Service` if the field is not p
 
 For incorporated partnerships the matching check result is "false" and consequently business verification and registration are not performed. As such the business verification flag has no effect and can be omitted.
 
+labels enables custom welsh translations for the service name to be provided by the calling service.
+If the labels property is omitted or present, but the "cy" property is not fully defined, the service's default values will be
+used for the undefined properties..
+
 All other fields must be provided.
 
 All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out to Business
@@ -141,12 +162,17 @@ Verification (rather than stub it) all non-relative urls will cause the handover
 
 ```
 {
-   "continueUrl" : "/test",
-   "optServiceName" : "Service Name",
-   "deskProServiceId" : "abc",
-   "signOutUrl" : "/sign-out",
-   "accessibilityUrl" : "/accessibility-statement/my-service",
-   "regime" : "VATC"
+  "continueUrl": "/test",
+  "optServiceName": "Service Name",
+  "deskProServiceId": "abc",
+  "signOutUrl": "/sign-out",
+  "accessibilityUrl": "/accessibility-statement/my-service",
+  "regime": "VATC",
+  "labels": {
+    "cy": {
+      "optServiceName": "Service name translated into welsh"
+    }
+  }
 }
 ```
 
@@ -168,6 +194,10 @@ optServiceName will default to `Entity Validation Service` if the field is not p
 
 For incorporated partnerships the matching check result is "false" and consequently business verification and registration are not performed. As such the business verification flag has no effect and can be omitted.
 
+labels enables custom welsh translations for the service name to be provided by the calling service.
+If the labels property is omitted or present, but the "cy" property is not fully defined, the service's default values will be
+used for the undefined properties.
+
 All other fields must be provided.
 
 All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out to Business
@@ -175,12 +205,17 @@ Verification (rather than stub it) all non-relative urls will cause the handover
 
 ```
 {
-   "continueUrl" : "/test",
-   "optServiceName" : "Service Name",
-   "deskProServiceId" : "abc",
-   "signOutUrl" : "/sign-out",
-   "accessibilityUrl" : "/accessibility-statement/my-service",
-   "regime" : "VATC"
+  "continueUrl": "/test",
+  "optServiceName": "Service Name",
+  "deskProServiceId": "abc",
+  "signOutUrl": "/sign-out",
+  "accessibilityUrl": "/accessibility-statement/my-service",
+  "regime": "VATC",
+  "labels": {
+    "cy": {
+      "optServiceName": "Service name translated into welsh"
+    }
+  }
 }
 ```
 
@@ -205,6 +240,10 @@ optServiceName will default to `Entity Validation Service` if the field is not p
 
 For incorporated partnerships the matching check result is "false" and consequently business verification and registration are not performed. As such the business verification flag has no effect and can be omitted.
 
+labels enables custom welsh translations for the service name to be provided by the calling service.
+If the labels property is omitted or present, but the "cy" property is not fully defined, the service's default values will be
+used for the undefined properties.
+
 All other fields must be provided.
 
 All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out to Business
@@ -212,12 +251,17 @@ Verification (rather than stub it) all non-relative urls will cause the handover
 
 ```
 {
-   "continueUrl" : "/test",
-   "optServiceName" : "Service Name",
-   "deskProServiceId" : "abc",
-   "signOutUrl" : "/sign-out",
-   "accessibilityUrl" : "/accessibility-statement/my-service",
-   "regime" : "VATC"
+  "continueUrl": "/test",
+  "optServiceName": "Service Name",
+  "deskProServiceId": "abc",
+  "signOutUrl": "/sign-out",
+  "accessibilityUrl": "/accessibility-statement/my-service",
+  "regime": "VATC",
+  "labels": {
+    "cy": {
+      "optServiceName": "Service name translated into welsh"
+    }
+  }
 }
 ```
 

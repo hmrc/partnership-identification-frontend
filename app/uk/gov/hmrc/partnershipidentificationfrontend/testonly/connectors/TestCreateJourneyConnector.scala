@@ -17,13 +17,13 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.testonly.connectors
 
 import play.api.http.Status.CREATED
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.{JsObject, Json, Writes}
 import play.api.mvc.Call
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, InternalServerException}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, InternalServerException}
 import uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.{JourneyController, routes}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, JourneyLabels}
 import uk.gov.hmrc.partnershipidentificationfrontend.testonly.connectors.TestCreateJourneyConnector.journeyConfigWriter
 
 import javax.inject.{Inject, Singleton}
@@ -71,5 +71,11 @@ object TestCreateJourneyConnector {
     JourneyController.signOutUrlKey -> journeyConfig.pageConfig.signOutUrl,
     JourneyController.accessibilityUrlKey -> journeyConfig.pageConfig.accessibilityUrl,
     JourneyController.regimeKey -> journeyConfig.regime
-  )
+  ) ++ labelsAsOptJsObject(journeyConfig.pageConfig.optLabels)
+
+  private def labelsAsOptJsObject(optJourneyLabels: Option[JourneyLabels]): JsObject =
+    optJourneyLabels match {
+      case Some(journeyLabels) => Json.obj(JourneyController.labelsKey -> Json.toJsObject(journeyLabels))
+      case _ => Json.obj()
+    }
 }

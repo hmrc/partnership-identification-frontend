@@ -16,14 +16,18 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{JsPath, OFormat, OWrites, Reads}
 
-case class PageConfig(optServiceName: Option[String],
-                      deskProServiceId: String,
-                      signOutUrl: String,
-                      accessibilityUrl: String,
-                      optLabels: Option[JourneyLabels] = None)
+case class JourneyLabels(welshServiceName: String)
 
-object PageConfig {
-  implicit val format: OFormat[PageConfig] = Json.format[PageConfig]
+object JourneyLabels {
+
+  private val jsonPath: JsPath = JsPath \ "cy" \ "optServiceName"
+
+  implicit val reads: Reads[JourneyLabels] = jsonPath.read[String].map(JourneyLabels.apply)
+
+  implicit val writes: OWrites[JourneyLabels] = jsonPath.write[String].contramap(_.welshServiceName)
+
+  val format: OFormat[JourneyLabels] = OFormat(reads, writes)
+
 }

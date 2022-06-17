@@ -73,6 +73,10 @@ to Business Verification (rather than stub it) all non-relative urls will cause 
    - It is passed down to the Registration API
    - Accepted values are PPT or VATC
 
+8. Welsh translation for Service Name (Optional)
+
+   - Welsh language translation for service name (item 2)
+
 
 #### GET test-only/create-scottish-partnership-journey
 
@@ -117,6 +121,9 @@ to Business Verification (rather than stub it) all non-relative urls will cause 
    - It is passed down to the Registration API
    - Accepted values are PPT or VATC
 
+8. Welsh translation for Service Name (Optional)
+
+    - Welsh language translation for service name (item 2)
 
 #### GET test-only/create-limited-partnership-journey
 
@@ -160,6 +167,9 @@ to Business Verification (rather than stub it) all non-relative urls will cause 
    - It is passed down to the Registration API
    - Accepted values are PPT or VATC
 
+8. Welsh translation for Service Name (Optional)
+
+    - Welsh language translation for service name (item 2)
 
 #### GET test-only/create-scottish-limited-partnership-journey
 
@@ -203,6 +213,10 @@ to Business Verification (rather than stub it) all non-relative urls will cause 
    - It is passed down to the Registration API
    - Accepted values are PPT or VATC
 
+8. Welsh translation for Service Name (Optional)
+
+    - Welsh language translation for service name (item 2)
+    - 
 #### GET test-only/create-limited-liability-partnership-journey
 
 ---
@@ -244,6 +258,10 @@ to Business Verification (rather than stub it) all non-relative urls will cause 
    - This is the Tax Regime Identifier
    - It is passed down to the Registration API
    - Accepted values are PPT or VATC
+   
+8. Welsh translation for Service Name (Optional)
+
+   - Welsh language translation for service name (item 2)
 
 #### GET test-only/retrieve-journey/:journeyId or test-only/retrieve-journey
 

@@ -21,6 +21,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import play.api.{Application, Environment, Mode}
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
+import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyLabels
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -82,6 +83,14 @@ class JourneyConfigRepositoryISpec extends ComponentSpecHelper with AbstractPati
     "successfully insert a journeyConfig with businessVerificationCheck field false" in {
       await(repo.insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = false)))
       await(repo.findById(testJourneyId)) must contain(testGeneralPartnershipJourneyConfig(businessVerificationCheck = false))
+    }
+
+    "successfully insert a journeyConfig with JourneyLabels" in {
+      val toBePersisted = testDefaultJourneyConfig.copy(pageConfig = testDefaultPageConfig.copy(optLabels = Some(JourneyLabels("Welsh service name"))))
+
+      await(repo.insertJourneyConfig(testJourneyId, testInternalId, toBePersisted))
+
+      await(repo.findById(testJourneyId)) must contain(toBePersisted)
     }
   }
 }
