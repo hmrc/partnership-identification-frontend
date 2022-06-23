@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.testonly.stubs.controllers
 
-import play.api.libs.json.{JsString, Json}
+import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.mvc.{Action, AnyContent, InjectedController}
 
 import javax.inject.Singleton
@@ -57,13 +57,33 @@ class CompaniesHouseStubController extends InjectedController {
       registeredOfficeAddressKey -> (stubRegisteredOfficeAddress + ("postal_code" -> JsString("BB11BB")))
     )
 
+    val stubLtdPartnershipProfileWithNameLongerThan105Chars = {
+      val companyNameLongerThan105Chars = "This company name is longer than 105 chars -" +
+        " This company name is longer than 105 chars -" +
+        " This company name is longer than 105 chars"
+
+      require(
+        requirement = companyNameLongerThan105Chars.length > 105,
+        message = s"Company name $companyNameLongerThan105Chars should be longer than 105 chars but was ${companyNameLongerThan105Chars.length}"
+      )
+
+      Json.obj(
+        companyNameKey -> companyNameLongerThan105Chars,
+        companyNumberKey -> companyNumber,
+        dateOfIncorporationKey -> stubDateOfIncorporation,
+        registeredOfficeAddressKey -> stubRegisteredOfficeAddress
+      )
+    }
+
     Action {
       companyNumber match {
-        case "00000002" => Ok(stubLtdPartnershipProfileWithNonMatchingPostcode)
         case "00000001" => NotFound
+        case "00000002" => Ok(stubLtdPartnershipProfileWithNonMatchingPostcode)
+        case "00000003" => Ok(stubLtdPartnershipProfileWithNameLongerThan105Chars)
         case _ => Ok(stubLtdPartnershipProfile)
       }
     }
   }
+
 }
 

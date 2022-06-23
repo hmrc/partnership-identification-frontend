@@ -418,10 +418,12 @@ A valid company Number must be sent in the URI
 ##### Response:
 Status:
 
-| Expected Response                       | Reason                              | Example
-|-----------------------------------------|-------------------------------------|-------------------------------------
-| ```OK(200)```                           |  ```Company Number exists```        | ```Any other valid Company Number```
-| ```NOT_FOUND(404)```                    | ```Company Number doesn't exist```  | ```"00000001"```
+| Expected Response                       | Reason                                                      | Example
+|-----------------------------------------|-------------------------------------------------------------|-------------------------------------
+| ```NOT_FOUND(404)```                    | ```Company Number doesn't exist```                          | ```00000001```
+| ```OK(200)```                           | ```Company postal_code = BB11BB (postCode not maching)```   | ```00000002```
+| ```OK(200)```                           | ```company_name longer than 105 chars```                    | ```00000003```
+| ```OK(200)```                           | ```Company Number exists```                                 | ```Any other valid Company Number```
 
 Example response body:
 ```
@@ -440,6 +442,27 @@ Example response body:
       "postal_code":"AA11AA",
       "premises":"1",
       "region":"test region"
+    }
+  }
+}
+```
+
+```
+{
+  "companyProfile": {
+    "company_name": "This company name is longer than 105 chars - This company name is longer than 105 chars - This company name is longer than 105 chars",
+    "company_number": "00000003",
+    "date_of_creation": "2020-01-01",
+    "registered_office_address": {
+      "address_line_1": "testLine1",
+      "address_line_2": "test town",
+      "care_of": "test name",
+      "country": "United Kingdom",
+      "locality": "test city",
+      "po_box": "123",
+      "postal_code": "AA11AA",
+      "premises": "1",
+      "region": "test region"
     }
   }
 }
