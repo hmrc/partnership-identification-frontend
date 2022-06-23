@@ -154,6 +154,7 @@ class CaptureCompanyNumberControllerISpec extends ComponentSpecHelper
   }
 
   "POST /company-registration-number" when {
+
     "the company number is missing" should {
       lazy val result = {
         await(insertJourneyConfig(

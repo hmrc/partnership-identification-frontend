@@ -59,7 +59,7 @@ object TestConstants {
   val testServiceName = "testServiceName"
   val testDeskProServiceId = "testDeskProServiceId"
   val testBusinessPartnerId = "testBusinessPartnerId"
-  val testDefaultPageConfig: PageConfig = PageConfig(Some(testServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl)
+  val testDefaultPageConfig: PageConfig = PageConfig(Some(testServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl, optLabels = None)
   val testDefaultGeneralPartnershipJourneyConfig: JourneyConfig = JourneyConfig(
     testContinueUrl,
     businessVerificationCheck = true,

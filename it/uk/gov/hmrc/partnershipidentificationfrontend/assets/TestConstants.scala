@@ -77,6 +77,12 @@ object TestConstants {
     regime = testRegime
   )
 
+  val testDefaultWelshJourneyConfig: JourneyConfig = testDefaultJourneyConfig.copy(
+    pageConfig = testDefaultPageConfig.copy(optLabels = Some(JourneyLabels(welshServiceName = "This is a welsh service name from Journey labels")))
+  )
+
+  val testDefaultWelshServiceName: String = "Gwasanaeth Dilysu Endid"
+
   def testJourneyConfig(partnershipType: PartnershipType,
                         serviceName: Option[String] = None,
                         businessVerificationCheck: Boolean,

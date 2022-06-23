@@ -29,7 +29,7 @@
 
 @(pageConfig: PageConfig, formAction: Call, companyName: String, journeyId: String)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@govukLayout(pageConfig, title(messages("confirm-partnership.title"), pageConfig)) {
+@govukLayout(pageConfig, title(messages("confirm-partnership.title"))) {
 
     @h1(messages("confirm-partnership.heading"))
     <p class="govuk-body">@companyName</p>

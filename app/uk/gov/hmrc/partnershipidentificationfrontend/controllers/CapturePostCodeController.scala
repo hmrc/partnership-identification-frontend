@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
+import play.api.i18n.Messages
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
@@ -23,6 +24,7 @@ import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.forms.CapturePostCodeForm.postCodeForm
 import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipIdentificationService}
+import uk.gov.hmrc.partnershipidentificationfrontend.utils.MessagesHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.capture_post_code_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -34,7 +36,8 @@ class CapturePostCodeController @Inject()(mcc: MessagesControllerComponents,
                                           view: capture_post_code_page,
                                           val authConnector: AuthConnector,
                                           journeyService: JourneyService,
-                                          partnershipIdentificationService: PartnershipIdentificationService
+                                          partnershipIdentificationService: PartnershipIdentificationService,
+                                          messagesHelper: MessagesHelper
                                          )(implicit val config: AppConfig,
                                            ec: ExecutionContext) extends FrontendController(mcc) with AuthorisedFunctions {
 
@@ -44,6 +47,7 @@ class CapturePostCodeController @Inject()(mcc: MessagesControllerComponents,
         case Some(authInternalId) =>
           journeyService.getJourneyConfig(journeyId, authInternalId).map {
             journeyConfig =>
+              implicit val messages: Messages = messagesHelper.getRemoteMessagesApi(journeyConfig).preferred(request)
               Ok(view(journeyConfig.pageConfig, routes.CapturePostCodeController.submit(journeyId), postCodeForm))
           }
         case _ =>
@@ -59,9 +63,10 @@ class CapturePostCodeController @Inject()(mcc: MessagesControllerComponents,
             journeyConfig =>
               postCodeForm.bindFromRequest.fold(
                 formWithErrors =>
-                  Future.successful(
+                  Future.successful {
+                    implicit val messages: Messages = messagesHelper.getRemoteMessagesApi(journeyConfig).preferred(request)
                     BadRequest(view(journeyConfig.pageConfig, routes.CapturePostCodeController.submit(journeyId), formWithErrors))
-                  ),
+                  },
                 postCode =>
                   partnershipIdentificationService.storePostCode(journeyId, postCode).map {
                     _ => Redirect(routes.CheckYourAnswersController.show(journeyId))
