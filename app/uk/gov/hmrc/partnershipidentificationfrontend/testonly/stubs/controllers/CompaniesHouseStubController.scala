@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.testonly.stubs.controllers
 
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.{JsString, Json}
 import play.api.mvc.{Action, AnyContent, InjectedController}
 
 import javax.inject.Singleton
