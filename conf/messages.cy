@@ -28,7 +28,8 @@ app.common.no                                               = Na
 ## Capture Company Number
 capture-company-number.title                                = Beth yw rhif cwmni’r bartneriaeth?
 capture-company-number.heading                              = Beth yw rhif cwmni’r bartneriaeth?
-capture-company-number.line_1                               = Gallwch <a id="companiesHouse" href={0} target="_blank"> chwilio yn Nhŷ’r Cwmnïau am rif cofrestru’r cwmni (yn agor tab newydd)</a>.
+capture-company-number.line_1.part1                         = Gallwch
+capture-company-number.line_1.part2                         = chwilio yn Nhŷ’r Cwmnïau am rif cofrestru’r cwmni
 capture-company-number.hint                                 = Er enghraifft, 01234567
 capture-company-number-empty.error                          = Nodwch rif cofrestru cwmni’r bartneriaeth
 capture-company-number-length.error                         = Nodwch rif cofrestru cwmni’r bartneriaeth gan ddefnyddio 8 o gymeriadau neu lai
