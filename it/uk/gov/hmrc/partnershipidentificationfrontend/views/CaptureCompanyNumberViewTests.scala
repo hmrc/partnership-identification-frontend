@@ -72,7 +72,8 @@ trait CaptureCompanyNumberViewTests {
     }
 
     "have the correct link" in {
-      doc.getLink("companiesHouse").attr("href") mustBe messages.link
+      doc.getSearchCompaniesHouse.attr("rel") mustBe "noopener noreferrer"
+      doc.getSearchCompaniesHouse.attr("href") mustBe messages.link
     }
 
     "have a correct details hint" in {
