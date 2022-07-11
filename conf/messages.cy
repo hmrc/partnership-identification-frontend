@@ -26,18 +26,18 @@ app.common.yes                                              = Iawn
 app.common.no                                               = Na
 
 ## Capture Company Number
-capture-company-number.title                                = Beth yw rhif cwmni’r bartneriaeth?
-capture-company-number.heading                              = Beth yw rhif cwmni’r bartneriaeth?
+capture-company-number.title                                = Beth yw rhif cofrestru’r cwmni?
+capture-company-number.heading                              = Beth yw rhif cofrestru’r cwmni?
 capture-company-number.line_1.part1                         = Gallwch
 capture-company-number.line_1.part2                         = chwilio yn Nhŷ’r Cwmnïau am rif cofrestru’r cwmni
-capture-company-number.hint                                 = Er enghraifft, 01234567
+capture-company-number.hint                                 = Mae hwn yn 8 o gymeriadau. Er enghraifft, 01234567 neu AC012345.
 capture-company-number-empty.error                          = Nodwch rif cofrestru cwmni’r bartneriaeth
-capture-company-number-length.error                         = Nodwch rif cofrestru cwmni’r bartneriaeth gan ddefnyddio 8 o gymeriadau neu lai
+capture-company-number-length.error                         = Mae’n rhaid i rif cofrestru’r cwmni fod yn 8 o gymeriadau neu lai
 capture-company-number-format.error                         = Nodwch rif cofrestru cwmni’r bartneriaeth yn y fformat cywir
 
 # Confirm Partnership Page
-confirm-partnership.title                                   = Cadarnhewch enw’r bartneriaeth
-confirm-partnership.heading                                 = Cadarnhewch enw’r bartneriaeth
+confirm-partnership.title                                   = Cadarnhewch enw’r cwmni
+confirm-partnership.heading                                 = Cadarnhewch enw’r cwmni
 confirm-partnership.change_company                          = Newid y cwmni
 
 ## Capture SA-UTR Page
@@ -49,19 +49,19 @@ capture-sa-utr.details.line_1                               = Mae’ch UTR yn ei
 capture-sa-utr.details.line_2                               = Ni allaf ddod o hyd i’m Cyfeirnod Unigryw y Trethdalwr (UTR)
 capture-sa-utr.details.line_3                               = Nid oes gan fy mhartneriaeth UTR
 capture-sa-utr.link_1                                       = Ni allaf ddod o hyd i’m Cyfeirnod Unigryw y Trethdalwr (UTR)
-capture-sa-utr.error                                        = Nodwch Gyfeirnod Unigryw y Trethdalwr yn y fformat cywir
+capture-sa-utr.error                                        = Nodwch Gyfeirnod Unigryw y Trethdalwr ar gyfer y bartneriaeth yn y fformat cywir
 
 ## Capture PostCode Page
-capture-postcode.title                                      = Beth yw’r cod post lle mae’r bartneriaeth wedi’i chofrestru ar gyfer Hunanasesiad?
-capture-postcode.heading                                    = Beth yw’r cod post lle mae’r bartneriaeth wedi’i chofrestru ar gyfer Hunanasesiad?
+capture-postcode.title                                      = Beth yw’r cod post a ddefnyddiwyd i gofrestru’r bartneriaeth ar gyfer Hunanasesiad?
+capture-postcode.heading                                    = Beth yw’r cod post a ddefnyddiwyd i gofrestru’r bartneriaeth ar gyfer Hunanasesiad?
 capture-postcode.hint_text                                  = Er enghraifft, AB1 2YZ
 capture-postcode.error.not_entered                          = Nodwch y cod post lle mae’r bartneriaeth wedi’i chofrestru ar gyfer Hunanasesiad
-capture-postcode.error.invalid_format                       = Nodwch god post dilys
+capture-postcode.error.invalid_format                       = Nodwch y cod post yn y fformat cywir, er enghraifft, AB1 2YZ
 capture-postcode.error.invalid_characters                   = Nodwch god post gan ddefnyddio llythrennau a rhifau yn unig
 
 ## Partnership's company number not found
-company-number-not-found.title                              = Doedd dim modd cadarnhau rhif cwmni eich Partneriaeth
-company-number-not-found.heading                            = Doedd dim modd cadarnhau rhif cwmni eich Partneriaeth
+company-number-not-found.title                              = Doedd dim modd cadarnhau rhif cofrestru’r cwmni ar gyfer y bartneriaeth
+company-number-not-found.heading                            = Doedd dim modd cadarnhau rhif cofrestru’r cwmni ar gyfer y bartneriaeth
 company-number-not-found.paragraph                          = Dydy rhif y cwmni ddim ar ein system.
 
 ## Cannot Confirm Business Error Page
@@ -77,6 +77,6 @@ error.no_selection                                          = Dewiswch ‘Iawn�
 check-your-answers.title                                    = Gwirio’ch atebion
 check-your-answers.heading                                  = Gwirio’ch atebion
 check-your-answers.sautr                                    = Cyfeirnod Unigryw y Trethdalwr
-check-your-answers.postcode                                 = Cod post
+check-your-answers.postcode                                 = Cod post Hunanasesiad
 check-your-answers.no-sautr                                 = Nid oes gan y busnes UTR
-check-your-answers.companyNumber                            = Rhif y cwmni
+check-your-answers.companyNumber                            = Rhif cofrestru’r cwmni

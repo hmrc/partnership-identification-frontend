@@ -46,31 +46,31 @@ object MessageLookup {
   }
 
   object CaptureCompanyNumber {
-    val title = "What is the partnership’s company number? - Entity Validation Service - GOV.UK"
-    val pageConfigTestTitle = "What is the partnership’s company number? - Test Service - GOV.UK"
-    val heading = "What is the partnership’s company number?"
+    val title = "What is the company registration number? - Entity Validation Service - GOV.UK"
+    val pageConfigTestTitle = "What is the company registration number? - Test Service - GOV.UK"
+    val heading = "What is the company registration number?"
     val line_1 = "You can search Companies House for the company registration number (opens in a new tab)"
     val link = "https://beta.companieshouse.gov.uk/"
-    val hint = "For example, 01234567"
+    val hint = "It is 8 characters. For example, 01234567 or AC012345."
 
     object Error {
       val noCompanyNumber = "Enter the partnership’s company registration number"
-      val invalidLengthCompanyNumber = "Enter the partnership’s company registration number using 8 characters or fewer"
+      val invalidLengthCompanyNumber = "The company registration number must be 8 characters or fewer"
       val invalidCompanyNumber = "Enter the partnership’s company registration number in the correct format"
     }
   }
 
   object ConfirmPartnershipName {
-    val title = "Confirm the partnership name - Entity Validation Service - GOV.UK"
-    val pageConfigTestTitle = "Confirm the partnership name - Test Service - GOV.UK"
-    val heading = "Confirm the partnership name"
+    val title = "Confirm the company name - Entity Validation Service - GOV.UK"
+    val pageConfigTestTitle = "Confirm the company name - Test Service - GOV.UK"
+    val heading = "Confirm the company name"
     val change_company_link = "Change company"
   }
 
   object CompanyNumberNotFound {
-    val title = "We could not confirm your Partnership's company number - Entity Validation Service - GOV.UK"
-    val pageConfigTestTitle = "We could not confirm your Partnership's company number - Test Service - GOV.UK"
-    val heading = "We could not confirm your Partnership's company number"
+    val title = "We could not confirm the partnership’s company registration number - Entity Validation Service - GOV.UK"
+    val pageConfigTestTitle = "We could not confirm the partnership’s company registration number - Test Service - GOV.UK"
+    val heading = "We could not confirm the partnership’s company registration number"
     val paragraph = "The company number is not in our system."
   }
 
@@ -86,20 +86,20 @@ object MessageLookup {
     val link_1 = "I cannot find my UTR"
 
     object Error {
-      val invalidSautrEntered = "Enter a Unique Taxpayer Reference in the correct format"
+      val invalidSautrEntered = "Enter the partnership’s Unique Taxpayer Reference in the correct format"
     }
 
   }
 
   object CapturePostCode {
-    val title = "What is the postcode where the partnership is registered for Self Assessment? - Entity Validation Service - GOV.UK"
-    val pageConfigTestTitle = "What is the postcode where the partnership is registered for Self Assessment? - Test Service - GOV.UK"
-    val heading = "What is the postcode where the partnership is registered for Self Assessment?"
+    val title = "What is the postcode used to register the partnership for Self Assessment? - Entity Validation Service - GOV.UK"
+    val pageConfigTestTitle = "What is the postcode used to register the partnership for Self Assessment? - Test Service - GOV.UK"
+    val heading = "What is the postcode used to register the partnership for Self Assessment?"
     val hint = "For example, AB1 2YZ"
 
     object Error {
       val noPostCodeEntered = "Enter the postcode where the partnership is registered for Self Assessment"
-      val invalidPostCodeEntered = "Enter a valid postcode"
+      val invalidPostCodeEntered = "Enter the postcode in the correct format, for example, AB1 2YZ"
       val invalidCharactersEntered = "Enter a postcode using only letters and numbers"
     }
 
@@ -120,10 +120,10 @@ object MessageLookup {
   object CheckYourAnswers {
     val title = "Check your answers - Entity Validation Service - GOV.UK"
     val heading = "Check your answers"
-    val sautr = "Unique Taxpayers Reference"
-    val postCode = "Postcode"
+    val sautr = "Unique Taxpayer Reference"
+    val postCode = "Self Assessment postcode"
     val noSautr = "The business does not have a UTR"
-    val companyNumber = "Company number"
+    val companyNumber = "Company registration number"
   }
 
 }

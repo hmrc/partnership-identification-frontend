@@ -80,9 +80,9 @@ class CheckYourAnswersListBuilderSpec extends AnyWordSpec with Matchers with Gui
 
     object TranslationLabel {
       val change = "Change"
-      val companyNumber = "Company number"
-      val postcode = "Postcode"
-      val utr = "Unique Taxpayers Reference"
+      val companyNumber = "Company registration number"
+      val postcode = "Self Assessment postcode"
+      val utr = "Unique Taxpayer Reference"
     }
 
   }
