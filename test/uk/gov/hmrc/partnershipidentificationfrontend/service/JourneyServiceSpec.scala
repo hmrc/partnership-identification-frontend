@@ -19,8 +19,9 @@ package uk.gov.hmrc.partnershipidentificationfrontend.service
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.test.Helpers._
-import reactivemongo.api.commands.WriteResult
-import reactivemongo.core.errors.GenericDriverException
+import com.mongodb.MongoSocketReadException
+import com.mongodb.ServerAddress
+import org.mongodb.scala.result.InsertOneResult
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException, NotFoundException}
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.mocks.MockJourneyConnector
 import uk.gov.hmrc.partnershipidentificationfrontend.helpers.TestConstants._
@@ -38,7 +39,7 @@ class JourneyServiceSpec extends AnyWordSpec with Matchers with MockJourneyConne
   "createJourney" should {
     "return a journeyID and store the provided journey config" in {
       mockCreateJourney(response = Future.successful(testJourneyId))
-      mockInsertJourneyConfig(testJourneyId, testInternalId, testDefaultGeneralPartnershipJourneyConfig)(response = Future.successful(mock[WriteResult]))
+      mockInsertJourneyConfig(testJourneyId, testInternalId, testDefaultGeneralPartnershipJourneyConfig)(response = Future.successful(mock[InsertOneResult]))
 
       val result = await(TestService.createJourney(testDefaultGeneralPartnershipJourneyConfig, testInternalId))
 
@@ -50,7 +51,7 @@ class JourneyServiceSpec extends AnyWordSpec with Matchers with MockJourneyConne
     "throw an exception" when {
       "create journey API returns an invalid response" in {
         mockCreateJourney(response = Future.failed(new InternalServerException("Invalid response returned from create journey API")))
-        mockInsertJourneyConfig(testJourneyId, testInternalId, testDefaultGeneralPartnershipJourneyConfig)(response = Future.successful(mock[WriteResult]))
+        mockInsertJourneyConfig(testJourneyId, testInternalId, testDefaultGeneralPartnershipJourneyConfig)(response = Future.successful(mock[InsertOneResult]))
 
         intercept[InternalServerException](
           await(TestService.createJourney(testDefaultGeneralPartnershipJourneyConfig, testInternalId))
@@ -60,14 +61,19 @@ class JourneyServiceSpec extends AnyWordSpec with Matchers with MockJourneyConne
 
       "the journey config is not stored" in {
         mockCreateJourney(response = Future.successful(testJourneyId))
-        mockInsertJourneyConfig(testJourneyId, testInternalId, testDefaultGeneralPartnershipJourneyConfig)(response = Future.failed(GenericDriverException("failed to insert")))
+        mockInsertJourneyConfig(
+          testJourneyId,
+          testInternalId,
+          testDefaultGeneralPartnershipJourneyConfig)(response =
+          Future.failed(new MongoSocketReadException("Exception receiving message", new ServerAddress())))
 
-        intercept[GenericDriverException](
+        intercept[MongoSocketReadException](
           await(TestService.createJourney(testDefaultGeneralPartnershipJourneyConfig, testInternalId))
         )
         verifyCreateJourney()
         verifyInsertJourneyConfig(testJourneyId, testInternalId, testDefaultGeneralPartnershipJourneyConfig)
       }
+      
     }
   }
 
