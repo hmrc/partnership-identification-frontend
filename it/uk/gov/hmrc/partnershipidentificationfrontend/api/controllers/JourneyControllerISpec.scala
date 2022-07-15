@@ -28,8 +28,6 @@ import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuthStub, JourneyStub, PartnershipIdentificationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with AuthStub with PartnershipIdentificationStub {
 
   val testJourneyConfigJson: JsObject = Json.obj(
@@ -55,7 +53,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
           (result.json \ "journeyStartUrl").as[String] must include(expectedJourneyStartUrl.url)
 
-          await(journeyConfigRepository.findById(testJourneyId)) mustBe
+          await(journeyConfigRepository.findJourneyConfig(testJourneyId, testInternalId)) mustBe
             Some(testJourneyConfig(expectedJourneyConfigPartnershipType, businessVerificationCheck = true, regime = testRegime))
           await(journeyConfigRepository.drop)
         }
@@ -104,7 +102,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
           val expectedJourneyConfig = testJourneyConfig(expectedJourneyConfigPartnershipType, businessVerificationCheck = true, regime = testRegime)
             .copy(businessVerificationCheck = false)
 
-          await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(expectedJourneyConfig)
+          await(journeyConfigRepository.findJourneyConfig(testJourneyId, testInternalId)) mustBe Some(expectedJourneyConfig)
           await(journeyConfigRepository.drop)
 
         }
@@ -151,7 +149,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
           (result.json \ "journeyStartUrl").as[String] must include(expectedJourneyStartUrl.url)
 
-          await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testJourneyConfig(expectedJourneyConfigPartnershipType, businessVerificationCheck = true, regime = testRegime))
+          await(journeyConfigRepository.findJourneyConfig(testJourneyId, testInternalId)) mustBe Some(testJourneyConfig(expectedJourneyConfigPartnershipType, businessVerificationCheck = true, regime = testRegime))
           await(journeyConfigRepository.drop)
         }
 
@@ -284,7 +282,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
         val expectedWelshLabels = Some(JourneyLabels("This is a welsh service name"))
 
-        await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(
+        await(journeyConfigRepository.findJourneyConfig(testJourneyId, testInternalId)) mustBe Some(
           testDefaultJourneyConfig
             .copy(partnershipType = expectedPartnershipType)
             .copy(pageConfig = testDefaultPageConfig.copy(optLabels = expectedWelshLabels))
@@ -306,7 +304,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
       (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
 
-      await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testGeneralPartnershipJourneyConfig(businessVerificationCheck = true))
+      await(journeyConfigRepository.findJourneyConfig(testJourneyId, testInternalId)) mustBe Some(testGeneralPartnershipJourneyConfig(businessVerificationCheck = true))
     }
 
     "redirect to the Sign In page when the user is not logged in" in {
@@ -330,7 +328,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
       (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureSautrController.show(testJourneyId).url)
 
-      await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testScottishPartnershipJourneyConfig(businessVerificationCheck = true))
+      await(journeyConfigRepository.findJourneyConfig(testJourneyId, testInternalId)) mustBe Some(testScottishPartnershipJourneyConfig(businessVerificationCheck = true))
     }
 
     "redirect to the Sign In page when the user is not logged in" in {
@@ -354,7 +352,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
       (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureCompanyNumberController.show(testJourneyId).url)
 
-      await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testScottishLimitedPartnershipJourneyConfig(businessVerificationCheck = true))
+      await(journeyConfigRepository.findJourneyConfig(testJourneyId, testInternalId)) mustBe Some(testScottishLimitedPartnershipJourneyConfig(businessVerificationCheck = true))
 
       verifyPost(1, "/partnership-identification/journey")
     }
@@ -381,7 +379,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
       (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureCompanyNumberController.show(testJourneyId).url)
 
-      await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testLimitedPartnershipJourneyConfig(businessVerificationCheck = true))
+      await(journeyConfigRepository.findJourneyConfig(testJourneyId, testInternalId)) mustBe Some(testLimitedPartnershipJourneyConfig(businessVerificationCheck = true))
     }
 
     "redirect to the Sign In page when the user is not logged in" in {
@@ -405,7 +403,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
       (result.json \ "journeyStartUrl").as[String] must include(appRoutes.CaptureCompanyNumberController.show(testJourneyId).url)
 
-      await(journeyConfigRepository.findById(testJourneyId)) mustBe Some(testLimitedLiabilityPartnershipJourneyConfig(businessVerificationCheck = true))
+      await(journeyConfigRepository.findJourneyConfig(testJourneyId, testInternalId)) mustBe Some(testLimitedLiabilityPartnershipJourneyConfig(businessVerificationCheck = true))
 
       verifyPost(1, "/partnership-identification/journey")
     }

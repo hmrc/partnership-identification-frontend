@@ -27,11 +27,10 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Writes}
 import play.api.libs.ws.{DefaultWSCookie, WSClient, WSCookie, WSRequest, WSResponse}
 import play.api.test.Helpers._
-import reactivemongo.api.commands.WriteResult
+import org.mongodb.scala.result.InsertOneResult
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.repositories.JourneyConfigRepository
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait ComponentSpecHelper extends AnyWordSpec with Matchers
@@ -131,7 +130,7 @@ trait ComponentSpecHelper extends AnyWordSpec with Matchers
 
   def insertJourneyConfig(journeyId: String,
                           authInternalId: String,
-                          journeyConfig: JourneyConfig): Future[WriteResult] =
+                          journeyConfig: JourneyConfig): Future[InsertOneResult] =
     journeyConfigRepository.insertJourneyConfig(journeyId, authInternalId, journeyConfig)
 
 }

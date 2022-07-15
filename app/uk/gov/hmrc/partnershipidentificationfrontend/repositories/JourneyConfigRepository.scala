@@ -17,71 +17,68 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.repositories
 
 import play.api.libs.json._
-import play.modules.reactivemongo.ReactiveMongoComponent
-import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.{Index, IndexType}
-import reactivemongo.bson.BSONDocument
-import reactivemongo.play.json.JsObjectDocumentWriter
-import uk.gov.hmrc.mongo.ReactiveRepository
+import org.mongodb.scala.model.Indexes.ascending
+import org.mongodb.scala.model.{Filters, IndexModel, IndexOptions}
+import org.mongodb.scala.result.{DeleteResult, InsertOneResult}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
 import uk.gov.hmrc.partnershipidentificationfrontend.repositories.JourneyConfigRepository._
+import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.{Codecs, PlayMongoRepository}
 
 import java.time.Instant
+import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class JourneyConfigRepository @Inject()(reactiveMongoComponent: ReactiveMongoComponent,
+class JourneyConfigRepository @Inject()(mongoComponent: MongoComponent,
                                         appConfig: AppConfig)
-                                       (implicit ec: ExecutionContext) extends ReactiveRepository[JourneyConfig, String](
+                                       (implicit ec: ExecutionContext) extends PlayMongoRepository[JsObject](
   collectionName = "partnership-identification-frontend",
-  mongo = reactiveMongoComponent.mongoConnector.db,
-  domainFormat = journeyConfigMongoFormat,
-  idFormat = implicitly[Format[String]]
-) {
+  mongoComponent = mongoComponent,
+  domainFormat = implicitly[Format[JsObject]],
+  indexes = Seq(timeToLiveIndex(appConfig.timeToLiveSeconds)),
+  extraCodecs = Seq(Codecs.playFormatCodec(journeyConfigMongoFormat))
+){
 
-  def insertJourneyConfig(journeyId: String, authInternalId: String, journeyConfig: JourneyConfig): Future[WriteResult] =
-    collection.insert(ordered = true).one(
-      Json.obj(
-        JourneyIdKey -> journeyId,
-        AuthInternalIdKey -> authInternalId,
-        CreationTimestampKey -> Json.obj("$date" -> Instant.now.toEpochMilli)
-      ) ++ Json.toJsObject(journeyConfig)
-    )
+  def insertJourneyConfig(journeyId: String, authInternalId: String, journeyConfig: JourneyConfig): Future[InsertOneResult] = {
 
-  def findJourneyConfig(journeyId: String, authInternalId: String): Future[Option[JourneyConfig]] =
-    collection.find(
-      Json.obj(
-        JourneyIdKey -> journeyId,
-        AuthInternalIdKey -> authInternalId
-      ),
-      Some(Json.obj(
-        JourneyIdKey -> 0,
-        AuthInternalIdKey -> 0
-      ))
-    ).one[JourneyConfig]
+    val document: JsObject = Json.obj(
+      JourneyIdKey -> journeyId,
+      AuthInternalIdKey -> authInternalId,
+      CreationTimestampKey -> Json.obj("$date" -> Instant.now.toEpochMilli)
+    ) ++ Json.toJsObject(journeyConfig)
 
-  private lazy val ttlIndex = Index(
-    Seq((CreationTimestampKey, IndexType.Ascending)),
-    name = Some("PartnershipInformationExpires"),
-    options = BSONDocument("expireAfterSeconds" -> appConfig.timeToLiveSeconds)
-  )
-
-  private def setIndex(): Unit = {
-    collection.indexesManager.drop(ttlIndex.name.get) onComplete {
-      _ => collection.indexesManager.ensure(ttlIndex)
-    }
+    collection.insertOne(document).toFuture()
   }
 
-  setIndex()
+  def findJourneyConfig(journeyId: String, authInternalId: String): Future[Option[JourneyConfig]] = {
 
-  override def drop(implicit ec: ExecutionContext): Future[Boolean] =
-    collection.drop(failIfNotFound = false).map { r =>
-      setIndex()
-      r
-    }
+    collection.find[JourneyConfig](
+      Filters.and(
+        Filters.equal(JourneyIdKey, journeyId),
+        Filters.equal(AuthInternalIdKey, authInternalId)
+      )
+    ).headOption
+
+  }
+
+  def count: Future[Long] = collection.countDocuments().toFuture()
+
+  def removeJourneyConfig(journeyId: String, authInternalId: String): Future[DeleteResult] = {
+
+    collection.deleteOne(
+      Filters.and(
+        Filters.equal(JourneyIdKey, journeyId),
+        Filters.equal(AuthInternalIdKey, authInternalId)
+      )
+    ).toFuture()
+
+  }
+
+  def drop: Future[Unit] = collection.drop().toFuture.map(_ => Unit)
 
 }
 
@@ -89,12 +86,20 @@ object JourneyConfigRepository {
   val JourneyIdKey = "_id"
   val AuthInternalIdKey = "authInternalId"
   val CreationTimestampKey = "creationTimestamp"
-  val BusinessEntityKey = "businessEntity"
   val GeneralPartnershipKey = "generalPartnership"
   val ScottishPartnershipKey = "scottishPartnership"
   val ScottishLimitedPartnershipKey = "scottishLimitedPartnership"
   val LimitedPartnershipKey = "limitedPartnership"
   val LimitedLiabilityPartnershipKey = "limitedLiabilityPartnership"
+
+  def timeToLiveIndex(timeToLiveDuration: Long): IndexModel = {
+    IndexModel(
+      keys = ascending(CreationTimestampKey),
+      indexOptions = IndexOptions()
+        .name("PartnershipInformationExpires")
+        .expireAfter(timeToLiveDuration, TimeUnit.SECONDS)
+    )
+  }
 
   implicit val partnershipTypeMongoFormat: Format[PartnershipType] = new Format[PartnershipType] {
     override def reads(json: JsValue): JsResult[PartnershipType] = json.validate[String].collect(JsonValidationError("Invalid partnership type")) {

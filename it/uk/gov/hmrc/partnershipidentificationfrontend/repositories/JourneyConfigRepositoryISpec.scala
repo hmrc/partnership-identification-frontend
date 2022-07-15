@@ -24,8 +24,6 @@ import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyLabels
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 class JourneyConfigRepositoryISpec extends ComponentSpecHelper with AbstractPatienceConfiguration with Eventually {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
@@ -45,17 +43,17 @@ class JourneyConfigRepositoryISpec extends ComponentSpecHelper with AbstractPati
   "documents" should {
     "successfully insert a new document" in {
       await(repo.insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
-      await(repo.count) mustBe 1
+      await(repo.count) mustBe 1L
     }
 
     "successfully insert journeyConfig" in {
       await(repo.insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
-      await(repo.findById(testJourneyId)) must contain(testGeneralPartnershipJourneyConfig(businessVerificationCheck = true))
+      await(repo.findJourneyConfig(testJourneyId, testInternalId)) must contain(testGeneralPartnershipJourneyConfig(businessVerificationCheck = true))
     }
 
     "successfully insert a journeyConfig for a scottish limited partnership" in {
       await(repo.insertJourneyConfig(testJourneyId, testInternalId, testScottishLimitedPartnershipJourneyConfig(businessVerificationCheck = true)))
-      await(repo.findById(testJourneyId)) must contain(testScottishLimitedPartnershipJourneyConfig(businessVerificationCheck = true))
+      await(repo.findJourneyConfig(testJourneyId, testInternalId)) must contain(testScottishLimitedPartnershipJourneyConfig(businessVerificationCheck = true))
     }
 
     "successfully insert a journeyConfig for a limited liability partnership" in {
@@ -64,25 +62,25 @@ class JourneyConfigRepositoryISpec extends ComponentSpecHelper with AbstractPati
         testInternalId,
         testLimitedLiabilityPartnershipJourneyConfig(businessVerificationCheck = true)
       ))
-      await(repo.findById(testJourneyId)) must contain(testLimitedLiabilityPartnershipJourneyConfig(businessVerificationCheck = true))
+      await(repo.findJourneyConfig(testJourneyId, testInternalId)) must contain(testLimitedLiabilityPartnershipJourneyConfig(businessVerificationCheck = true))
     }
 
     "successfully delete all documents" in {
       await(repo.insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
       await(repo.drop)
-      await(repo.count) mustBe 0
+      await(repo.count) mustBe 0L
     }
 
     "successfully delete one document" in {
       await(repo.insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
       await(repo.insertJourneyConfig(testJourneyId + 1, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
-      await(repo.removeById(testJourneyId + 1))
-      await(repo.count) mustBe 1
+      await(repo.removeJourneyConfig(testJourneyId + 1, testInternalId))
+      await(repo.count) mustBe 1L
     }
 
     "successfully insert a journeyConfig with businessVerificationCheck field false" in {
       await(repo.insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = false)))
-      await(repo.findById(testJourneyId)) must contain(testGeneralPartnershipJourneyConfig(businessVerificationCheck = false))
+      await(repo.findJourneyConfig(testJourneyId, testInternalId)) must contain(testGeneralPartnershipJourneyConfig(businessVerificationCheck = false))
     }
 
     "successfully insert a journeyConfig with JourneyLabels" in {
@@ -90,7 +88,9 @@ class JourneyConfigRepositoryISpec extends ComponentSpecHelper with AbstractPati
 
       await(repo.insertJourneyConfig(testJourneyId, testInternalId, toBePersisted))
 
-      await(repo.findById(testJourneyId)) must contain(toBePersisted)
+      await(repo.findJourneyConfig(testJourneyId, testInternalId)) must contain(toBePersisted)
     }
+
   }
+
 }
