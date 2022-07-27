@@ -7,7 +7,7 @@ object AppDependencies {
     "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % "5.3.0",
     "uk.gov.hmrc" %% "bootstrap-backend-play-28" % "5.3.0",
     "uk.gov.hmrc" %% "play-frontend-hmrc" % "1.22.0-play-28",
-    "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28" % "0.67.0",
+    "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28" % "0.68.0",
     "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.12.3"
   )
 
@@ -21,6 +21,6 @@ object AppDependencies {
     "com.github.tomakehurst" % "wiremock-jre8" % "2.27.2" % IntegrationTest,
     "org.mockito" %% "mockito-scala-scalatest" % "1.16.46" % Test,
     "org.scalatestplus" %% "mockito-3-4" % "3.2.9.0" % Test,
-    "uk.gov.hmrc.mongo" %% "hmrc-mongo-test-play-28" % "0.67.0" % Test
+    "uk.gov.hmrc.mongo" %% "hmrc-mongo-test-play-28" % "0.68.0" % Test
   )
 }
