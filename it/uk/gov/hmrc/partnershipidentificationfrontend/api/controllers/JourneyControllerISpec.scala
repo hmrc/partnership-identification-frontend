@@ -290,7 +290,8 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
         await(journeyConfigRepository.drop)
 
-      }}
+      }
+      }
 
     }
   }
@@ -452,7 +453,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
         result.status mustBe OK
 
-        val testJson: JsObject =  Json.obj(
+        val testJson: JsObject = Json.obj(
           "sautr" -> testSautr,
           "postcode" -> testPostcode,
           "identifiersMatch" -> true,
