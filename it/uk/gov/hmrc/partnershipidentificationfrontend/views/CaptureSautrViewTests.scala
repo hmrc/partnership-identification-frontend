@@ -152,7 +152,7 @@ trait CaptureSautrViewTests {
 
   def testCaptureSautrViewWithErrorMessages(result: => WSResponse): Unit = {
 
-    testCaptureOptionalSautrView(result, hasErrors = true)
+    testCaptureSautrView(result, hasErrors = true)
 
     lazy val doc: Document = Jsoup.parse(result.body)
 

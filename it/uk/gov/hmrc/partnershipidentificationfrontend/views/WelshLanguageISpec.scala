@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.views
 
-import org.apache.commons.io.IOUtils
 import play.api.i18n.{Lang, MessagesApi}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 
@@ -49,7 +48,8 @@ class WelshLanguageISpec extends ComponentSpecHelper {
     try {
       testCode(messageKeysEnglish, messageKeysWelsh)
     } finally {
-      IOUtils.close(englishMessages, welshMessages)
+      englishMessages.close()
+      welshMessages.close()
     }
   }
 
