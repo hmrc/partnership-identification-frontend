@@ -54,9 +54,9 @@ object MessageLookup {
     val hint = "It is 8 characters. For example, 01234567 or AC012345."
 
     object Error {
-      val noCompanyNumber = "Enter the partnership’s company registration number"
+      val noCompanyNumber = "Enter the company registration number"
       val invalidLengthCompanyNumber = "The company registration number must be 8 characters or fewer"
-      val invalidCompanyNumber = "Enter the partnership’s company registration number in the correct format"
+      val invalidCompanyNumber = "Enter the company registration number in the correct format"
     }
   }
 
@@ -86,6 +86,7 @@ object MessageLookup {
     val link_1 = "I cannot find my UTR"
 
     object Error {
+      val saUtrNotEntered = "Enter the partnership’s Unique Taxpayer Reference"
       val invalidSautrEntered = "Enter the partnership’s Unique Taxpayer Reference in the correct format"
     }
 
@@ -98,9 +99,8 @@ object MessageLookup {
     val hint = "For example, AB1 2YZ"
 
     object Error {
-      val noPostCodeEntered = "Enter the postcode where the partnership is registered for Self Assessment"
-      val invalidPostCodeEntered = "Enter the postcode in the correct format, for example, AB1 2YZ"
-      val invalidCharactersEntered = "Enter a postcode using only letters and numbers"
+      val noPostCodeEntered = "Enter the postcode used to register the partnership for Self Assessment"
+      val invalidPostCodeEntered = "Enter the postcode in the correct format"
     }
 
   }
