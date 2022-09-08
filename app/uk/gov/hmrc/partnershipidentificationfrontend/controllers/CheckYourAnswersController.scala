@@ -22,13 +22,14 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
+import uk.gov.hmrc.partnershipidentificationfrontend.controllers.errorpages.{routes => errorRoutes}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, ScottishPartnership}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{IdentifiersMatched, IdentifiersMismatch, UnMatchable}
 import uk.gov.hmrc.partnershipidentificationfrontend.service.{AuditService, JourneyService, PartnershipIdentificationService, ValidationOrchestrationService}
+import uk.gov.hmrc.partnershipidentificationfrontend.utils.MessagesHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.views.helpers.CheckYourAnswersListBuilder
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.check_your_answers_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import uk.gov.hmrc.partnershipidentificationfrontend.controllers.errorpages.{routes => errorRoutes}
-import uk.gov.hmrc.partnershipidentificationfrontend.utils.MessagesHelper
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -81,6 +82,10 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
                   Future.successful(Redirect(routes.BusinessVerificationController.startBusinessVerificationJourney(journeyId)))
                 case IdentifiersMatched =>
                   Future.successful(Redirect(routes.RegistrationController.register(journeyId)))
+                case UnMatchable if journeyConfig.partnershipType == GeneralPartnership || journeyConfig.partnershipType == ScottishPartnership =>
+                  auditService.auditPartnershipInformation(journeyId, journeyConfig).map {
+                    _ => Redirect(routes.JourneyRedirectController.redirectToContinueUrl(journeyId))
+                  }
                 case UnMatchable | IdentifiersMismatch =>
                   auditService.auditPartnershipInformation(journeyId, journeyConfig).map {
                     _ => Redirect(errorRoutes.CannotConfirmBusinessErrorController.show(journeyId))
