@@ -145,10 +145,24 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
         result.status mustBe BAD_REQUEST
       }
 
-      testCaptureSautrViewWithErrorMessages(result)
+      testCaptureSautrViewWithSautrNotEnteredErrorMessages(result)
     }
 
-    "an invalid sautr is submitted" should {
+    "an invalid SA Utr owing to the presence of non-digit characters is submitted" should {
+      lazy val result: WSResponse = {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        post(s"$baseUrl/$testJourneyId/sa-utr")("sa-utr" -> "123456789A")
+      }
+
+      "return a bad request" in {
+        result.status mustBe BAD_REQUEST
+      }
+
+      testCaptureSautrViewWithInvalidSautrErrorMessages(result)
+    }
+
+    "an invalid SA Utr owing to incorrect length is submitted" should {
       lazy val result: WSResponse = {
         await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
@@ -159,7 +173,7 @@ class CaptureSautrControllerISpec extends ComponentSpecHelper
         result.status mustBe BAD_REQUEST
       }
 
-      testCaptureSautrViewWithErrorMessages(result)
+      testCaptureSautrViewWithInvalidSautrErrorMessages(result)
     }
 
     "the user is not logged in" should {

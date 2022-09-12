@@ -76,7 +76,7 @@ trait BusinessVerificationStub extends WiremockMethods {
                                                             journeyConfig: JourneyConfig,
                                                             uri: String
                                                            )(status: Int,
-                                                             body: JsObject = Json.obj()): StubMapping = {
+                                                             body: JsObject): StubMapping = {
 
     val callingService: String = journeyConfig.pageConfig.optServiceName.getOrElse(appConfig.defaultServiceName)
 

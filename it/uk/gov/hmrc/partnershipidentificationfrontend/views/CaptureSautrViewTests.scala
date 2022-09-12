@@ -150,7 +150,24 @@ trait CaptureSautrViewTests {
     }
   }
 
-  def testCaptureSautrViewWithErrorMessages(result: => WSResponse): Unit = {
+  def testCaptureSautrViewWithSautrNotEnteredErrorMessages(result: => WSResponse): Unit = {
+
+    testCaptureSautrView(result, hasErrors = true)
+
+    lazy val doc: Document = Jsoup.parse(result.body)
+
+    "correctly display the error summary" in {
+      doc.getErrorSummaryTitle.text mustBe Base.Error.title
+      doc.getErrorSummaryBody.text mustBe messages.Error.saUtrNotEntered
+    }
+
+    "correctly display the field error" in {
+      doc.getFieldErrorMessage.text mustBe Base.Error.error + messages.Error.saUtrNotEntered
+    }
+
+  }
+
+  def testCaptureSautrViewWithInvalidSautrErrorMessages(result: => WSResponse): Unit = {
 
     testCaptureSautrView(result, hasErrors = true)
 
@@ -164,6 +181,7 @@ trait CaptureSautrViewTests {
     "correctly display the field errors" in {
       doc.getFieldErrorMessage.text mustBe Base.Error.error + messages.Error.invalidSautrEntered
     }
+
   }
 
 }

@@ -17,15 +17,33 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.forms
 
 import play.api.data.Form
-import play.api.data.Forms._
+import play.api.data.validation.Constraint
+
+import uk.gov.hmrc.partnershipidentificationfrontend.forms.utils.ConstraintUtil._
+import uk.gov.hmrc.partnershipidentificationfrontend.forms.utils.MappingUtil.{OTextUtil, optText}
+import uk.gov.hmrc.partnershipidentificationfrontend.forms.utils.ValidationHelper._
 
 object CaptureSautrForm {
-  val SautrErrorKey: String = "capture-sa-utr.error"
+
   val SautrKey: String = "sa-utr"
+
+  val saUtrNotEntered: Constraint[String] = Constraint("sa-utr.not-entered")(
+    saUtr => validate(
+      constraint = saUtr.isEmpty,
+      errMsg = "capture-sa-utr-empty.error"
+    )
+  )
+
+  val saUtrIncorrectFormat: Constraint[String] = Constraint("sa-utr.incorrect-format")(
+    saUtr =>
+      validateNot(
+      constraint = saUtr.forall(_.isDigit) && saUtr.length == 10,
+      errMsg = "capture-sa-utr-format.error"
+    )
+  )
 
   val form: Form[String] =
     Form(
-      SautrKey -> text.verifying(SautrErrorKey, sautr => sautr.forall(_.isDigit) && sautr.length == 10)
+      SautrKey -> optText.toText.verifying(saUtrNotEntered andThen saUtrIncorrectFormat)
     )
-
 }
