@@ -21,14 +21,13 @@ import org.scalatest.concurrent.Eventually.eventually
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
+import uk.gov.hmrc.partnershipidentificationfrontend.controllers.errorpages.{routes => errorRoutes}
 import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.FeatureSwitching
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType._
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{IdentifiersMatched, IdentifiersMismatch, UnMatchable}
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationNotEnoughInformationToCallBV, RegistrationNotCalled}
+import uk.gov.hmrc.partnershipidentificationfrontend.models._
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuditStub, AuthStub, PartnershipIdentificationStub, ValidatePartnershipInformationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.views.CheckYourAnswersViewTests
-import uk.gov.hmrc.partnershipidentificationfrontend.controllers.errorpages.{routes => errorRoutes}
 
 class CheckYourAnswersControllerISpec extends ComponentSpecHelper
   with CheckYourAnswersViewTests
@@ -276,48 +275,6 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         }
       }
 
-      "the applicant does not have an sautr" in {
-        await(insertJourneyConfig(
-          testJourneyId,
-          testInternalId,
-          testJourneyConfig(GeneralPartnership, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)
-        ))
-        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
-        stubRetrievePartnershipDetails(testJourneyId)(OK, Json.obj()).setNewScenarioState("auditing")
-        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = UnMatchable)(OK)
-        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(OK)
-        stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
-        stubRetrievePartnershipDetails(testJourneyId)(OK,
-          Json.obj(
-            "identifiersMatch" -> "UnMatchable",
-            "businessVerification" -> Json.obj(
-              "verificationStatus" -> "NOT_ENOUGH_INFORMATION_TO_CALL_BV"
-            ),
-            "registration" -> Json.obj(
-              "registrationStatus" -> "REGISTRATION_NOT_CALLED"
-            )
-          )
-        ).setRequiredScenarioState("auditing")
-
-        lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
-
-        result must have {
-          httpStatus(SEE_OTHER)
-          redirectUri(errorRoutes.CannotConfirmBusinessErrorController.show(testJourneyId).url)
-        }
-
-        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = UnMatchable)
-        eventually {
-          verifyAuditDetail(Json.obj(
-            "isMatch" -> "unmatchable",
-            "businessType" -> "General Partnership",
-            "VerificationStatus" -> "Not Enough Information to call BV",
-            "RegisterApiStatus" -> "not called",
-            "callingService" -> testCallingServiceName
-          ))
-        }
-      }
-
       "the business entity Limited Partnership has a Company Profile stored and the identifiersMatch is false" in {
         await(insertJourneyConfig(
           testJourneyId,
@@ -399,6 +356,51 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
         verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMismatch)
         eventually {
           verifyAuditDetail(expectedAudit = testLimitedPartnershipAuditJson(businessType = "Scottish LTD Partnership"))
+        }
+      }
+    }
+
+    "redirect to calling service" when {
+      for(partnershipType <- Seq((GeneralPartnership, "General Partnership"), (ScottishPartnership, "Scottish Partnership")))
+      s"the applicant does not have an sautr and is $partnershipType" in {
+        await(insertJourneyConfig(
+          testJourneyId,
+          testInternalId,
+          testJourneyConfig(partnershipType._1, Some(testCallingServiceName), businessVerificationCheck = true, testRegime)
+        ))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrievePartnershipDetails(testJourneyId)(OK, Json.obj()).setNewScenarioState("auditing")
+        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = UnMatchable)(OK)
+        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(OK)
+        stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
+        stubRetrievePartnershipDetails(testJourneyId)(OK,
+          Json.obj(
+            "identifiersMatch" -> "UnMatchable",
+            "businessVerification" -> Json.obj(
+              "verificationStatus" -> "NOT_ENOUGH_INFORMATION_TO_CALL_BV"
+            ),
+            "registration" -> Json.obj(
+              "registrationStatus" -> "REGISTRATION_NOT_CALLED"
+            )
+          )
+        ).setRequiredScenarioState("auditing")
+
+        lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
+
+        result must have {
+          httpStatus(SEE_OTHER)
+          redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
+        }
+
+        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = UnMatchable)
+        eventually {
+          verifyAuditDetail(Json.obj(
+            "isMatch" -> "unmatchable",
+            "businessType" -> partnershipType._2,
+            "VerificationStatus" -> "Not Enough Information to call BV",
+            "RegisterApiStatus" -> "not called",
+            "callingService" -> testCallingServiceName
+          ))
         }
       }
     }
