@@ -19,7 +19,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 import play.api.test.Helpers.{BAD_REQUEST, INTERNAL_SERVER_ERROR, LOCATION, NOT_FOUND, OK, SEE_OTHER, await, defaultAwaitTimeout}
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.{CompaniesHouseStub, FeatureSwitching}
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PageConfig
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyLabels, PageConfig}
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuthStub, CompaniesHouseApiStub, PartnershipIdentificationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.views.CaptureCompanyNumberViewTests
@@ -68,6 +68,24 @@ class CaptureCompanyNumberControllerISpec extends ComponentSpecHelper
 
         testCaptureCompanyNumberView(result, testCallingServiceName)
       }
+
+      "there is a serviceName passed in the journeyConfig labels object" should {
+        lazy val result = {
+          val config = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
+            .copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl, Some(JourneyLabels(Some(testWelshServiceName),None))))
+          await(insertJourneyConfig(
+            journeyId = testJourneyId,
+            authInternalId = testInternalId,
+            journeyConfig = config
+          ))
+          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+          get(s"$baseUrl/$testJourneyId/company-registration-number")
+        }
+
+        testCaptureCompanyNumberView(result, testCallingServiceName)
+      }
+
+
     }
 
     "redirect to sign in page" when {

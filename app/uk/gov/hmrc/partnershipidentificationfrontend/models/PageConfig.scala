@@ -25,5 +25,17 @@ case class PageConfig(optServiceName: Option[String],
                       optLabels: Option[JourneyLabels] = None)
 
 object PageConfig {
+
+  def apply(deskProServiceId: String,
+            signOutUrl: String,
+            accessibilityUrl: String,
+            labels: JourneyLabels
+           ): PageConfig = {
+
+    val optLabels = if (labels.nonEmpty) Some(labels) else None
+
+    new PageConfig(None, deskProServiceId, signOutUrl, accessibilityUrl, optLabels)
+  }
+
   implicit val format: OFormat[PageConfig] = Json.format[PageConfig]
 }

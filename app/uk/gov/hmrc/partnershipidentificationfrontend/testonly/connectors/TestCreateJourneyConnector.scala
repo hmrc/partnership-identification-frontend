@@ -66,7 +66,6 @@ object TestCreateJourneyConnector {
   implicit val journeyConfigWriter: Writes[JourneyConfig] = (journeyConfig: JourneyConfig) => Json.obj(
     JourneyController.continueUrlKey -> journeyConfig.continueUrl,
     JourneyController.businessVerificationCheckKey -> journeyConfig.businessVerificationCheck,
-    JourneyController.optServiceNameKey -> journeyConfig.pageConfig.optServiceName,
     JourneyController.deskProServiceIdKey -> journeyConfig.pageConfig.deskProServiceId,
     JourneyController.signOutUrlKey -> journeyConfig.pageConfig.signOutUrl,
     JourneyController.accessibilityUrlKey -> journeyConfig.pageConfig.accessibilityUrl,
