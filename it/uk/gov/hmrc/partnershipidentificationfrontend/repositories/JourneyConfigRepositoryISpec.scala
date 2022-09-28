@@ -84,7 +84,7 @@ class JourneyConfigRepositoryISpec extends ComponentSpecHelper with AbstractPati
     }
 
     "successfully insert a journeyConfig with JourneyLabels" in {
-      val toBePersisted = testDefaultJourneyConfig.copy(pageConfig = testDefaultPageConfig.copy(optLabels = Some(JourneyLabels("Welsh service name"))))
+      val toBePersisted = testDefaultJourneyConfig.copy(pageConfig = testDefaultPageConfig.copy(optLabels = Some(JourneyLabels(Some(testWelshServiceName),Some("testEnglishServiceName")))))
 
       await(repo.insertJourneyConfig(testJourneyId, testInternalId, toBePersisted))
 

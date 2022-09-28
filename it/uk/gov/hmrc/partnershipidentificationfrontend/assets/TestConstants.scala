@@ -77,8 +77,13 @@ object TestConstants {
     regime = testRegime
   )
 
+
+  val testWelshServiceName: String = "This is a welsh service name"
+  val testEnglishServiceName: String = "This is a welsh service name"
+
   val testDefaultWelshJourneyConfig: JourneyConfig = testDefaultJourneyConfig.copy(
-    pageConfig = testDefaultPageConfig.copy(optLabels = Some(JourneyLabels(welshServiceName = "This is a welsh service name from Journey labels")))
+    pageConfig = testDefaultPageConfig.copy(optLabels = Some(JourneyLabels(optWelshServiceName = Some(testWelshServiceName), None))
+    )
   )
 
   val testDefaultWelshServiceName: String = "Gwasanaeth Dilysu Endid"
@@ -171,7 +176,7 @@ object TestConstants {
       ),
       "registration" -> Json.obj(
         "registrationStatus" -> "REGISTRATION_FAILED",
-        "failures" ->  Json.arr(
+        "failures" -> Json.arr(
           Json.obj(
             "code" -> "INVALID_REGIME",
             "reason" -> "Request has not passed validation. Invalid regime"
@@ -236,14 +241,14 @@ object TestConstants {
     "companyNumber" -> testCompanyNumber
   )
 
-  val testRegistrationFailedWithMultipleFailures: RegistrationFailed =  RegistrationFailed(
+  val testRegistrationFailedWithMultipleFailures: RegistrationFailed = RegistrationFailed(
     Array(
       Failure("INVALID_REGIME", "Request has not passed validation. Invalid regime"),
       Failure("INVALID_PAYLOAD", "Request has not passed validation. Invalid payload.")
     )
   )
 
-  val testRegistrationFailedWith1Failure: RegistrationFailed =  RegistrationFailed(
+  val testRegistrationFailedWith1Failure: RegistrationFailed = RegistrationFailed(
     Array(
       Failure("PARTY_TYPE_MISMATCH", "The remote endpoint has indicated there is Party Type mismatch")
     ))

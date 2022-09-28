@@ -34,7 +34,7 @@ class MessageHelperSpec extends AnyFlatSpec with BeforeAndAfterEach {
     val welshServiceName = "This is a welsh service name"
     val englishServiceName = "This is an english service name"
 
-    val welshLabels: JourneyLabels = JourneyLabels(welshServiceName)
+    val welshLabels: JourneyLabels = JourneyLabels(Some(welshServiceName), None)
 
     val actualAmendedMessages = MessagesHelper.amendMessagesWithLabelsFromJourneyConfig(
       initialMessages = initialMessages,

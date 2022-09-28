@@ -19,7 +19,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
-import uk.gov.hmrc.partnershipidentificationfrontend.models.PageConfig
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyLabels, PageConfig}
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{AuthStub, PartnershipIdentificationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.views.CapturePostCodeViewTests
@@ -51,6 +51,22 @@ class CapturePostCodeControllerISpec extends ComponentSpecHelper
           val config = testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)
             .copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl))
           await(insertJourneyConfig(testJourneyId, testInternalId, config))
+          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+          get(s"$baseUrl/$testJourneyId/self-assessment-postcode")
+        }
+
+        testCapturePostCodeView(result, testCallingServiceName)
+      }
+
+      "there is a serviceName passed in the journeyConfig labels object" should {
+        lazy val result = {
+          val config = testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)
+            .copy(pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl, Some(JourneyLabels(Some(testWelshServiceName),None))))
+          await(insertJourneyConfig(
+            journeyId = testJourneyId,
+            authInternalId = testInternalId,
+            journeyConfig = config
+          ))
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
           get(s"$baseUrl/$testJourneyId/self-assessment-postcode")
         }

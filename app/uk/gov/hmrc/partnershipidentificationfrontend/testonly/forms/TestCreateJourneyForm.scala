@@ -21,8 +21,8 @@ import play.api.data.Forms.{boolean, mapping, text}
 import play.api.data.validation.Constraint
 import uk.gov.hmrc.partnershipidentificationfrontend.forms.utils.MappingUtil.optText
 import uk.gov.hmrc.partnershipidentificationfrontend.forms.utils.ValidationHelper.validate
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, JourneyLabels, PageConfig}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.PartnershipType
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, JourneyLabels, PageConfig}
 
 
 object TestCreateJourneyForm {
@@ -47,29 +47,23 @@ object TestCreateJourneyForm {
       accessibilityUrl -> text.verifying(accessibilityUrlEmpty),
       regime -> text.verifying(regimeEmpty),
       welshServiceName -> optText
-    )((continueUrl, serviceName, businessVerificationCheck, deskProServiceId, signOutUrl, accessibilityUrl, regime, optWelshServiceName) =>
+    )((continueUrl, serviceName, businessVerificationCheck, deskProServiceId, signOutUrl, accessibilityUrl, regime, welshServiceName) =>
       JourneyConfig(
         continueUrl,
         businessVerificationCheck,
-        pageConfig = PageConfig(
-          optServiceName = serviceName,
-          deskProServiceId = deskProServiceId,
-          signOutUrl = signOutUrl,
-          accessibilityUrl = accessibilityUrl,
-          optLabels = optWelshServiceName.map(welshServiceName => JourneyLabels(welshServiceName))
-        ),
+        PageConfig(deskProServiceId, signOutUrl, accessibilityUrl, JourneyLabels(welshServiceName, serviceName)),
         partnershipType = partnershipType,
         regime
       ))(journeyConfig =>
       Some(
         journeyConfig.continueUrl,
-        journeyConfig.pageConfig.optServiceName,
+        journeyConfig.pageConfig.optLabels.flatMap(_.optEnglishServiceName),
         journeyConfig.businessVerificationCheck,
         journeyConfig.pageConfig.deskProServiceId,
         journeyConfig.pageConfig.signOutUrl,
         journeyConfig.pageConfig.accessibilityUrl,
         journeyConfig.regime,
-        journeyConfig.pageConfig.optLabels.map(labels => labels.welshServiceName)
+        journeyConfig.pageConfig.optLabels.flatMap(_.optWelshServiceName)
       )))
   }
 

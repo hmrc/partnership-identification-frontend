@@ -280,7 +280,7 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
         post("/partnership-identification/api/" + apiUrlSuffix, testJourneyConfigJson ++ testIncomingJsonWelshLabels)
 
-        val expectedWelshLabels = Some(JourneyLabels("This is a welsh service name"))
+        val expectedWelshLabels = Some(JourneyLabels(Some("This is a welsh service name"), None))
 
         await(journeyConfigRepository.findJourneyConfig(testJourneyId, testInternalId)) mustBe Some(
           testDefaultJourneyConfig
@@ -292,9 +292,37 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
 
       }
       }
-
     }
-  }
+
+      "return (for all PartnershipType) a JourneyConfig with English labels" in {
+
+        val testIncomingJsonEnglishLabels: JsObject = Json.obj(
+          "labels" -> Json.obj("en" -> Json.obj("optServiceName" -> "This is an English service name"))
+        )
+
+        forAll(labelsScenarios) { (apiUrlSuffix: String, expectedPartnershipType: PartnershipType) => {
+
+          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+
+          stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
+
+          post("/partnership-identification/api/" + apiUrlSuffix, testJourneyConfigJson ++ testIncomingJsonEnglishLabels)
+
+          val expectedEnglishLabels = Some(JourneyLabels(None, Some("This is an English service name")))
+
+          await(journeyConfigRepository.findJourneyConfig(testJourneyId, testInternalId)) mustBe Some(
+            testDefaultJourneyConfig
+              .copy(partnershipType = expectedPartnershipType)
+              .copy(pageConfig = testDefaultPageConfig.copy(optLabels = expectedEnglishLabels))
+          )
+
+          await(journeyConfigRepository.drop)
+        }
+        }
+      }
+    }
+
+
 
   "POST /api/general-partnership-journey" should {
     "return a created journey" in {
