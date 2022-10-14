@@ -155,8 +155,6 @@ Creates a new journey for a Limited Partnership, storing the journeyConfig again
 #### Request:
 optServiceName will default to `Entity Validation Service` if the field is not provided.
 
-For incorporated partnerships the matching check result is "false" and consequently business verification and registration are not performed. As such the business verification flag has no effect and can be omitted.
-
 Labels "cy" and "en" enable welsh and english translations for the service name to be provided by the calling service respectively.
 If the labels property is omitted or present, but the "cy" property is not fully defined, the service's default values will be
 used for the undefined properties..
@@ -200,8 +198,6 @@ Example Response body:
 Creates a new journey for a Scottish Limited Partnership, storing the journeyConfig against the journeyId.
 #### Request:
 optServiceName will default to `Entity Validation Service` if the field is not provided.
-
-For incorporated partnerships the matching check result is "false" and consequently business verification and registration are not performed. As such the business verification flag has no effect and can be omitted.
 
 Labels "cy" and "en" enable welsh and english translations for the service name to be provided by the calling service respectively.
 If the labels property is omitted or present, but the "cy" property is not fully defined, the service's default values will be
@@ -249,8 +245,6 @@ where protocol, host and port number are set to the values for the appropriate e
 Creates a new journey for a Limited Liability Partnership, storing the journeyConfig against the journeyId.
 #### Request:
 optServiceName will default to `Entity Validation Service` if the field is not provided.
-
-For incorporated partnerships the matching check result is "false" and consequently business verification and registration are not performed. As such the business verification flag has no effect and can be omitted.
 
 Labels "cy" and "en" enable welsh and english translations for the service name to be provided by the calling service respectively.
 If the labels property is omitted or present, but the "cy" property is not fully defined, the service's default values will be
