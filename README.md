@@ -68,7 +68,7 @@ Verification (rather than stub it) all non-relative urls will cause the handover
 {
   "continueUrl": "/test",
   "businessVerificationCheck": false,
-  "optServiceName": "Service Name",
+  "optServiceName": "Service Name", // deprecated, use labels.en.optServiceName
   "deskProServiceId": "abc",
   "signOutUrl": "/sign-out",
   "accessibilityUrl": "/accessibility-statement/my-service",
@@ -120,7 +120,7 @@ Verification (rather than stub it) all non-relative urls will cause the handover
 {
   "continueUrl": "/test",
   "businessVerificationCheck": false,
-  "optServiceName": "Service Name",
+  "optServiceName": "Service Name", // deprecated, use labels.en.optServiceName
   "deskProServiceId": "abc",
   "signOutUrl": "/sign-out",
   "accessibilityUrl": "/accessibility-statement/my-service",
@@ -167,7 +167,7 @@ Verification (rather than stub it) all non-relative urls will cause the handover
 ```
 {
   "continueUrl": "/test",
-  "optServiceName": "Service Name",
+  "optServiceName": "Service Name", // deprecated, use labels.en.optServiceName
   "deskProServiceId": "abc",
   "signOutUrl": "/sign-out",
   "accessibilityUrl": "/accessibility-statement/my-service",
@@ -211,7 +211,7 @@ Verification (rather than stub it) all non-relative urls will cause the handover
 ```
 {
   "continueUrl": "/test",
-  "optServiceName": "Service Name",
+  "optServiceName": "Service Name", // deprecated, use labels.en.optServiceName
   "deskProServiceId": "abc",
   "signOutUrl": "/sign-out",
   "accessibilityUrl": "/accessibility-statement/my-service",
@@ -258,7 +258,7 @@ Verification (rather than stub it) all non-relative urls will cause the handover
 ```
 {
   "continueUrl": "/test",
-  "optServiceName": "Service Name",
+  "optServiceName": "Service Name", // deprecated, use labels.en.optServiceName
   "deskProServiceId": "abc",
   "signOutUrl": "/sign-out",
   "accessibilityUrl": "/accessibility-statement/my-service",
