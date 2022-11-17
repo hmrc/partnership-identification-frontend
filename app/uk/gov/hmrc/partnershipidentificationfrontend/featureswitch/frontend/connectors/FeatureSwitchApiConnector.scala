@@ -19,6 +19,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.frontend.con
 import play.api.http.Status._
 import play.api.libs.json.{JsError, JsSuccess, Reads}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.models.FeatureSwitchSetting
 
 import javax.inject.{Inject, Singleton}

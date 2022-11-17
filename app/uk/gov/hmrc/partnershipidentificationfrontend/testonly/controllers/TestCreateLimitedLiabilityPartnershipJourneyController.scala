@@ -49,7 +49,7 @@ class TestCreateLimitedLiabilityPartnershipJourneyController @Inject()(messagesC
           view(
             defaultPageConfig,
             form(LimitedLiabilityPartnership).fill(defaultJourneyConfig),
-            routes.TestCreateLimitedLiabilityPartnershipJourneyController.submit()
+            routes.TestCreateLimitedLiabilityPartnershipJourneyController.submit
           )
         )
       )
@@ -65,7 +65,7 @@ class TestCreateLimitedLiabilityPartnershipJourneyController @Inject()(messagesC
           BadRequest(
             view(defaultPageConfig,
               formWithErrors,
-              routes.TestCreateLimitedLiabilityPartnershipJourneyController.submit()
+              routes.TestCreateLimitedLiabilityPartnershipJourneyController.submit
             )
           )
         ),

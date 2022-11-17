@@ -15,10 +15,10 @@ lazy val microservice = Project(appName, file("."))
     TwirlKeys.templateImports ++= Seq(
       "uk.gov.hmrc.govukfrontend.views.html.components._"
     ),
-    pipelineStages in Assets := Seq(gzip),
+    Assets / pipelineStages := Seq(gzip),
     // ***************
     // Use the silencer plugin to suppress warnings
-    scalacOptions += "-P:silencer:pathFilters=routes",
+    scalacOptions += "-P:silencer:pathFilters=views;routes",
     libraryDependencies ++= Seq(
       compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
       "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
@@ -32,13 +32,13 @@ lazy val microservice = Project(appName, file("."))
   .settings(resolvers += Resolver.jcenterRepo)
   .disablePlugins(JUnitXmlReportPlugin)
 
-Keys.fork in Test := true
-javaOptions in Test += "-Dlogger.resource=logback-test.xml"
-parallelExecution in Test := true
+Test / Keys.fork := true
+Test / javaOptions += "-Dlogger.resource=logback-test.xml"
+Test / parallelExecution := true
 addTestReportOption(Test, "test-reports")
 
-Keys.fork in IntegrationTest := true
-javaOptions in IntegrationTest += "-Dlogger.resource=logback-test.xml"
+IntegrationTest / Keys.fork := true
+IntegrationTest / javaOptions += "-Dlogger.resource=logback-test.xml"
 
 def calculateITTestsGroupingSettings(isADevMachineProperty: String): Seq[sbt.Setting[_]] = {
   IntegrationTest / testGrouping := {
