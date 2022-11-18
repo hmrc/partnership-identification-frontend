@@ -49,7 +49,7 @@ class TestCreateGeneralPartnershipJourneyController @Inject()(messagesController
             view(
               defaultPageConfig,
               form(GeneralPartnership).fill(defaultJourneyConfig),
-              routes.TestCreateGeneralPartnershipJourneyController.submit()
+              routes.TestCreateGeneralPartnershipJourneyController.submit
             )
           )
         )
@@ -66,7 +66,7 @@ class TestCreateGeneralPartnershipJourneyController @Inject()(messagesController
                 view(
                   defaultPageConfig,
                   formWithErrors,
-                  routes.TestCreateGeneralPartnershipJourneyController.submit()
+                  routes.TestCreateGeneralPartnershipJourneyController.submit
                 )
               )
             ),

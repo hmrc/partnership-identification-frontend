@@ -41,7 +41,7 @@ class FeatureSwitchFrontendController @Inject()(featureSwitchService: FeatureSwi
     implicit req =>
       featureSwitchService.retrieveFeatureSwitches().map {
         featureSwitches =>
-          Ok(featureSwitchView(defaultPageConfig, featureSwitches, routes.FeatureSwitchFrontendController.submit()))
+          Ok(featureSwitchView(defaultPageConfig, featureSwitches, routes.FeatureSwitchFrontendController.submit))
       }
   }
 
@@ -49,7 +49,7 @@ class FeatureSwitchFrontendController @Inject()(featureSwitchService: FeatureSwi
     implicit req =>
       featureSwitchService.updateFeatureSwitches(req.body.keys).map {
         featureSwitches =>
-          Ok(featureSwitchView(defaultPageConfig, featureSwitches, routes.FeatureSwitchFrontendController.submit()))
+          Ok(featureSwitchView(defaultPageConfig, featureSwitches, routes.FeatureSwitchFrontendController.submit))
       }
   }
 }

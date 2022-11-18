@@ -49,7 +49,7 @@ class TestCreateScottishPartnershipJourneyController @Inject()(messagesControlle
             view(
               defaultPageConfig,
               form(ScottishPartnership).fill(defaultJourneyConfig),
-              routes.TestCreateScottishPartnershipJourneyController.submit()
+              routes.TestCreateScottishPartnershipJourneyController.submit
             )
           )
         )
@@ -65,7 +65,7 @@ class TestCreateScottishPartnershipJourneyController @Inject()(messagesControlle
               BadRequest(
                 view(defaultPageConfig,
                   formWithErrors,
-                  routes.TestCreateScottishPartnershipJourneyController.submit()
+                  routes.TestCreateScottishPartnershipJourneyController.submit
                 )
               )
             ),

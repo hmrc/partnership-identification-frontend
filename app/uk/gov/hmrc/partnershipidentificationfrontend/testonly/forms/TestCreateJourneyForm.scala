@@ -55,7 +55,7 @@ object TestCreateJourneyForm {
         partnershipType = partnershipType,
         regime
       ))(journeyConfig =>
-      Some(
+      Some((
         journeyConfig.continueUrl,
         journeyConfig.pageConfig.optLabels.flatMap(_.optEnglishServiceName),
         journeyConfig.businessVerificationCheck,
@@ -64,7 +64,7 @@ object TestCreateJourneyForm {
         journeyConfig.pageConfig.accessibilityUrl,
         journeyConfig.regime,
         journeyConfig.pageConfig.optLabels.flatMap(_.optWelshServiceName)
-      )))
+      ))))
   }
 
   def continueUrlEmpty: Constraint[String] = Constraint("continue_url.not_entered")(
