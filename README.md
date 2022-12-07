@@ -37,12 +37,11 @@ sbt -DisADevMachine=true
 
 ### Testing Endpoints
 
-See the TestREADME for more information on how to use our stubs for testing
+See the [TestREADME](TestREADME.md) for more information on how to use our stubs for testing
 
 # End-Points
 
 ---
-## Creating the General Partnership journey
 ### POST /general-partnership-journey
 
 ---
@@ -136,7 +135,7 @@ Verification (rather than stub it) all non-relative urls will cause the handover
 }
 ```
 
-### Response:
+#### Response:
 Status: **Created(201)**
 
 Example Response body:
@@ -146,7 +145,6 @@ Example Response body:
 ```
 
 where protocol, host and port number are set to the values for the appropriate environment and journey id is used to identify the specific user journey.
-
 
 ### POST /limited-partnership-journey
 
@@ -183,7 +181,7 @@ Verification (rather than stub it) all non-relative urls will cause the handover
 }
 ```
 
-### Response:
+#### Response:
 Status: **Created(201)**
 
 Example Response body:
@@ -227,7 +225,7 @@ Verification (rather than stub it) all non-relative urls will cause the handover
 }
 ```
 
-### Response:
+#### Response:
 Status: **Created(201)**
 
 Example Response body:
@@ -237,7 +235,6 @@ Example Response body:
 ```
 
 where protocol, host and port number are set to the values for the appropriate environment and journey id is used to identify the specific user journey.
-
 
 ### POST /limited-liability-partnership-journey
 
