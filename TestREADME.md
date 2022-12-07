@@ -29,6 +29,7 @@ Shows all feature switches:
 2. Partnership Identification
 
     - Use stub for Partnership Known Facts SAUTR call
+    - Use stub for register API
 
 #### GET test-only/create-general-partnership-journey
 
@@ -385,7 +386,7 @@ Limited Liability Partnership:
 #### POST test-only/verification-question/journey
 
 ---
-Stubs creating a Business Verification journey. The Business Verification Stub Feature Switch will need to be enabled.
+Stubs creating a Business Verification journey. The Business Verification Stub Feature Switch will need to be enabled. This bypasses the whole Business Verification journey.
 
 ##### Request:
 
@@ -405,7 +406,7 @@ Example Response body:
 
 ---
 Stubs retrieving the result from the Business Verification Service. The Business Verification Stub feature switch will
-need to be enabled.
+need to be enabled. Always returns BusinessVerification Status as PASS.
 
 ##### Request:
 
