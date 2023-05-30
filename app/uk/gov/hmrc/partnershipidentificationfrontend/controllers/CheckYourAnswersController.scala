@@ -82,7 +82,7 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
                   Future.successful(Redirect(routes.BusinessVerificationController.startBusinessVerificationJourney(journeyId)))
                 case IdentifiersMatched =>
                   Future.successful(Redirect(routes.RegistrationController.register(journeyId)))
-                case UnMatchable if journeyConfig.partnershipType == GeneralPartnership || journeyConfig.partnershipType == ScottishPartnership =>
+                case UnMatchable if journeyConfig.partnershipType == GeneralPartnership || journeyConfig.partnershipType == ScottishPartnership || journeyConfig.regime != "VATC" =>
                   auditService.auditPartnershipInformation(journeyId, journeyConfig).map {
                     _ => Redirect(routes.JourneyRedirectController.redirectToContinueUrl(journeyId))
                   }

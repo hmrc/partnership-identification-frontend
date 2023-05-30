@@ -361,6 +361,37 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
     }
 
     "redirect to calling service" when {
+      "the regim is not VATC and no match identified" in {
+        await(insertJourneyConfig(
+          testJourneyId,
+          testInternalId,
+          testJourneyConfig(LimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = true, "PPT")
+        ))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrievePartnershipDetails(testJourneyId)(OK, Json.obj()).setNewScenarioState("auditing")
+        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = UnMatchable)(OK)
+        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(OK)
+        stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
+        stubRetrievePartnershipDetails(testJourneyId)(OK,
+          Json.obj(
+            "identifiersMatch" -> "UnMatchable",
+            "businessVerification" -> Json.obj(
+              "verificationStatus" -> "NOT_ENOUGH_INFORMATION_TO_CALL_BV"
+            ),
+            "registration" -> Json.obj(
+              "registrationStatus" -> "REGISTRATION_NOT_CALLED"
+            )
+          )
+        ).setRequiredScenarioState("auditing")
+
+        lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
+
+        result must have {
+          httpStatus(SEE_OTHER)
+          redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
+        }
+      }
+
       for(partnershipType <- Seq((GeneralPartnership, "General Partnership"), (ScottishPartnership, "Scottish Partnership")))
       s"the applicant does not have an sautr and is $partnershipType" in {
         await(insertJourneyConfig(
