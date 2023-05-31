@@ -39,8 +39,8 @@ class JourneyConfigRepository @Inject()(mongoComponent: MongoComponent,
   collectionName = "partnership-identification-frontend",
   mongoComponent = mongoComponent,
   domainFormat = implicitly[Format[JsObject]],
-  indexes = Seq(timeToLiveIndex(appConfig.timeToLiveSeconds)),
-  extraCodecs = Seq(Codecs.playFormatCodec(journeyConfigMongoFormat))
+  indexes = scala.Seq(timeToLiveIndex(appConfig.timeToLiveSeconds)),
+  extraCodecs = scala.Seq(Codecs.playFormatCodec(journeyConfigMongoFormat))
 ){
 
   def insertJourneyConfig(journeyId: String, authInternalId: String, journeyConfig: JourneyConfig): Future[InsertOneResult] = {
@@ -61,7 +61,7 @@ class JourneyConfigRepository @Inject()(mongoComponent: MongoComponent,
         Filters.equal(JourneyIdKey, journeyId),
         Filters.equal(AuthInternalIdKey, authInternalId)
       )
-    ).headOption
+    ).headOption()
 
   }
 
@@ -78,7 +78,7 @@ class JourneyConfigRepository @Inject()(mongoComponent: MongoComponent,
 
   }
 
-  def drop: Future[Unit] = collection.drop().toFuture.map(_ => Unit)
+  def drop: Future[Unit] = collection.drop().toFuture().map(_ => ())
 
 }
 

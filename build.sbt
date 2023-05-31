@@ -1,11 +1,10 @@
 import uk.gov.hmrc.DefaultBuildSettings
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "partnership-identification-frontend"
 
-val silencerVersion = "1.7.3"
+val silencerVersion = "1.7.12"
 
 lazy val scoverageSettings = {
 
@@ -26,7 +25,7 @@ lazy val scoverageSettings = {
 
   Seq(
     ScoverageKeys.coverageExcludedPackages := exclusionList.mkString(";"),
-    ScoverageKeys.coverageMinimum := 90,
+    ScoverageKeys.coverageMinimumStmtTotal := 90,
     ScoverageKeys.coverageFailOnMinimum := false,
     ScoverageKeys.coverageHighlighting := true
   )
@@ -36,7 +35,7 @@ lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .settings(
     majorVersion := 0,
-    scalaVersion := "2.12.13",
+    scalaVersion := "2.13.8",
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     TwirlKeys.templateImports ++= Seq(
       "uk.gov.hmrc.govukfrontend.views.html.components._"
@@ -52,7 +51,6 @@ lazy val microservice = Project(appName, file("."))
     // ***************
   )
   .settings(scoverageSettings)
-  .settings(publishingSettings: _*)
   .configs(IntegrationTest)
   .settings(DefaultBuildSettings.integrationTestSettings())
   .settings(calculateITTestsGroupingSettings(System.getProperty("isADevMachine")): _*)

@@ -61,7 +61,7 @@ class CapturePostCodeController @Inject()(mcc: MessagesControllerComponents,
         case Some(authInternalId) =>
           journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
             journeyConfig =>
-              postCodeForm.bindFromRequest.fold(
+              postCodeForm.bindFromRequest().fold(
                 formWithErrors =>
                   Future.successful {
                     implicit val messages: Messages = messagesHelper.getRemoteMessagesApi(journeyConfig).preferred(request)

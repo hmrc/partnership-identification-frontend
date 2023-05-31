@@ -62,9 +62,9 @@ class CannotConfirmBusinessErrorController @Inject()(mcc: MessagesControllerComp
 
   def submit(journeyId: String): Action[AnyContent] = Action.async {
     implicit request =>
-      authorised.retrieve(internalId) {
+      authorised().retrieve(internalId) {
         case Some(authInternalId) =>
-            cannotConfirmBusinessForm.bindFromRequest.fold(
+            cannotConfirmBusinessForm.bindFromRequest().fold(
               formWithErrors =>
                 journeyService.getJourneyConfig(journeyId, authInternalId).map {
                   journeyConfig =>
