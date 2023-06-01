@@ -361,7 +361,7 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
     }
 
     "redirect to calling service" when {
-      "the regim is not VATC and no match identified" in {
+      "the regim is not VATC and not enough information for a match" in {
         await(insertJourneyConfig(
           testJourneyId,
           testInternalId,
@@ -390,6 +390,31 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
           httpStatus(SEE_OTHER)
           redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
         }
+        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = UnMatchable)
+      }
+
+      "the regim is not VATC and the details do not match" in {
+        await(insertJourneyConfig(
+          testJourneyId,
+          testInternalId,
+          testJourneyConfig(LimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = true, "PPT")
+        ))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationWithCompanyProfile).setNewScenarioState("auditing")
+        stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> false))
+        stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> false))
+        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMismatch)(OK)
+        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(OK)
+        stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile).setRequiredScenarioState("auditing")
+
+        lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
+
+        result must have {
+          httpStatus(SEE_OTHER)
+          redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
+        }
+        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMismatch)
       }
 
       for(partnershipType <- Seq((GeneralPartnership, "General Partnership"), (ScottishPartnership, "Scottish Partnership")))
