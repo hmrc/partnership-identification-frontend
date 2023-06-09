@@ -53,8 +53,9 @@ capture-sa-utr-empty.error                                  = Enter the partners
 capture-sa-utr-format.error                                 = Enter the partnership’s Unique Taxpayer Reference in the correct format
 
 ## Capture PostCode Page
-capture-postcode.title                                      = What is the postcode used to register the partnership for Self Assessment?
-capture-postcode.heading                                    = What is the postcode used to register the partnership for Self Assessment?
+capture-postcode.title                                      = Enter the postcode the partnership used to register for Self Assessment
+capture-postcode.heading                                    = Enter the postcode the partnership used to register for Self Assessment
+capture-postcode.subtitle                                   = You can find this information in <b>box 2</b> of your partnership for Self Assessment form (SA400), under the heading 'About the partnership'.
 capture-postcode.hint_text                                  = For example, AB1 2YZ
 capture-postcode.error.not_entered                          = Enter the postcode used to register the partnership for Self Assessment
 capture-postcode.error.invalid_format                       = Enter the postcode in the correct format

@@ -53,8 +53,9 @@ capture-sa-utr-empty.error                                  = Nodwch Gyfeirnod U
 capture-sa-utr-format.error                                 = Nodwch Gyfeirnod Unigryw y Trethdalwr ar gyfer y bartneriaeth yn y fformat cywir
 
 ## Capture PostCode Page
-capture-postcode.title                                      = Beth yw’r cod post a ddefnyddiwyd i gofrestru’r bartneriaeth ar gyfer Hunanasesiad?
-capture-postcode.heading                                    = Beth yw’r cod post a ddefnyddiwyd i gofrestru’r bartneriaeth ar gyfer Hunanasesiad?
+capture-postcode.title                                      = Nodwch y cod post a ddefnyddiwyd gan y bartneriaeth i gofrestru ar gyfer Hunanasesiad
+capture-postcode.heading                                    = Nodwch y cod post a ddefnyddiwyd gan y bartneriaeth i gofrestru ar gyfer Hunanasesiad
+capture-postcode.subtitle                                   = Gallwch ddod o hyd i’r wybodaeth hon ym <b>mlwch 2</b> ar eich ffurflen i gofrestru partneriaeth ar gyfer Hunanasesiad (SA400), o dan y pennawd ‘Ynglŷn â’r bartneriaeth’.
 capture-postcode.hint_text                                  = Er enghraifft, AB1 2YZ
 capture-postcode.error.not_entered                          = Nodwch y cod post a ddefnyddiwyd i gofrestru’r bartneriaeth ar gyfer Hunanasesiad
 capture-postcode.error.invalid_format                       = Nodwch y cod post yn y fformat cywir

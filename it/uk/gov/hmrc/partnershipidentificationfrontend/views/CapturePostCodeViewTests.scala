@@ -70,7 +70,11 @@ trait CapturePostCodeViewTests {
     }
 
     "have the correct hint text" in {
-      doc.getHintText mustBe messages.hint
+      doc.getPostCodeHintText mustBe messages.hint
+    }
+
+    "have the correct subtitle" in {
+      doc.getSubTitle mustBe messages.subTitle
     }
 
     "have a save and continue button" in {
