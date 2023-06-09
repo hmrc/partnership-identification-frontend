@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.controllers.errorpages.{routes => errorRoutes}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.PartnershipType.{GeneralPartnership, ScottishPartnership}
-import uk.gov.hmrc.partnershipidentificationfrontend.models.{IdentifiersMatched, IdentifiersMismatch, UnMatchable}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{IdentifiersMatched, IdentifiersMismatch, JourneyConfig, UnMatchable, ValidationResponse}
 import uk.gov.hmrc.partnershipidentificationfrontend.service.{AuditService, JourneyService, PartnershipIdentificationService, ValidationOrchestrationService}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.MessagesHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.views.helpers.CheckYourAnswersListBuilder
@@ -71,30 +71,40 @@ class CheckYourAnswersController @Inject()(mcc: MessagesControllerComponents,
       }
   }
 
-  def submit(journeyId: String): Action[AnyContent] = Action.async {
-    implicit request =>
-      authorised().retrieve(internalId) {
-        case Some(authInternalId) =>
-          journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
-            journeyConfig =>
-              validationOrchestrationService.orchestrate(journeyId, journeyConfig.businessVerificationCheck).flatMap {
-                case IdentifiersMatched if journeyConfig.businessVerificationCheck =>
-                  Future.successful(Redirect(routes.BusinessVerificationController.startBusinessVerificationJourney(journeyId)))
-                case IdentifiersMatched =>
-                  Future.successful(Redirect(routes.RegistrationController.register(journeyId)))
-                case UnMatchable if journeyConfig.partnershipType == GeneralPartnership || journeyConfig.partnershipType == ScottishPartnership =>
-                  auditService.auditPartnershipInformation(journeyId, journeyConfig).map {
-                    _ => Redirect(routes.JourneyRedirectController.redirectToContinueUrl(journeyId))
-                  }
-                case UnMatchable | IdentifiersMismatch =>
-                  auditService.auditPartnershipInformation(journeyId, journeyConfig).map {
-                    _ => Redirect(errorRoutes.CannotConfirmBusinessErrorController.show(journeyId))
-                  }
-              }
-          }
-        case _ =>
-          throw new InternalServerException("Internal ID could not be retrieved from Auth")
-      }
-  }
+  def submit(journeyId: String): Action[AnyContent] = Action.async { implicit request =>
+    def validationToPages(journeyConfig: JourneyConfig, validation: ValidationResponse): Future[Result] = {
+      val isPartnershipGeneralOrScottish = journeyConfig.partnershipType == GeneralPartnership || journeyConfig.partnershipType == ScottishPartnership
+      val isRegimeOtherThanVATC = journeyConfig.regime != "VATC"
 
+      validation match {
+        case IdentifiersMatched if journeyConfig.businessVerificationCheck =>
+          Future.successful(Redirect(routes.BusinessVerificationController.startBusinessVerificationJourney(journeyId)))
+        case IdentifiersMatched =>
+          Future.successful(Redirect(routes.RegistrationController.register(journeyId)))
+        case UnMatchable if isPartnershipGeneralOrScottish =>
+          auditService.auditPartnershipInformation(journeyId, journeyConfig).map {
+            _ => Redirect(routes.JourneyRedirectController.redirectToContinueUrl(journeyId))
+          }
+        case UnMatchable | IdentifiersMismatch if isRegimeOtherThanVATC =>
+          auditService.auditPartnershipInformation(journeyId, journeyConfig).map {
+            _ => Redirect(routes.JourneyRedirectController.redirectToContinueUrl(journeyId))
+          }
+        case UnMatchable | IdentifiersMismatch =>
+          auditService.auditPartnershipInformation(journeyId, journeyConfig).map {
+            _ => Redirect(errorRoutes.CannotConfirmBusinessErrorController.show(journeyId))
+          }
+      }
+    }
+
+    authorised().retrieve(internalId) {
+      case Some(authInternalId) =>
+        for {
+          journeyConfig <- journeyService.getJourneyConfig(journeyId, authInternalId)
+          validation    <- validationOrchestrationService.orchestrate(journeyId, journeyConfig.businessVerificationCheck)
+          response      <- validationToPages(journeyConfig, validation)
+        } yield response
+      case _ =>
+        throw new InternalServerException("Internal ID could not be retrieved from Auth")
+    }
+  }
 }

@@ -1,62 +1,43 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import uk.gov.hmrc.DefaultBuildSettings
-import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "partnership-identification-frontend"
 
-val silencerVersion = "1.7.3"
-
-lazy val scoverageSettings = {
-
-  val exclusionList: List[String] = List(
-    "<empty>",
-    "Reverse.*",
-    "app.*",
-    "config.*",
-    ".*(AuthService|BuildInfo|Routes).*",
-    "testOnly.*",
-    "business.*",
-    "testOnlyDoNotUseInAppConf.*",
-    "uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.api.*",
-    "uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.frontend.*",
-    "uk.gov.hmrc.partnershipidentificationfrontend.testonly.*",
-    "uk.gov.hmrc.partnershipidentificationfrontend.views.html.*"
-  )
-
-  Seq(
-    ScoverageKeys.coverageExcludedPackages := exclusionList.mkString(";"),
-    ScoverageKeys.coverageMinimum := 90,
-    ScoverageKeys.coverageFailOnMinimum := false,
-    ScoverageKeys.coverageHighlighting := true
-  )
-}
+val silencerVersion = "1.7.12"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .settings(
+    resolvers += Resolver.jcenterRepo,
     majorVersion := 0,
-    scalaVersion := "2.12.13",
+    scalaVersion := "2.13.8",
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     TwirlKeys.templateImports ++= Seq(
       "uk.gov.hmrc.govukfrontend.views.html.components._"
     ),
-    Assets / pipelineStages := Seq(gzip),
-    // ***************
-    // Use the silencer plugin to suppress warnings
-    scalacOptions += "-P:silencer:pathFilters=views;routes",
-    libraryDependencies ++= Seq(
-      compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
-      "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
-    )
-    // ***************
+    Assets / pipelineStages := Seq(gzip)
   )
-  .settings(scoverageSettings)
-  .settings(publishingSettings: _*)
+  .settings(SilencerSettings(silencerVersion))
+  .settings(ScoverageSettings.settings *)
   .configs(IntegrationTest)
   .settings(DefaultBuildSettings.integrationTestSettings())
   .settings(calculateITTestsGroupingSettings(System.getProperty("isADevMachine")): _*)
-  .settings(resolvers += Resolver.jcenterRepo)
   .disablePlugins(JUnitXmlReportPlugin)
 
 Test / Keys.fork := true

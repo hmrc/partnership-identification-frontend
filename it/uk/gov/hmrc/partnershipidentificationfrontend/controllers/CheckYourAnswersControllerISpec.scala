@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -361,6 +361,62 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
     }
 
     "redirect to calling service" when {
+      "the regim is not VATC and not enough information for a match" in {
+        await(insertJourneyConfig(
+          testJourneyId,
+          testInternalId,
+          testJourneyConfig(LimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = true, "PPT")
+        ))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrievePartnershipDetails(testJourneyId)(OK, Json.obj()).setNewScenarioState("auditing")
+        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = UnMatchable)(OK)
+        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(OK)
+        stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
+        stubRetrievePartnershipDetails(testJourneyId)(OK,
+          Json.obj(
+            "identifiersMatch" -> "UnMatchable",
+            "businessVerification" -> Json.obj(
+              "verificationStatus" -> "NOT_ENOUGH_INFORMATION_TO_CALL_BV"
+            ),
+            "registration" -> Json.obj(
+              "registrationStatus" -> "REGISTRATION_NOT_CALLED"
+            )
+          )
+        ).setRequiredScenarioState("auditing")
+
+        lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
+
+        result must have {
+          httpStatus(SEE_OTHER)
+          redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
+        }
+        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = UnMatchable)
+      }
+
+      "the regim is not VATC and the details do not match" in {
+        await(insertJourneyConfig(
+          testJourneyId,
+          testInternalId,
+          testJourneyConfig(LimitedPartnership, Some(testCallingServiceName), businessVerificationCheck = true, "PPT")
+        ))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationWithCompanyProfile).setNewScenarioState("auditing")
+        stubValidate(testSautr, testPostcode)(OK, body = Json.obj("identifiersMatch" -> false))
+        stubValidate(testSautr, testRegisteredOfficePostcode)(OK, body = Json.obj("identifiersMatch" -> false))
+        stubStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMismatch)(OK)
+        stubStoreBusinessVerificationStatus(testJourneyId, BusinessVerificationNotEnoughInformationToCallBV)(OK)
+        stubStoreRegistrationStatus(testJourneyId, RegistrationNotCalled)(OK)
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipFullJourneyDataJsonWithCompanyProfile).setRequiredScenarioState("auditing")
+
+        lazy val result = post(s"$baseUrl/$testJourneyId/check-your-answers-business")()
+
+        result must have {
+          httpStatus(SEE_OTHER)
+          redirectUri(routes.JourneyRedirectController.redirectToContinueUrl(testJourneyId).url)
+        }
+        verifyStoreIdentifiersMatch(testJourneyId, identifiersMatch = IdentifiersMismatch)
+      }
+
       for(partnershipType <- Seq((GeneralPartnership, "General Partnership"), (ScottishPartnership, "Scottish Partnership")))
       s"the applicant does not have an sautr and is $partnershipType" in {
         await(insertJourneyConfig(

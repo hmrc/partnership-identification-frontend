@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,8 +39,8 @@ class JourneyConfigRepository @Inject()(mongoComponent: MongoComponent,
   collectionName = "partnership-identification-frontend",
   mongoComponent = mongoComponent,
   domainFormat = implicitly[Format[JsObject]],
-  indexes = Seq(timeToLiveIndex(appConfig.timeToLiveSeconds)),
-  extraCodecs = Seq(Codecs.playFormatCodec(journeyConfigMongoFormat))
+  indexes = scala.Seq(timeToLiveIndex(appConfig.timeToLiveSeconds)),
+  extraCodecs = scala.Seq(Codecs.playFormatCodec(journeyConfigMongoFormat))
 ){
 
   def insertJourneyConfig(journeyId: String, authInternalId: String, journeyConfig: JourneyConfig): Future[InsertOneResult] = {
@@ -61,7 +61,7 @@ class JourneyConfigRepository @Inject()(mongoComponent: MongoComponent,
         Filters.equal(JourneyIdKey, journeyId),
         Filters.equal(AuthInternalIdKey, authInternalId)
       )
-    ).headOption
+    ).headOption()
 
   }
 
@@ -78,7 +78,7 @@ class JourneyConfigRepository @Inject()(mongoComponent: MongoComponent,
 
   }
 
-  def drop: Future[Unit] = collection.drop().toFuture.map(_ => Unit)
+  def drop: Future[Unit] = collection.drop().toFuture().map(_ => ())
 
 }
 
