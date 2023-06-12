@@ -93,9 +93,10 @@ object MessageLookup {
   }
 
   object CapturePostCode {
-    val title = "What is the postcode used to register the partnership for Self Assessment? - Entity Validation Service - GOV.UK"
-    val pageConfigTestTitle = "What is the postcode used to register the partnership for Self Assessment? - Test Service - GOV.UK"
-    val heading = "What is the postcode used to register the partnership for Self Assessment?"
+    val title = "Enter the postcode the partnership used to register for Self Assessment - Entity Validation Service - GOV.UK"
+    val pageConfigTestTitle = "Enter the postcode the partnership used to register for Self Assessment - Test Service - GOV.UK"
+    val heading = "Enter the postcode the partnership used to register for Self Assessment"
+    val subTitle = "You can find this information in box 2 of your partnership for Self Assessment form (SA400), under the heading About the partnership."
     val hint = "For example, AB1 2YZ"
 
     object Error {

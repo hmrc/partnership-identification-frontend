@@ -50,7 +50,11 @@ object ViewSpecHelper {
 
     lazy val getSubmitButton: Elements = element.getElementsByClass("govuk-button")
 
-    lazy val getHintText: String = element.select(s"""div[class=govuk-hint]""").text()
+    lazy val getHintText: String = element.getElementsByClass("govuk-hint").text()
+
+    lazy val getPostCodeHintText: String = element.select("p[class=govuk-hint]").text()
+
+    lazy val getSubTitle: String = element.select("p[class=govuk-body]").text()
 
     lazy val getForm: Elements = element.select("form")
 
