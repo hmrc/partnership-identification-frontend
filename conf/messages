@@ -57,6 +57,8 @@ capture-postcode.title                                      = Enter the postcode
 capture-postcode.heading                                    = Enter the postcode the partnership used to register for Self Assessment
 capture-postcode.subtitle                                   = You can find this information in <b>box 2</b> of your partnership for Self Assessment form (SA400), under the heading 'About the partnership'.
 capture-postcode.hint_text                                  = For example, AB1 2YZ
+capture-postcode.details.summary                            = Where to find this information
+capture-postcode.details.line_1                             = You can find this information on your partnership for Self Assessment form (SA400).
 capture-postcode.error.not_entered                          = Enter the postcode used to register the partnership for Self Assessment
 capture-postcode.error.invalid_format                       = Enter the postcode in the correct format
 

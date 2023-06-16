@@ -27,6 +27,7 @@
         govukFieldset: GovukFieldset,
         govukDateInput: GovukDateInput,
         govukButton: GovukButton,
+        govukDetails: GovukDetails,
         formWithCSRF: FormWithCSRF,
         inputText: inputText,
         hintWithDesc: HintWithDescription,
@@ -35,6 +36,11 @@
 @(pageConfig: PageConfig, formAction: Call, form: Form[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @hintDesc = @{hintWithDesc("capture-postcode.subtitle", "capture-postcode.hint_text")}
+
+@detailsHtmlContent = {
+    <p>@messages("capture-postcode.details.line_1")</p>
+    <img style="max-width: 100%; height: auto;" src="@controllers.routes.Assets.versioned("images/sa/SA400-partnership-postcode.png")" alt="@messages("capture-postcode.details.line_1")">
+}
 
 @layout(pageConfig, title = title(messages("capture-postcode.title"), form)) {
 
@@ -56,6 +62,11 @@
             autocomplete = None,
             inputType = "text",
             errorMessage = form("postcode").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*))))
+        ))
+
+        @govukDetails(Details(
+            summary = Text(messages("capture-postcode.details.summary")),
+            content = HtmlContent(detailsHtmlContent)
         ))
 
         @govukButton(Button(
