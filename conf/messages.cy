@@ -57,6 +57,8 @@ capture-postcode.title                                      = Nodwch y cod post 
 capture-postcode.heading                                    = Nodwch y cod post a ddefnyddiwyd gan y bartneriaeth i gofrestru ar gyfer Hunanasesiad
 capture-postcode.subtitle                                   = Gallwch ddod o hyd i’r wybodaeth hon ym <b>mlwch 2</b> ar eich ffurflen i gofrestru partneriaeth ar gyfer Hunanasesiad (SA400), o dan y pennawd ‘Ynglŷn â’r bartneriaeth’.
 capture-postcode.hint_text                                  = Er enghraifft, AB1 2YZ
+capture-postcode.details.summary                            = Ble i ddod o hyd i’r wybodaeth hon
+capture-postcode.details.line_1                             = Gallwch ddod o hyd i’r wybodaeth hon ar eich ffurflen i gofrestru partneriaeth ar gyfer Hunanasesiad (SA400).
 capture-postcode.error.not_entered                          = Nodwch y cod post a ddefnyddiwyd i gofrestru’r bartneriaeth ar gyfer Hunanasesiad
 capture-postcode.error.invalid_format                       = Nodwch y cod post yn y fformat cywir
 
