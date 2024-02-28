@@ -19,14 +19,14 @@ import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
 
 val appName = "partnership-identification-frontend"
 
-val silencerVersion = "1.7.12"
+val silencerVersion = "1.7.16"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .settings(
     resolvers += Resolver.jcenterRepo,
     majorVersion := 0,
-    scalaVersion := "2.13.8",
+    scalaVersion := "2.13.12",
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     TwirlKeys.templateImports ++= Seq(
       "uk.gov.hmrc.govukfrontend.views.html.components._"
@@ -38,6 +38,7 @@ lazy val microservice = Project(appName, file("."))
   .configs(IntegrationTest)
   .settings(DefaultBuildSettings.integrationTestSettings())
   .settings(calculateITTestsGroupingSettings(System.getProperty("isADevMachine")): _*)
+  .settings(libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always)
   .disablePlugins(JUnitXmlReportPlugin)
 
 Test / Keys.fork := true
