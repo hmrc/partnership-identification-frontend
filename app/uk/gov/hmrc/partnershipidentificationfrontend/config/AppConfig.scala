@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import javax.inject.{Inject, Singleton}
 class AppConfig @Inject()(config: Configuration,
                           servicesConfig: ServicesConfig) extends FeatureSwitching {
 
+  lazy val appName: String = servicesConfig.getString("appName")
   lazy val selfBaseUrl: String = servicesConfig.baseUrl("self")
   lazy val selfUrl: String = servicesConfig.getString("microservice.services.self.url")
 
@@ -97,4 +98,7 @@ class AppConfig @Inject()(config: Configuration,
   }
 
   lazy val allowedHosts: Set[String] = config.get[Seq[String]]("microservice.hosts.allowList").toSet
+
+  lazy val basGatewayUrl: String = s"${servicesConfig.baseUrl("bas-gateway-frontend")}"
+
 }

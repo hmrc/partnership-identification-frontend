@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,13 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.config
 
 import play.api.i18n.MessagesApi
-import play.api.mvc.Results.{BadRequest, NotFound}
+import play.api.mvc.Results.{BadRequest, NotFound, Redirect}
 import play.api.mvc.{Request, RequestHeader, Result}
-import play.api.{Configuration, Environment, Logging}
+import play.api.{Configuration, Environment, Logging, Mode}
 import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.AuthorisationException
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.templates.error_template
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
 import javax.inject.{Inject, Singleton}
@@ -35,7 +34,23 @@ class ErrorHandler @Inject()(val messagesApi: MessagesApi,
                              view: error_template,
                              val config: Configuration,
                              val env: Environment
-                            )(implicit val appConfig: AppConfig) extends FrontendErrorHandler with AuthRedirects with Logging {
+                            )(implicit val appConfig: AppConfig) extends FrontendErrorHandler with Logging {
+
+  val hostDefaults: Map[String, String] = Map(
+    "Dev.external-url.bas-gateway-frontend.host" -> appConfig.basGatewayUrl
+  )
+
+  private lazy val envPrefix =
+    if (env.mode.equals(Mode.Test)) "Test"
+    else config.getOptional[String]("run.mode")
+      .getOrElse("Dev")
+
+  private def basGatewayUrl(): String = {
+    val key = s"$envPrefix.external-url.bas-gateway-frontend.host"
+    config.getOptional[String](key).orElse(hostDefaults.get(key)).getOrElse("")
+  }
+
+  private def ggLoginUrl:String = basGatewayUrl() + "/bas-gateway/sign-in"
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] =
     if (play.mvc.Http.Status.BAD_REQUEST == statusCode)
@@ -61,7 +76,12 @@ class ErrorHandler @Inject()(val messagesApi: MessagesApi,
     ex match {
       case _: AuthorisationException =>
         logger.debug("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
-        toGGLogin(rh.path)
+        Redirect(
+          ggLoginUrl,
+          Map(
+            "continue_url" -> Seq(rh.path),
+            "origin" -> Seq(appConfig.appName)
+          ))
       case _: NotFoundException =>
         NotFound(notFoundTemplate(Request(rh, "")))
       case _ =>
