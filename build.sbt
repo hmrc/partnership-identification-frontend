@@ -21,12 +21,18 @@ val appName = "partnership-identification-frontend"
 
 val silencerVersion = "1.7.16"
 
+ThisBuild / majorVersion := 0
+ThisBuild / scalaVersion := "2.13.12"
+
+Test / Keys.fork := true
+Test / javaOptions += "-Dlogger.resource=logback-test.xml"
+Test / parallelExecution := true
+addTestReportOption(Test, "test-reports")
+
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .settings(
     resolvers += Resolver.jcenterRepo,
-    majorVersion := 0,
-    scalaVersion := "2.13.12",
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     TwirlKeys.templateImports ++= Seq(
       "uk.gov.hmrc.govukfrontend.views.html.components._"
@@ -35,35 +41,34 @@ lazy val microservice = Project(appName, file("."))
   )
   .settings(SilencerSettings(silencerVersion))
   .settings(ScoverageSettings.settings *)
-  .configs(IntegrationTest)
-  .settings(DefaultBuildSettings.integrationTestSettings())
-  .settings(calculateITTestsGroupingSettings(System.getProperty("isADevMachine")): _*)
   .settings(libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always)
   .disablePlugins(JUnitXmlReportPlugin)
-
-Test / Keys.fork := true
-Test / javaOptions += "-Dlogger.resource=logback-test.xml"
-Test / parallelExecution := true
-addTestReportOption(Test, "test-reports")
-
-IntegrationTest / Keys.fork := true
-IntegrationTest / javaOptions += "-Dlogger.resource=logback-test.xml"
-
-def calculateITTestsGroupingSettings(isADevMachineProperty: String): Seq[sbt.Setting[_]] = {
-  IntegrationTest / testGrouping := {
-    if ("true".equals(isADevMachineProperty))
-      onlyOneJvmForAllISpecTestsTestGroup.value
-    else
-      (IntegrationTest / testGrouping).value
-  }
-}
 
 lazy val onlyOneJvmForAllISpecTestsTestGroup = taskKey[Seq[Tests.Group]]("Default test group that run all the tests in only one JVM - (much faster!)")
 
 onlyOneJvmForAllISpecTestsTestGroup := Seq(new Tests.Group(
   "<default>",
-  (IntegrationTest / definedTests).value,
+  (Test / definedTests).value,
   Tests.InProcess,
   Seq.empty
 ))
+
+def calculateITTestsGroupingSettings(isADevMachineProperty: String): Seq[sbt.Setting[_]] = {
+  Test / testGrouping := {
+    if ("true".equals(isADevMachineProperty))
+      onlyOneJvmForAllISpecTestsTestGroup.value
+    else
+      (Test / testGrouping).value
+  }
+}
+
+
+lazy val it = project
+  .enablePlugins(PlayScala)
+  .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
+  .settings(DefaultBuildSettings.itSettings())
+  .settings(calculateITTestsGroupingSettings(System.getProperty("isADevMachine")): _*)
+  .settings(libraryDependencies ++= AppDependencies.test)
+
+
 
