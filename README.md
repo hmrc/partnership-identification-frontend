@@ -6,11 +6,11 @@ This is a Scala/Play frontend to allow Partnerships to provide their information
 
 1. Make sure any dependent services are running using the following service-manager command
 ```bash
-sm --start PARTNERSHIP_IDENTIFICATION_ALL -r
+sm2 --start PARTNERSHIP_IDENTIFICATION_ALL -r
 ```
 2. Stop the frontend in service manager using
 ```bash
-sm --stop PARTNERSHIP_IDENTIFICATION_FRONTEND
+sm2 --stop PARTNERSHIP_IDENTIFICATION_FRONTEND
 ```
 3. Run the frontend locally using
 ```bash
@@ -24,13 +24,13 @@ sbt clean coverage test coverageReport
 
 ### Integration Testing
 ```bash
-sbt clean coverage it:test coverageReport
+sbt clean coverage it/test coverageReport
 ``` 
 
 By default, for each ISpec test a new JVM will run and all tests will run sequentially.  
-To run all ISpec tests in a single JVM start sbt with the -DisADevMachine=true property and then run `IntegrationTest / test` task:
+To run all ISpec tests in a single JVM start sbt with the -DisADevMachine=true property and then run `Test` task:
 ```bash
-sbt -DisADevMachine=true clean coverage it:test coverageReport
+sbt -DisADevMachine=true clean coverage it/test coverageReport
 ``` 
 
 ### Testing Endpoints

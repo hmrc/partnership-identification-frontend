@@ -19,8 +19,8 @@ import sbt.*
 
 object AppDependencies {
 
-  private val bootstrapPlayVersion = "8.4.0"
-  private val hmrcMongoVersion = "1.7.0"
+  private val bootstrapPlayVersion = "8.5.0"
+  private val hmrcMongoVersion = "1.8.0"
 
   val compile = Seq(
     "uk.gov.hmrc"                  %% "bootstrap-frontend-play-30" % bootstrapPlayVersion,
@@ -33,12 +33,12 @@ object AppDependencies {
   val test = Seq(
     "uk.gov.hmrc"            %% "bootstrap-test-play-30"  % bootstrapPlayVersion % Test,
     "org.scalatest"          %% "scalatest"               % "3.2.18"              % Test,
-    "org.jsoup"               % "jsoup"                   % "1.15.4"             % Test,
+    "org.jsoup"               % "jsoup"                   % "1.17.2"             % Test,
     "org.playframework"      %% "play-test"               % PlayVersion.current  % Test,
-    "com.vladsch.flexmark"    % "flexmark-all"            % "0.64.8"             % "test, it",
-    "org.scalatestplus.play" %% "scalatestplus-play"      % "7.0.0"              % "test, it",
-    "com.github.tomakehurst"  % "wiremock-jre8"           % "2.35.0"             % "it",
-    "org.mockito"            %% "mockito-scala-scalatest" % "1.17.29"            % Test,
+    "com.vladsch.flexmark"    % "flexmark-all"            % "0.64.8"             % Test,
+    "org.scalatestplus.play" %% "scalatestplus-play"      % "7.0.1"              % Test,
+    "com.github.tomakehurst"  % "wiremock"           % "2.27.2"             % Test,
+    "org.mockito"            %% "mockito-scala-scalatest" % "1.17.31"            % Test,
     "org.scalatestplus"      %% "mockito-5-10"             % "3.2.18.0"           % Test,
     "uk.gov.hmrc.mongo"      %% "hmrc-mongo-test-play-30" % hmrcMongoVersion     % Test
   )
