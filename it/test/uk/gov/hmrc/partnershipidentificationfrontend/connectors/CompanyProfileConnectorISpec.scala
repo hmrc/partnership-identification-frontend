@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.partnershipidentificationfrontend.connectors
+package test.uk.gov.hmrc.partnershipidentificationfrontend.connectors
 
 import play.api.test.Helpers.{NOT_FOUND, OK, await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.HeaderCarrier

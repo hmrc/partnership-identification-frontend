@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.partnershipidentificationfrontend.assets
+package test.uk.gov.hmrc.partnershipidentificationfrontend.assets
 
 object MessageLookup {
 

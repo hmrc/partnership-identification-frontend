@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.partnershipidentificationfrontend.api.controllers
+package test.uk.gov.hmrc.partnershipidentificationfrontend.api.controllers
 
 import org.scalatest.prop.TableDrivenPropertyChecks.forAll
 import org.scalatest.prop.{TableFor2, Tables}

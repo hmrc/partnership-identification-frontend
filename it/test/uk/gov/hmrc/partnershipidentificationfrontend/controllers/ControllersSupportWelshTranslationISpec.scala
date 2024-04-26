@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.partnershipidentificationfrontend.controllers
+package test.uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
 import org.jsoup.nodes.Document
 import org.scalatest.prop.TableDrivenPropertyChecks.forAll

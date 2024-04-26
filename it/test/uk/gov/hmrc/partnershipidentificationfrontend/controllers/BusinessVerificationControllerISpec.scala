@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.partnershipidentificationfrontend.controllers
+package test.uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
 import org.scalatest.BeforeAndAfterEach
 import play.api.libs.json.Json

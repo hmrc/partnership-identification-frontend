@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.partnershipidentificationfrontend.views
+package test.uk.gov.hmrc.partnershipidentificationfrontend.views
 
 import play.api.i18n.{Lang, MessagesApi}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper

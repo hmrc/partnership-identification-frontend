@@ -46,7 +46,7 @@ lazy val microservice = Project(appName, file("."))
 
 lazy val onlyOneJvmForAllISpecTestsTestGroup = taskKey[Seq[Tests.Group]]("Default test group that run all the tests in only one JVM - (much faster!)")
 
-onlyOneJvmForAllISpecTestsTestGroup := Seq(new Tests.Group(
+it / onlyOneJvmForAllISpecTestsTestGroup := Seq(new Tests.Group(
   "<default>",
   (Test / definedTests).value,
   Tests.InProcess,

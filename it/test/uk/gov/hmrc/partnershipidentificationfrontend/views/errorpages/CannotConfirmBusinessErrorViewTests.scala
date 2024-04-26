@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.partnershipidentificationfrontend.views.errorpages
+package test.uk.gov.hmrc.partnershipidentificationfrontend.views.errorpages
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.partnershipidentificationfrontend.controllers
+package test.uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import org.scalatest.concurrent.Eventually.eventually

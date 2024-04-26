@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.partnershipidentificationfrontend.utils
+package test.uk.gov.hmrc.partnershipidentificationfrontend.utils
 
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
