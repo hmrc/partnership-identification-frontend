@@ -6,7 +6,7 @@ This is a Scala/Play frontend to allow Partnerships to provide their information
 
 1. Make sure any dependent services are running using the following service-manager command
 ```bash
-sm2 --start PARTNERSHIP_IDENTIFICATION_ALL -r
+sm2 --start PARTNERSHIP_IDENTIFICATION_ALL
 ```
 2. Stop the frontend in service manager using
 ```bash
