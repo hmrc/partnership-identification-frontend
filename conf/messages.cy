@@ -68,8 +68,8 @@ company-number-not-found.heading                            = Doedd dim modd cad
 company-number-not-found.paragraph                          = Dydy rhif y cwmni ddim ar ein system.
 
 ## Cannot Confirm Business Error Page
-cannot-confirm-business.title                               = Nid yw’r manylion a roesoch yn cyd-fynd â’r cofnodion sydd gan CThEM
-cannot-confirm-business.heading                             = Nid yw’r manylion a roesoch yn cyd-fynd â’r cofnodion sydd gan CThEM
+cannot-confirm-business.title                               = Nid yw’r manylion a roesoch yn cyd-fynd â’r cofnodion sydd gan CThEF
+cannot-confirm-business.heading                             = Nid yw’r manylion a roesoch yn cyd-fynd â’r cofnodion sydd gan CThEF
 cannot-confirm-business.line_1                              = Os yw’r manylion hyn yn gywir, gallwch gofrestru o hyd. Os gwnaethoch nodi’r manylion anghywir, ewch yn ôl i wneud newidiadau.
 cannot-confirm-business.radio                               = A hoffech barhau i gofrestru gyda’r manylion a roesoch?
 
