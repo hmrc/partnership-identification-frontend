@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.testonly.stubs.controllers
 
-import play.api.libs.json.{JsString, Json}
+import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.mvc.{Action, AnyContent, InjectedController}
 
 import javax.inject.Singleton
@@ -30,6 +30,7 @@ class CompaniesHouseStubController extends InjectedController {
   private val stubCompanyName = "Test Company Ltd"
   private val stubDateOfIncorporation = "2020-01-01"
   private val registeredOfficeAddressKey = "registered_office_address"
+
   private val stubRegisteredOfficeAddress = Json.obj(
     "address_line_1" -> "testLine1",
     "address_line_2" -> "test town",
@@ -43,12 +44,6 @@ class CompaniesHouseStubController extends InjectedController {
   )
 
   def getCompanyInformation(companyNumber: String): Action[AnyContent] = {
-    val stubLtdPartnershipProfile = Json.obj(
-      companyNameKey -> stubCompanyName,
-      companyNumberKey -> companyNumber,
-      dateOfIncorporationKey -> stubDateOfIncorporation,
-      registeredOfficeAddressKey -> stubRegisteredOfficeAddress
-    )
 
     val stubLtdPartnershipProfileWithNonMatchingPostcode = Json.obj(
       companyNameKey -> stubCompanyName,
@@ -80,10 +75,32 @@ class CompaniesHouseStubController extends InjectedController {
         case "00000001" => NotFound
         case "00000002" => Ok(stubLtdPartnershipProfileWithNonMatchingPostcode)
         case "00000003" => Ok(stubLtdPartnershipProfileWithNameLongerThan105Chars)
-        case _ => Ok(stubLtdPartnershipProfile)
+        case _ => Ok(stubLtdPartnershipProfile(companyNumber))
       }
     }
   }
+
+  private def stubLtdPartnershipProfile(companyNumber: String): JsObject = {
+
+    val officeAddress: JsObject = if(pillar2Data.contains(companyNumber)) {
+      stubRegisteredOfficeAddress + ("postal_code" -> JsString(pillar2Data(companyNumber)))
+    } else
+      stubRegisteredOfficeAddress
+
+    Json.obj(
+      companyNameKey -> stubCompanyName,
+      companyNumberKey -> companyNumber,
+      dateOfIncorporationKey -> stubDateOfIncorporation,
+      registeredOfficeAddressKey -> officeAddress
+    )
+
+  }
+
+  lazy private val pillar2Data: Map[String, String] = Map(
+    "31257555" -> "AV1 2CD",
+    "31757555" -> "DH9 6TD",
+    "12575555" -> "RH20 4EQ"
+  )
 
 }
 
