@@ -30,7 +30,7 @@ Test / parallelExecution := true
 addTestReportOption(Test, "test-reports")
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .settings(
     resolvers += Resolver.jcenterRepo,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
@@ -39,6 +39,8 @@ lazy val microservice = Project(appName, file("."))
     ),
     Assets / pipelineStages := Seq(gzip)
   )
+  .settings(scalacOptions += "-Wconf:cat=unused-imports&src=html/.*:s")
+  .settings(scalacOptions += "-Wconf:cat=unused-imports&src=routes/.*:s")
   .settings(SilencerSettings(silencerVersion))
   .settings(ScoverageSettings.settings *)
   .settings(libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always)
