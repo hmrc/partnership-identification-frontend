@@ -152,4 +152,14 @@ trait CheckYourAnswersViewTests {
     }
 
   }
+
+  def testCheckYourAnswersInternalServerErrorView(result: => WSResponse): Unit = {
+
+    lazy val doc: Document = Jsoup.parse(result.body)
+
+    "have the correct title for the error page" in {
+      doc.title mustBe messages.internalServerErrorTitle
+    }
+
+  }
 }

@@ -19,27 +19,27 @@ import sbt.*
 
 object AppDependencies {
 
-  private val bootstrapPlayVersion = "8.5.0"
-  private val hmrcMongoVersion = "1.8.0"
+  private val bootstrapPlayVersion = "9.11.0"
+  private val hmrcMongoVersion = "2.6.0"
 
   val compile = Seq(
     "uk.gov.hmrc"                  %% "bootstrap-frontend-play-30" % bootstrapPlayVersion,
     "uk.gov.hmrc"                  %% "bootstrap-backend-play-30"  % bootstrapPlayVersion,
-    "uk.gov.hmrc"                  %% "play-frontend-hmrc-play-30"         % "8.5.0", // later versions up to 7.7.0 break the footer in the html as of now 2023.06
+    "uk.gov.hmrc"                  %% "play-frontend-hmrc-play-30" % "11.12.0", // later versions up to 7.7.0 break the footer in the html as of now 2023.06
     "uk.gov.hmrc.mongo"            %% "hmrc-mongo-play-30"         % hmrcMongoVersion,
-    "com.fasterxml.jackson.module" %% "jackson-module-scala"       % "2.14.2"
+    "com.fasterxml.jackson.module" %% "jackson-module-scala"       % "2.18.3"
   )
 
   val test = Seq(
     "uk.gov.hmrc"            %% "bootstrap-test-play-30"  % bootstrapPlayVersion % Test,
-    "org.scalatest"          %% "scalatest"               % "3.2.18"              % Test,
-    "org.jsoup"               % "jsoup"                   % "1.17.2"             % Test,
+    "org.scalatest"          %% "scalatest"               % "3.2.19"              % Test,
+    "org.jsoup"               % "jsoup"                   % "1.19.1"             % Test,
     "org.playframework"      %% "play-test"               % PlayVersion.current  % Test,
     "com.vladsch.flexmark"    % "flexmark-all"            % "0.64.8"             % Test,
     "org.scalatestplus.play" %% "scalatestplus-play"      % "7.0.1"              % Test,
-    "com.github.tomakehurst"  % "wiremock"           % "2.27.2"             % Test,
-    "org.mockito"            %% "mockito-scala-scalatest" % "1.17.31"            % Test,
-    "org.scalatestplus"      %% "mockito-5-10"             % "3.2.18.0"           % Test,
+    "com.github.tomakehurst"  % "wiremock"                % "3.0.1"              % Test,
+    "org.mockito"            %% "mockito-scala-scalatest" % "1.17.37"            % Test,
+    "org.scalatestplus"      %% "mockito-5-10"            % "3.2.18.0"           % Test,
     "uk.gov.hmrc.mongo"      %% "hmrc-mongo-test-play-30" % hmrcMongoVersion     % Test
   )
 }

@@ -18,7 +18,7 @@ package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{InternalServerException, HeaderCarrier}
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.testBusinessVerificationJourneyId
 import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.{BusinessVerificationStub, FeatureSwitching}
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationFail, BusinessVerificationPass}
@@ -49,6 +49,17 @@ class RetrieveBusinessVerificationStatusConnectorISpec extends ComponentSpecHelp
 
         result mustBe BusinessVerificationFail
       }
+      "raise an internal server exception" when {
+        "an unexpected status is returned" in {
+
+          enable(BusinessVerificationStub)
+          stubRetrieveBusinessVerificationResultFromStub(testBusinessVerificationJourneyId)(INTERNAL_SERVER_ERROR)
+
+          intercept[InternalServerException](
+            await(retrieveBusinessVerificationStatusConnector.retrieveBusinessVerificationStatus(testBusinessVerificationJourneyId))
+          )
+        }
+      }
     }
 
     s"the $BusinessVerificationStub feature switch is disabled" should {
@@ -67,6 +78,17 @@ class RetrieveBusinessVerificationStatusConnectorISpec extends ComponentSpecHelp
         val result = await(retrieveBusinessVerificationStatusConnector.retrieveBusinessVerificationStatus(testBusinessVerificationJourneyId))
 
         result mustBe BusinessVerificationFail
+      }
+      "raise an internal server exception" when {
+        "an unexpected status is returned" in {
+
+          disable(BusinessVerificationStub)
+          stubRetrieveBusinessVerificationResult(testBusinessVerificationJourneyId)(INTERNAL_SERVER_ERROR)
+
+          intercept[InternalServerException](
+            await(retrieveBusinessVerificationStatusConnector.retrieveBusinessVerificationStatus(testBusinessVerificationJourneyId))
+          )
+        }
       }
     }
   }

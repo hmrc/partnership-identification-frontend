@@ -16,10 +16,11 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 
-import play.api.libs.json.{Reads, Writes}
+import play.api.libs.json.{Json, Reads, Writes}
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
+import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.{PartnershipIdentificationStorageHttpReads, SuccessfullyStored}
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.RemovePartnershipDetailsHttpParser.{RemovePartnershipDetailsHttpReads, SuccessfullyRemoved}
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.RetrievePartnershipFullJourneyDataHttpParser.RetrievePartnershipFullJourneyDataHttpReads
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{PartnershipFullJourneyData, PartnershipInformation}
@@ -28,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PartnershipIdentificationConnector @Inject()(http: HttpClient,
+class PartnershipIdentificationConnector @Inject()(http: HttpClientV2,
                                                    appConfig: AppConfig
                                                   )(implicit ec: ExecutionContext) extends HttpReadsInstances {
 
@@ -37,24 +38,28 @@ class PartnershipIdentificationConnector @Inject()(http: HttpClient,
                                               )(implicit dataTypeReads: Reads[DataType],
                                                 manifest: Manifest[DataType],
                                                 hc: HeaderCarrier): Future[Option[DataType]] =
-    http.GET[Option[DataType]](s"${appConfig.partnershipInformationUrl(journeyId)}/$dataKey")
+    http.get(url = url"${appConfig.partnershipInformationUrl(journeyId)}/$dataKey")(hc).execute[Option[DataType]]
+
 
   def retrievePartnershipInformation(journeyId: String
                                     )(implicit hc: HeaderCarrier): Future[Option[PartnershipInformation]] =
-    http.GET[Option[PartnershipInformation]](appConfig.partnershipInformationUrl(journeyId))
+    http.get(url = url"${appConfig.partnershipInformationUrl(journeyId)}")(hc).execute[Option[PartnershipInformation]]
 
   def retrievePartnershipFullJourneyData(journeyId: String
                                         )(implicit hc: HeaderCarrier): Future[Option[PartnershipFullJourneyData]] =
-    http.GET[Option[PartnershipFullJourneyData]](appConfig.partnershipInformationUrl(journeyId))(RetrievePartnershipFullJourneyDataHttpReads, hc, ec)
+    http.get(url = url"${appConfig.partnershipInformationUrl(journeyId)}")(hc)
+      .execute[Option[PartnershipFullJourneyData]](RetrievePartnershipFullJourneyDataHttpReads, ec)
 
   def storeData[DataType](journeyId: String, dataKey: String, data: DataType
                          )(implicit dataTypeWriter: Writes[DataType], hc: HeaderCarrier): Future[SuccessfullyStored.type] = {
-    http.PUT[DataType, SuccessfullyStored.type](s"${appConfig.partnershipInformationUrl(journeyId)}/$dataKey", data)
+    http.put(url = url"${appConfig.partnershipInformationUrl(journeyId)}/$dataKey")(hc).withBody(Json.toJson(data))
+      .execute[SuccessfullyStored.type](PartnershipIdentificationStorageHttpReads, ec)
   }
 
   def removePartnershipInformation(journeyId: String,
                                    dataKey: String
                                   )(implicit hc: HeaderCarrier): Future[SuccessfullyRemoved.type] =
-    http.DELETE[SuccessfullyRemoved.type](s"${appConfig.partnershipInformationUrl(journeyId)}/$dataKey")(RemovePartnershipDetailsHttpReads, hc, ec)
+    http.delete(url = url"${appConfig.partnershipInformationUrl(journeyId)}/$dataKey")(hc)
+      .execute[SuccessfullyRemoved.type](RemovePartnershipDetailsHttpReads, ec)
 
 }

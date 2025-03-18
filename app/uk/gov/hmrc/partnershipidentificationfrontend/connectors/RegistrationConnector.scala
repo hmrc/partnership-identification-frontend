@@ -18,7 +18,8 @@ package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 
 import play.api.http.Status.OK
 import play.api.libs.json.{JsObject, Json}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse, InternalServerException}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, InternalServerException, StringContextOps}
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.RegistrationHttpParser._
 import uk.gov.hmrc.partnershipidentificationfrontend.models.RegistrationStatus
@@ -44,55 +45,45 @@ object RegistrationHttpParser {
   }
 }
 
-class RegistrationConnector @Inject()(httpClient: HttpClient,
+class RegistrationConnector @Inject()(httpClient: HttpClientV2,
                                       appConfig: AppConfig
                                      )(implicit ec: ExecutionContext) {
   def registerGeneralPartnership(sautr: String, regime: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
-    httpClient.POST[JsObject, RegistrationStatus](
-      appConfig.registerGeneralPartnershipUrl,
-      Json.obj(
-        sautrKey -> sautr,
-        "regime" -> regime
-      )
-    )
+    httpClient.post(url = url"${appConfig.registerGeneralPartnershipUrl}")(hc)
+      .withBody(createRegistrationPayload(sautr, regime))
+      .execute[RegistrationStatus]
 
   def registerScottishPartnership(sautr: String, regime: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
-    httpClient.POST[JsObject, RegistrationStatus](
-      appConfig.registerScottishPartnershipUrl,
-      Json.obj(
-        sautrKey -> sautr,
-        "regime" -> regime
-      )
-    )
+    httpClient.post(url = url"${appConfig.registerScottishPartnershipUrl}")(hc)
+      .withBody(createRegistrationPayload(sautr, regime))
+      .execute[RegistrationStatus]
 
   def registerLimitedPartnership(sautr: String, companyNumber: String, regime: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
-    httpClient.POST[JsObject, RegistrationStatus](
-      appConfig.registerLimitedPartnershipUrl,
-      Json.obj(
-        sautrKey -> sautr,
-        companyNumberKey -> companyNumber,
-        "regime" -> regime
-      )
-    )
+    httpClient.post(url = url"${appConfig.registerLimitedPartnershipUrl}")(hc)
+      .withBody(createRegistrationPayloadWithCompanyNumber(sautr, companyNumber, regime))
+      .execute[RegistrationStatus]
 
   def registerLimitedLiabilityPartnership(sautr: String, companyNumber: String, regime: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
-    httpClient.POST[JsObject, RegistrationStatus](
-      appConfig.registerLimitedLiabilityPartnershipUrl,
-      Json.obj(
-        sautrKey -> sautr,
-        companyNumberKey -> companyNumber,
-        "regime" -> regime
-      )
-    )
+    httpClient.post(url = url"${appConfig.registerLimitedLiabilityPartnershipUrl}")(hc)
+      .withBody(createRegistrationPayloadWithCompanyNumber(sautr, companyNumber, regime))
+      .execute[RegistrationStatus]
 
   def registerScottishLimitedPartnership(sautr: String, companyNumber: String, regime: String)(implicit hc: HeaderCarrier): Future[RegistrationStatus] =
-    httpClient.POST[JsObject, RegistrationStatus](
-      appConfig.registerScottishLimitedPartnershipUrl,
-      Json.obj(
-        sautrKey -> sautr,
-        companyNumberKey -> companyNumber,
-        "regime" -> regime
-      )
+    httpClient.post(url = url"${appConfig.registerScottishLimitedPartnershipUrl}")(hc)
+      .withBody(createRegistrationPayloadWithCompanyNumber(sautr, companyNumber, regime))
+      .execute[RegistrationStatus]
+
+  private def createRegistrationPayload(sautr: String, regime: String): JsObject =
+    Json.obj(
+      sautrKey -> sautr,
+      "regime" -> regime
+    )
+
+  private def createRegistrationPayloadWithCompanyNumber(sautr: String, companyNumber: String, regime: String): JsObject =
+    Json.obj(
+      sautrKey -> sautr,
+      companyNumberKey -> companyNumber,
+      "regime" -> regime
     )
 
 }

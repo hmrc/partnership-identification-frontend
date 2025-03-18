@@ -17,7 +17,8 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.ValidatePartnershipInformationHttpParser.ValidatePartnershipDetailsHttpReads
 
@@ -25,15 +26,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ValidatePartnershipInformationConnector @Inject()(http: HttpClient,
+class ValidatePartnershipInformationConnector @Inject()(http: HttpClientV2,
                                                         appConfig: AppConfig) {
 
   def validate(sautr: String, postcode: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] =
-    http.POST(
-      url = appConfig.validatePartnershipInformationUrl,
-      body = Json.obj(
-        "sautr" -> sautr,
-        "postcode" -> postcode
-      )
-    )
+    http.post(url = url"${appConfig.validatePartnershipInformationUrl}")(hc)
+      .withBody(
+        Json.obj(
+          "sautr" -> sautr,
+          "postcode" -> postcode
+        )
+      ).execute[Boolean]
 }

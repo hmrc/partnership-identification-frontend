@@ -16,10 +16,10 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 
-import play.api.http.Status.FORBIDDEN
+import play.api.http.Status.{FORBIDDEN, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.Json
 import play.api.test.Helpers.{CREATED, NOT_FOUND, await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.{BusinessVerificationStub, FeatureSwitching}
@@ -91,6 +91,14 @@ class CreateBusinessVerificationJourneyConnectorISpec extends ComponentSpecHelpe
           result mustBe Left(UserLockedOut)
         }
       }
+      "raise an exception" when {
+        "the journey creation request returns an unexpected status" in {
+          enable(BusinessVerificationStub)
+          stubCreateBusinessVerificationJourneyFromStub(testSautr, testJourneyId, appConfig, testGeneralPartnershipJourneyConfig(true))(INTERNAL_SERVER_ERROR)
+
+          intercept[InternalServerException](await(createBusinessVerificationJourneyConnector.createBusinessVerificationJourney(testJourneyId, testSautr, testGeneralPartnershipJourneyConfig(true))))
+        }
+      }
     }
 
     s"the $BusinessVerificationStub feature switch is disabled" should {
@@ -140,6 +148,14 @@ class CreateBusinessVerificationJourneyConnectorISpec extends ComponentSpecHelpe
           val result = await(createBusinessVerificationJourneyConnector.createBusinessVerificationJourney(testJourneyId, testSautr, testGeneralPartnershipJourneyConfig(true)))
 
           result mustBe Left(UserLockedOut)
+        }
+      }
+      "raise an exception" when {
+        "the journey creation request returns an unexpected status" in {
+          disable(BusinessVerificationStub)
+          stubCreateBusinessVerificationJourney(testSautr, testJourneyId, appConfig, testGeneralPartnershipJourneyConfig(true))(INTERNAL_SERVER_ERROR)
+
+          intercept[InternalServerException](await(createBusinessVerificationJourneyConnector.createBusinessVerificationJourney(testJourneyId, testSautr, testGeneralPartnershipJourneyConfig(true))))
         }
       }
     }

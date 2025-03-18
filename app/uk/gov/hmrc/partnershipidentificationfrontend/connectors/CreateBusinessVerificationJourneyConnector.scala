@@ -17,8 +17,9 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 
 import play.api.http.Status.{CREATED, FORBIDDEN, NOT_FOUND}
-import play.api.libs.json.{JsObject, Json, Writes}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse, InternalServerException}
+import play.api.libs.json.{JsObject, Json}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, InternalServerException, StringContextOps}
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.CreateBusinessVerificationJourneyConnector.BusinessVerificationHttpReads
 import uk.gov.hmrc.partnershipidentificationfrontend.controllers.routes
@@ -28,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CreateBusinessVerificationJourneyConnector @Inject()(http: HttpClient,
+class CreateBusinessVerificationJourneyConnector @Inject()(http: HttpClientV2,
                                                            appConfig: AppConfig
                                                           )(implicit ec: ExecutionContext) {
 
@@ -42,6 +43,7 @@ class CreateBusinessVerificationJourneyConnector @Inject()(http: HttpClient,
       .getOrElse(journeyConfig.pageConfig.optServiceName
         .getOrElse(appConfig.defaultServiceName)
       )
+
     val jsonBody: JsObject =
       Json.obj(
         "journeyType" -> "BUSINESS_VERIFICATION",
@@ -56,13 +58,9 @@ class CreateBusinessVerificationJourneyConnector @Inject()(http: HttpClient,
         "pageTitle" -> callingService,
         "deskproServiceName" -> journeyConfig.pageConfig.deskProServiceId
       )
-
-    http.POST[JsObject, Either[JourneyCreationFailure, JourneyCreated]](appConfig.createBusinessVerificationJourneyUrl, jsonBody)(
-      implicitly[Writes[JsObject]],
-      BusinessVerificationHttpReads,
-      hc,
-      ec
-    )
+    
+    http.post(url = url"${appConfig.createBusinessVerificationJourneyUrl}")(hc).withBody(jsonBody)
+      .execute[Either[JourneyCreationFailure, JourneyCreated]](BusinessVerificationHttpReads, ec)
   }
 
 }

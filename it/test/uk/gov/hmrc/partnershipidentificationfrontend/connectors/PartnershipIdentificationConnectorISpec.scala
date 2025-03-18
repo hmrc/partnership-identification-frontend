@@ -16,11 +16,14 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 
-import play.api.libs.json.JsString
-import play.api.test.Helpers.{NOT_FOUND, OK, await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.libs.json.Json
+import play.api.test.Helpers.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NO_CONTENT, NOT_FOUND, OK, await, defaultAwaitTimeout}
+import uk.gov.hmrc.http.{InternalServerException, HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.PartnershipIdentificationStorageHttpParser.SuccessfullyStored
+import uk.gov.hmrc.partnershipidentificationfrontend.httpparsers.RemovePartnershipDetailsHttpParser.SuccessfullyRemoved
+import uk.gov.hmrc.partnershipidentificationfrontend.models.{BusinessVerificationPass, BusinessVerificationStatus, CompanyProfile, PartnershipInformation, SaInformation}
+import uk.gov.hmrc.partnershipidentificationfrontend.models.BusinessVerificationStatus.format
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.PartnershipIdentificationStub
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 
@@ -40,18 +43,102 @@ class PartnershipIdentificationConnectorISpec extends ComponentSpecHelper with P
       "the sautr key is given and a sautr is stored against the journeyId" in {
         stubRetrieveSautr(testJourneyId)(OK, testSautr)
 
-        val result = await(partnershipInformationConnector.retrievePartnershipInformation[JsString](testJourneyId, sautrKey))
+        val result = await(partnershipInformationConnector.retrievePartnershipInformation[String](testJourneyId, sautrKey))
 
-        result mustBe Some(JsString(testSautr))
+        result mustBe Some(testSautr)
       }
     }
     "return None" when {
       "no sautr is stored against the journeyId" in {
         stubRetrieveSautr(testJourneyId)(NOT_FOUND)
 
-        val result = await(partnershipInformationConnector.retrievePartnershipInformation[JsString](testJourneyId, sautrKey))
+        val result = await(partnershipInformationConnector.retrievePartnershipInformation[String](testJourneyId, sautrKey))
 
         result mustBe None
+      }
+    }
+    "return UpstreamErrorResponse with status 400" when {
+      "a status of bad request is returned" in {
+        stubRetrieveSautr(testJourneyId)(BAD_REQUEST)
+
+        val exception = intercept[UpstreamErrorResponse](await(partnershipInformationConnector.retrievePartnershipInformation[String](testJourneyId, sautrKey)))
+
+        exception.statusCode mustBe BAD_REQUEST
+      }
+    }
+    "return UpstreamErrorResponse with status 500" when {
+      "a status of internal server error is returned" in {
+        stubRetrieveSautr(testJourneyId)(INTERNAL_SERVER_ERROR)
+
+        val exception = intercept[UpstreamErrorResponse](await(partnershipInformationConnector.retrievePartnershipInformation[String](testJourneyId, sautrKey)))
+
+        exception.statusCode mustBe INTERNAL_SERVER_ERROR
+      }
+    }
+    "retrieve the status of business verification" when {
+      "the business verification status key is given and a status is stored against the journeyId" in {
+        stubRetrieveBusinessVerificationStatus(testJourneyId)(status=OK, Json.toJson[BusinessVerificationStatus](BusinessVerificationPass))
+
+        val result = await(partnershipInformationConnector.retrievePartnershipInformation[BusinessVerificationStatus](testJourneyId, verificationStatusKey))
+
+        result mustBe Some(BusinessVerificationPass)
+      }
+    }
+  }
+
+  s"retrievePartnershipInformation($testJourneyId)" should {
+    "return an instance of PartnershipInformation" when {
+      "the required information is stored in the journey data" in {
+
+        stubRetrievePartnershipDetails(testJourneyId)(OK, testPartnershipInformationWithCompanyProfile)
+
+        val result = await(partnershipInformationConnector.retrievePartnershipInformation(testJourneyId))
+
+        result match {
+          case Some(partnershipInformation: PartnershipInformation) =>
+            partnershipInformation.optSaInformation mustBe Some(SaInformation(testSautr, testPostcode))
+            partnershipInformation.optCompanyProfile match {
+              case Some(companyProfile: CompanyProfile) =>
+                companyProfile.companyName mustBe testCompanyName
+                companyProfile.companyNumber mustBe testCompanyNumber
+                companyProfile.dateOfIncorporation mustBe testDateOfIncorporation
+                companyProfile.unsanitisedCHROAddress.equals(testAddress) mustBe true
+              case None => fail("An instance of CompanyProfile is expected")
+            }
+          case None => fail("An instance of PartnershipInformation should be returned")
+        }
+
+      }
+    }
+    "return None" when {
+      "no partnership information is stored against the journey id" in {
+
+        stubRetrievePartnershipDetails(testJourneyId)(NOT_FOUND)
+
+        val result = await(partnershipInformationConnector.retrievePartnershipInformation(testJourneyId))
+
+        result mustBe None
+
+      }
+    }
+    "return UpstreamErrorResponse with status 400" when {
+      "a status of bad request is returned" in {
+
+        stubRetrievePartnershipDetails(testJourneyId)(BAD_REQUEST)
+
+        val exception = intercept[UpstreamErrorResponse](await(partnershipInformationConnector.retrievePartnershipInformation(testJourneyId)))
+
+        exception.statusCode mustBe BAD_REQUEST
+      }
+     }
+    "return UpstreamErrorResponse" when {
+      "a status of internal server error is returned" in {
+
+        stubRetrievePartnershipDetails(testJourneyId)(INTERNAL_SERVER_ERROR)
+
+        val exception = intercept[UpstreamErrorResponse](await(partnershipInformationConnector.retrievePartnershipInformation(testJourneyId)))
+
+        exception.statusCode mustBe INTERNAL_SERVER_ERROR
       }
     }
   }
@@ -63,6 +150,13 @@ class PartnershipIdentificationConnectorISpec extends ComponentSpecHelper with P
       val result = await(partnershipInformationConnector.storeData[String](testJourneyId, sautrKey, testSautr))
 
       result mustBe SuccessfullyStored
+    }
+    "raise an exception" when {
+      "an unexpected status is returned" in {
+        stubStoreSautr(testJourneyId, testSautr)(status = NOT_FOUND)
+
+        intercept[InternalServerException](await(partnershipInformationConnector.storeData[String](testJourneyId, sautrKey, testSautr)))
+      }
     }
   }
 
@@ -81,6 +175,34 @@ class PartnershipIdentificationConnectorISpec extends ComponentSpecHelper with P
         val result = await(partnershipInformationConnector.retrievePartnershipFullJourneyData(testJourneyId))
 
         result mustBe None
+      }
+    }
+    "raise an exception" when {
+      "an unexpected status is returned" in {
+        stubRetrievePartnershipDetails(testJourneyId)(INTERNAL_SERVER_ERROR)
+
+        intercept[InternalServerException](await(partnershipInformationConnector.retrievePartnershipFullJourneyData(testJourneyId)))
+      }
+    }
+  }
+
+  s"removePartnershipInformation($testJourneyId, $testSautr)" should {
+    "return successfully removed" when {
+      "an SA Utr key is given and the journey data contains a SA Utr value" in {
+
+        stubRemoveSautr(testJourneyId)(NO_CONTENT)
+
+        val result = await(partnershipInformationConnector.removePartnershipInformation(testJourneyId, sautrKey))
+
+        result mustBe SuccessfullyRemoved
+      }
+    }
+    "raise an exception" when {
+      "an unexpected status is returned" in {
+
+        stubRemoveSautr(testJourneyId)(INTERNAL_SERVER_ERROR)
+
+        intercept[InternalServerException](await(partnershipInformationConnector.removePartnershipInformation(testJourneyId, sautrKey)))
       }
     }
   }
