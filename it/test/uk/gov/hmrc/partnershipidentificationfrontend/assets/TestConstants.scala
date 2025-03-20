@@ -57,7 +57,7 @@ object TestConstants {
   val testDeskProServiceId: String = "vrs"
   val testSignOutUrl: String = "/Signout"
   val testAccessibilityUrl: String = "/accessibility"
-  val testTechnicalHelpUrl: String = "http://localhost:9250/contact/report-technical-problem?newTab=true&service=grs"
+  val testTechnicalHelpUrl: String = "http://localhost:9250/contact/report-technical-problem?service=grs"
   val testDefaultServiceName: String = "Entity Validation Service"
   val testCallingServiceName: String = "Test Service"
 
@@ -135,7 +135,7 @@ object TestConstants {
       "companyProfile" -> Json.obj(
         "companyName" -> "Test Company Ltd",
         "companyNumber" -> testCompanyNumber,
-        "dateOfIncorporation" -> "2020-01-01",
+        "dateOfIncorporation" -> testDateOfIncorporation,
         "unsanitisedCHROAddress" -> Json.obj(
           "address_line_1" -> "testLine1",
           "address_line_2" -> "test town",
@@ -143,7 +143,7 @@ object TestConstants {
           "country" -> "United Kingdom",
           "locality" -> "test city",
           "po_box" -> "123",
-          "postal_code" -> "AA11AA",
+          "postal_code" -> testRegisteredOfficePostcode,
           "premises" -> "1",
           "region" -> "test region"
         )

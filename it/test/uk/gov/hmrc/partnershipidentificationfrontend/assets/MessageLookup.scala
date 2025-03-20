@@ -125,6 +125,7 @@ object MessageLookup {
     val postCode = "Self Assessment postcode"
     val noSautr = "The business does not have a UTR"
     val companyNumber = "Company registration number"
+    val internalServerErrorTitle = "Sorry, there is a problem with the service - 500"
   }
 
 }

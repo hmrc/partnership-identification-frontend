@@ -20,6 +20,7 @@ import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.connectors.CompanyProfileHttpParser._
 import uk.gov.hmrc.partnershipidentificationfrontend.models.CompanyProfile
@@ -28,16 +29,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CompanyProfileConnector @Inject()(http: HttpClient,
+class CompanyProfileConnector @Inject()(http: HttpClientV2,
                                         appConfig: AppConfig
                                        )(implicit ec: ExecutionContext) {
 
   def getCompanyProfile(companyNumber: String)(implicit hc: HeaderCarrier): Future[Option[CompanyProfile]] =
-    http.GET[Option[CompanyProfile]](appConfig.getCompanyProfileUrl(companyNumber))(
-      CompanyProfileHttpReads,
-      hc,
-      ec
-    )
+    http.get(url = url"${appConfig.getCompanyProfileUrl(companyNumber)}")(hc).execute[Option[CompanyProfile]](CompanyProfileHttpReads, ec)
 
 }
 

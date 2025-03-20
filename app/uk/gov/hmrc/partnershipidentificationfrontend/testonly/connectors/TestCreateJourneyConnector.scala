@@ -19,8 +19,9 @@ package uk.gov.hmrc.partnershipidentificationfrontend.testonly.connectors
 import play.api.http.Status.CREATED
 import play.api.libs.json.{JsObject, Json, Writes}
 import play.api.mvc.Call
-import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, InternalServerException}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, InternalServerException, StringContextOps}
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.partnershipidentificationfrontend.api.controllers.{JourneyController, routes}
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{JourneyConfig, JourneyLabels}
@@ -30,7 +31,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TestCreateJourneyConnector @Inject()(httpClient: HttpClient,
+class TestCreateJourneyConnector @Inject()(httpClient: HttpClientV2,
                                            appConfig: AppConfig
                                           )(implicit ec: ExecutionContext) {
 
@@ -52,7 +53,7 @@ class TestCreateJourneyConnector @Inject()(httpClient: HttpClient,
   private def postTo(destination: Call, journeyConfig: JourneyConfig)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[String] = {
     val url = appConfig.selfBaseUrl + destination.url
 
-    httpClient.POST(url, journeyConfig).map {
+    httpClient.post(url"$url").withBody(Json.toJson(journeyConfig)).execute[HttpResponse].map {
       case response@HttpResponse(CREATED, _, _) =>
         (response.json \ "journeyStartUrl").as[String]
       case response =>

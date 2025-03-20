@@ -27,14 +27,14 @@ import uk.gov.hmrc.partnershipidentificationfrontend.views.html.templates.error_
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ErrorHandler @Inject()(val messagesApi: MessagesApi,
                              view: error_template,
                              val config: Configuration,
                              val env: Environment
-                            )(implicit val appConfig: AppConfig) extends FrontendErrorHandler with Logging {
+                            )(implicit val appConfig: AppConfig, val ec: ExecutionContext) extends FrontendErrorHandler with Logging {
 
   val hostDefaults: Map[String, String] = Map(
     "Dev.external-url.bas-gateway-frontend.host" -> appConfig.basGatewayUrl
@@ -61,29 +61,29 @@ class ErrorHandler @Inject()(val messagesApi: MessagesApi,
   override def standardErrorTemplate(pageTitle: String,
                                      heading: String,
                                      message: String
-                                    )(implicit request: Request[_]): Html =
-    view(pageTitle, heading, message)
+                                    )(implicit request: RequestHeader): Future[Html] =
+    Future.successful(view(pageTitle, heading, message))
 
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
     exception match {
-      case _: AuthorisationException => Future.successful(resolveError(request, exception))
+      case _: AuthorisationException => resolveError(request, exception)
       case _ => super.onServerError(request, exception)
     }
   }
 
-  override def resolveError(rh: RequestHeader, ex: Throwable): Result = {
+  override def resolveError(rh: RequestHeader, ex: Throwable): Future[Result] = {
     ex match {
       case _: AuthorisationException =>
         logger.debug("[AuthenticationPredicate][async] Unauthorised request. Redirect to Sign In.")
-        Redirect(
+        Future.successful(Redirect(
           ggLoginUrl,
           Map(
             "continue_url" -> Seq(rh.path),
             "origin" -> Seq(appConfig.appName)
-          ))
+          )))
       case _: NotFoundException =>
-        NotFound(notFoundTemplate(Request(rh, "")))
+        notFoundTemplate(Request(rh, "")).map{html => NotFound(html)}
       case _ =>
         super.resolveError(rh, ex)
     }

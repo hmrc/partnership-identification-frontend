@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 
-import play.api.test.Helpers.{NOT_FOUND, OK, await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.test.Helpers.{BAD_REQUEST, NOT_FOUND, OK, await, defaultAwaitTimeout}
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.partnershipidentificationfrontend.featureswitch.core.config.{CompaniesHouseStub, FeatureSwitching}
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.{CompaniesHouseApiStub, PartnershipIdentificationStub}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
@@ -54,6 +54,14 @@ class CompanyProfileConnectorISpec extends ComponentSpecHelper with CompaniesHou
 
         result mustBe None
       }
+      "raise an exception" when {
+        "an unexpected status is returned and the feature switch is enabled" in {
+          enable(CompaniesHouseStub)
+          stubRetrieveCompanyProfileFromStub(testCompanyNumber)(status = BAD_REQUEST)
+
+          intercept[InternalServerException](await(companyProfileConnector.getCompanyProfile(testCompanyNumber)))
+        }
+      }
     }
     "return Company Profile" when {
       "the companyNumber exists and the feature switch is disabled" in {
@@ -77,6 +85,14 @@ class CompanyProfileConnectorISpec extends ComponentSpecHelper with CompaniesHou
         val result = await(companyProfileConnector.getCompanyProfile(testCompanyNumber))
 
         result mustBe None
+      }
+    }
+    "raise an exception" when {
+      "an unexpected status is returned and the feature switch is disabled" in {
+        disable(CompaniesHouseStub)
+        stubRetrieveCompanyProfileFromCoHo(testCompanyNumber)(status = BAD_REQUEST)
+
+        intercept[InternalServerException](await(companyProfileConnector.getCompanyProfile(testCompanyNumber)))
       }
     }
   }

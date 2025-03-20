@@ -17,7 +17,7 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{InternalServerException, HeaderCarrier}
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.models.{Registered, RegistrationFailed, RegistrationStatus}
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.RegisterStub
@@ -32,7 +32,7 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
   "registerGeneralPartnership" should {
     "return Registered" when {
       "the registration has been successful" in {
-        stubRegisterGeneralPartnership(testSautr, testRegime)(OK, Registered(testSafeId))
+        stubRegisterGeneralPartnership(testSautr, testRegime)(OK, Some(Registered(testSafeId)))
 
         val result = await(registrationConnector.registerGeneralPartnership(testSautr, testRegime))
 
@@ -42,7 +42,7 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
     "return RegistrationFailed" when {
       "the registration has not been successful" in {
-        stubRegisterGeneralPartnership(testSautr, testRegime)(OK, testRegistrationFailedWith1Failure)
+        stubRegisterGeneralPartnership(testSautr, testRegime)(OK, Some(testRegistrationFailedWith1Failure))
 
         val result: RegistrationStatus = await(registrationConnector.registerGeneralPartnership(testSautr, testRegime))
 
@@ -50,7 +50,7 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
       }
       "multiple failures have been returned" in {
-        stubRegisterGeneralPartnership(testSautr, testRegime)(OK, testRegistrationFailedWithMultipleFailures)
+        stubRegisterGeneralPartnership(testSautr, testRegime)(OK, Some(testRegistrationFailedWithMultipleFailures))
 
         val result: RegistrationStatus = await(registrationConnector.registerGeneralPartnership(testSautr, testRegime))
 
@@ -58,12 +58,21 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
       }
     }
+    "raise an exception" when {
+      "an unexpected status is returned" in {
+        stubRegisterGeneralPartnership(testSautr, testRegime)(INTERNAL_SERVER_ERROR)
+
+        intercept[InternalServerException](await(registrationConnector.registerGeneralPartnership(testSautr, testRegime)))
+      }
+    }
+
+
   }
 
   "registerScottishPartnership" should {
     "return Registered" when {
       "the registration has been successful" in {
-        stubRegisterScottishPartnership(testSautr, testRegime)(OK, Registered(testSafeId))
+        stubRegisterScottishPartnership(testSautr, testRegime)(OK, Some(Registered(testSafeId)))
 
         val result = await(registrationConnector.registerScottishPartnership(testSautr, testRegime))
 
@@ -73,7 +82,7 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
     "return RegistrationFailed" when {
       "the registration has not been successful" in {
-        stubRegisterScottishPartnership(testSautr, testRegime)(OK, testRegistrationFailedWith1Failure)
+        stubRegisterScottishPartnership(testSautr, testRegime)(OK, Some(testRegistrationFailedWith1Failure))
 
         val result: RegistrationStatus = await(registrationConnector.registerScottishPartnership(testSautr, testRegime))
 
@@ -81,7 +90,7 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
       }
       "multiple failures have been returned" in {
-        stubRegisterScottishPartnership(testSautr, testRegime)(OK, testRegistrationFailedWithMultipleFailures)
+        stubRegisterScottishPartnership(testSautr, testRegime)(OK, Some(testRegistrationFailedWithMultipleFailures))
 
         val result: RegistrationStatus = await(registrationConnector.registerScottishPartnership(testSautr, testRegime))
 
@@ -89,12 +98,20 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
       }
     }
+    "raise an exception" when {
+      "an unexpected status is returned" in {
+
+        stubRegisterScottishPartnership(testSautr, testRegime)(INTERNAL_SERVER_ERROR)
+
+        intercept[InternalServerException](await(registrationConnector.registerScottishPartnership(testSautr, testRegime)))
+      }
+    }
   }
 
   "registerLimitedPartnership" should {
     "return Registered" when {
       "the registration has been successful" in {
-        stubRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, Registered(testSafeId))
+        stubRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, Some(Registered(testSafeId)))
 
         val result = await(registrationConnector.registerLimitedPartnership(testSautr, testCompanyNumber, testRegime))
 
@@ -104,7 +121,7 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
     "return RegistrationFailed" when {
       "the registration has not been successful" in {
-        stubRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, testRegistrationFailedWith1Failure)
+        stubRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, Some(testRegistrationFailedWith1Failure))
 
         val result: RegistrationStatus = await(registrationConnector.registerLimitedPartnership(testSautr, testCompanyNumber, testRegime))
 
@@ -113,7 +130,7 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
       }
 
       "multiple failures have been returned" in {
-        stubRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, testRegistrationFailedWithMultipleFailures)
+        stubRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, Some(testRegistrationFailedWithMultipleFailures))
 
         val result: RegistrationStatus = await(registrationConnector.registerLimitedPartnership(testSautr, testCompanyNumber, testRegime))
 
@@ -121,12 +138,20 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
       }
     }
+    "raise an exception" when {
+      "an unexpected status is returned" in {
+
+        stubRegisterLimitedPartnership(testSautr, testCompanyNumber, testRegime)(INTERNAL_SERVER_ERROR)
+
+        intercept[InternalServerException](await(registrationConnector.registerLimitedPartnership(testSautr, testCompanyNumber, testRegime)))
+      }
+    }
   }
 
   "registerLimitedLiabilityPartnership" should {
     "return Registered" when {
       "the registration has been successful" in {
-        stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(OK, Registered(testSafeId))
+        stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(OK, Some(Registered(testSafeId)))
 
         val result = await(registrationConnector.registerLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime))
 
@@ -136,7 +161,7 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
     "return RegistrationFailed" when {
       "the registration has not been successful" in {
-        stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(OK, testRegistrationFailedWith1Failure)
+        stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(OK, Some(testRegistrationFailedWith1Failure))
 
         val result: RegistrationStatus = await(registrationConnector.registerLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime))
 
@@ -145,7 +170,7 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
       }
 
       "multiple failures have been returned" in {
-        stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(OK, testRegistrationFailedWithMultipleFailures)
+        stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(OK, Some(testRegistrationFailedWithMultipleFailures))
 
         val result: RegistrationStatus = await(registrationConnector.registerLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime))
 
@@ -153,12 +178,19 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
       }
     }
+    "raise an exception" when {
+      "an unexpected status is returned" in {
+        stubRegisterLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)(INTERNAL_SERVER_ERROR)
+
+        intercept[InternalServerException](await(registrationConnector.registerLimitedLiabilityPartnership(testSautr, testCompanyNumber, testRegime)))
+      }
+    }
   }
 
   "registerScottishLimitedPartnership" should {
     "return Registered" when {
       "the registration has been successful" in {
-        stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, Registered(testSafeId))
+        stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, Some(Registered(testSafeId)))
 
         val result = await(registrationConnector.registerScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime))
 
@@ -168,7 +200,7 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
 
     "return RegistrationFailed" when {
       "the registration has not been successful" in {
-        stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, testRegistrationFailedWith1Failure)
+        stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, Some(testRegistrationFailedWith1Failure))
 
         val result: RegistrationStatus = await(registrationConnector.registerScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime))
 
@@ -177,12 +209,19 @@ class RegistrationConnectorISpec extends ComponentSpecHelper with RegisterStub {
       }
 
       "multiple failures have been returned" in {
-        stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, testRegistrationFailedWithMultipleFailures)
+        stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(OK, Some(testRegistrationFailedWithMultipleFailures))
 
         val result: RegistrationStatus = await(registrationConnector.registerScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime))
 
         assertRegistrationStatusIsCorrect(actual = result, expected = testRegistrationFailedWithMultipleFailures)
 
+      }
+    }
+    "raise an exception" when {
+      "an unexpected status is returned" in {
+        stubRegisterScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)(INTERNAL_SERVER_ERROR)
+
+        intercept[InternalServerException](await(registrationConnector.registerScottishLimitedPartnership(testSautr, testCompanyNumber, testRegime)))
       }
     }
   }

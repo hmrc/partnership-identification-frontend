@@ -24,15 +24,19 @@ import uk.gov.hmrc.partnershipidentificationfrontend.utils.{WiremockHelper, Wire
 trait RegisterStub extends WiremockMethods {
   implicit private val RegistrationStatusFormat: OFormat[RegistrationStatus] = RegistrationStatus.format
 
-  def stubRegisterGeneralPartnership(sautr: String, regime: String)(status: Int, body: RegistrationStatus): StubMapping =
-    when(method = POST, uri = "/partnership-identification/register-general-partnership", Json.obj(
+  def stubRegisterGeneralPartnership(sautr: String, regime: String)(status: Int, optBody: Option[RegistrationStatus] = None): StubMapping = {
+
+    val mapping: Mapping = when(method = POST, uri = "/partnership-identification/register-general-partnership", Json.obj(
       "sautr" -> sautr,
       "regime" -> regime
     ))
-      .thenReturn(
-        status = status,
-        body = Json.obj("registration" -> body)
-      )
+
+    optBody match {
+      case Some(body) => mapping.thenReturn(status = status, body = Json.obj("registration" -> body))
+      case None => mapping.thenReturn(status = status)
+    }
+
+  }
 
   def verifyRegisterGeneralPartnership(sautr: String, regime: String): Unit =
     WiremockHelper.verifyPost(uri = "/partnership-identification/register-general-partnership", optBody = Some(Json.obj(
@@ -40,15 +44,18 @@ trait RegisterStub extends WiremockMethods {
       "regime" -> regime
     ).toString))
 
-  def stubRegisterScottishPartnership(sautr: String, regime: String)(status: Int, body: RegistrationStatus): StubMapping =
-    when(method = POST, uri = "/partnership-identification/register-scottish-partnership", Json.obj(
+  def stubRegisterScottishPartnership(sautr: String, regime: String)(status: Int, optBody: Option[RegistrationStatus] = None): StubMapping = {
+
+    val mapping: Mapping = when(method = POST, uri = "/partnership-identification/register-scottish-partnership", Json.obj(
       "sautr" -> sautr,
       "regime" -> regime
     ))
-      .thenReturn(
-        status = status,
-        body = Json.obj("registration" -> body)
-      )
+
+    optBody match {
+      case Some(body) => mapping.thenReturn(status = status, body = Json.obj("registration" -> body))
+      case None => mapping.thenReturn(status = status)
+    }
+  }
 
   def verifyRegisterScottishPartnership(sautr: String, regime: String): Unit =
     WiremockHelper.verifyPost(uri = "/partnership-identification/register-scottish-partnership", optBody = Some(Json.obj(
@@ -56,18 +63,22 @@ trait RegisterStub extends WiremockMethods {
       "regime" -> regime
     ).toString))
 
-  def stubRegisterLimitedPartnership(sautr: String, companyNumber: String, regime: String)(status: Int, body: RegistrationStatus): StubMapping =
-    when(method = POST,
+  def stubRegisterLimitedPartnership(sautr: String, companyNumber: String, regime: String)(status: Int, optBody: Option[RegistrationStatus] = None): StubMapping = {
+
+    val mapping: Mapping = when(method = POST,
       uri = "/partnership-identification/register-limited-partnership",
       Json.obj(
         "sautr" -> sautr,
         "companyNumber" -> companyNumber,
         "regime" -> regime
       )
-    ).thenReturn(
-      status = status,
-      body = Json.obj("registration" -> body)
     )
+
+    optBody match {
+      case Some(body) => mapping.thenReturn(status = status, body = Json.obj("registration" -> body))
+      case None => mapping.thenReturn(status = status)
+    }
+  }
 
   def verifyRegisterLimitedPartnership(sautr: String, companyNumber: String, regime: String): Unit =
     WiremockHelper.verifyPost(
@@ -79,18 +90,21 @@ trait RegisterStub extends WiremockMethods {
       ).toString)
     )
 
-  def stubRegisterLimitedLiabilityPartnership(sautr: String, companyNumber: String, regime: String)(status: Int, body: RegistrationStatus): StubMapping =
-    when(method = POST,
+  def stubRegisterLimitedLiabilityPartnership(sautr: String, companyNumber: String, regime: String)(status: Int, optBody: Option[RegistrationStatus] = None): StubMapping = {
+    val mapping: Mapping = when(method = POST,
       uri = "/partnership-identification/register-limited-liability-partnership",
       Json.obj(
         "sautr" -> sautr,
         "companyNumber" -> companyNumber,
         "regime" -> regime
       )
-    ).thenReturn(
-      status = status,
-      body = Json.obj("registration" -> body)
     )
+
+    optBody match {
+      case Some(body) => mapping.thenReturn(status = status, body = Json.obj("registration" -> body))
+      case None => mapping.thenReturn(status = status)
+    }
+  }
 
   def verifyRegisterLimitedLiabilityPartnership(sautr: String, companyNumber: String, regime: String): Unit =
     WiremockHelper.verifyPost(
@@ -103,8 +117,8 @@ trait RegisterStub extends WiremockMethods {
     )
 
 
-  def stubRegisterScottishLimitedPartnership(sautr: String, companyNumber: String, regime: String)(status: Int, body: RegistrationStatus): StubMapping =
-    when(
+  def stubRegisterScottishLimitedPartnership(sautr: String, companyNumber: String, regime: String)(status: Int, optBody: Option[RegistrationStatus] = None): StubMapping = {
+    val mapping: Mapping = when(
       method = POST,
       uri = "/partnership-identification/register-scottish-limited-partnership",
       Json.obj(
@@ -112,10 +126,14 @@ trait RegisterStub extends WiremockMethods {
         "companyNumber" -> companyNumber,
         "regime" -> regime
       )
-    ).thenReturn(
-      status = status,
-      body = Json.obj("registration" -> body)
     )
+
+    optBody match {
+      case Some(body) => mapping.thenReturn(status = status, body = Json.obj("registration" -> body))
+      case None => mapping.thenReturn(status = status)
+    }
+
+  }
 
   def verifyRegisterScottishLimitedPartnership(sautr: String, companyNumber: String, regime: String): Unit =
     WiremockHelper.verifyPost(

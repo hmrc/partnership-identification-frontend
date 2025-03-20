@@ -89,6 +89,42 @@ class CheckYourAnswersControllerISpec extends ComponentSpecHelper
       }
     }
 
+    "the backend service returns a bad request status" should {
+      lazy val result = {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrievePartnershipDetails(testJourneyId)(BAD_REQUEST)
+        get(s"$baseUrl/$testJourneyId/check-your-answers-business")
+      }
+
+      "return INTERNAL_SERVER_ERROR" in {
+        result.status mustBe INTERNAL_SERVER_ERROR
+      }
+
+      "return a view which" should {
+        testCheckYourAnswersInternalServerErrorView(result)
+      }
+    }
+
+    "the backend service returns an internal server error" should {
+      lazy val result = {
+        await(insertJourneyConfig(testJourneyId, testInternalId, testGeneralPartnershipJourneyConfig(businessVerificationCheck = true)))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+        stubRetrievePartnershipDetails(testJourneyId)(INTERNAL_SERVER_ERROR)
+        get(s"$baseUrl/$testJourneyId/check-your-answers-business")
+      }
+
+      "return INTERNAL_SERVER_ERROR" in {
+        result.status mustBe INTERNAL_SERVER_ERROR
+      }
+
+      "return a view which" should {
+        testCheckYourAnswersInternalServerErrorView(result)
+      }
+    }
+
+
+
     "the user is not signed in" should {
       "redirect to the sign in page" in {
         stubAuthFailure()

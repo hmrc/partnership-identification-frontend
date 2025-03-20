@@ -17,8 +17,8 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.connectors
 
 import play.api.libs.json.Json
-import play.api.test.Helpers.{CREATED, await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.test.Helpers.{CREATED, INTERNAL_SERVER_ERROR, await, defaultAwaitTimeout}
+import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants.testJourneyId
 import uk.gov.hmrc.partnershipidentificationfrontend.stubs.JourneyStub
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
@@ -36,6 +36,13 @@ class JourneyConnectorISpec extends ComponentSpecHelper with JourneyStub {
       val result = await(createJourneyConnector.createJourney())
 
       result mustBe testJourneyId
+    }
+    "raise an exception" when {
+      "an unexpected status is returned" in {
+        stubCreateJourney(INTERNAL_SERVER_ERROR)
+
+        intercept[InternalServerException](await(createJourneyConnector.createJourney()))
+      }
     }
   }
 
