@@ -22,15 +22,15 @@ object AppDependencies {
   private val bootstrapPlayVersion = "9.11.0"
   private val hmrcMongoVersion = "2.6.0"
 
-  val compile = Seq(
+  val compile: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"                  %% "bootstrap-frontend-play-30" % bootstrapPlayVersion,
     "uk.gov.hmrc"                  %% "bootstrap-backend-play-30"  % bootstrapPlayVersion,
-    "uk.gov.hmrc"                  %% "play-frontend-hmrc-play-30" % "11.12.0", // later versions up to 7.7.0 break the footer in the html as of now 2023.06
+    "uk.gov.hmrc"                  %% "play-frontend-hmrc-play-30" % "12.0.0",
     "uk.gov.hmrc.mongo"            %% "hmrc-mongo-play-30"         % hmrcMongoVersion,
     "com.fasterxml.jackson.module" %% "jackson-module-scala"       % "2.18.3"
   )
 
-  val test = Seq(
+  val test: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"            %% "bootstrap-test-play-30"  % bootstrapPlayVersion % Test,
     "org.scalatest"          %% "scalatest"               % "3.2.19"              % Test,
     "org.jsoup"               % "jsoup"                   % "1.19.1"             % Test,
