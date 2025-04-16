@@ -19,10 +19,10 @@ import uk.gov.hmrc.DefaultBuildSettings.addTestReportOption
 
 val appName = "partnership-identification-frontend"
 
-val silencerVersion = "1.7.16"
+val silencerVersion = "1.7.19"
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / scalaVersion := "2.13.16"
 
 Test / Keys.fork := true
 Test / javaOptions += "-Dlogger.resource=logback-test.xml"
@@ -46,7 +46,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always)
   .disablePlugins(JUnitXmlReportPlugin)
 
-def calculateITTestsGroupingSettings(isADevMachineProperty: String): Seq[sbt.Setting[_]] = {
+def calculateITTestsGroupingSettings(isADevMachineProperty: String): Seq[sbt.Setting[?]] = {
   Test / testGrouping := {
     if ("true".equals(isADevMachineProperty))
       onlyOneJvmForAllISpecTestsTestGroup.value
@@ -69,6 +69,6 @@ lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
   .settings(DefaultBuildSettings.itSettings())
-  .settings(calculateITTestsGroupingSettings(System.getProperty("isADevMachine")): _*)
+  .settings(calculateITTestsGroupingSettings(System.getProperty("isADevMachine")) *)
   .settings(libraryDependencies ++= AppDependencies.test)
 
