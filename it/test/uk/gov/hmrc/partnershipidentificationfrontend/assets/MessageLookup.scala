@@ -75,15 +75,11 @@ object MessageLookup {
   }
 
   object CaptureSautr {
-    val title = "What is the partnership’s Unique Taxpayer Reference? - Entity Validation Service - GOV.UK"
-    val pageConfigTestTitle = "What is the partnership’s Unique Taxpayer Reference? - Test Service - GOV.UK"
-    val heading = "What is the partnership’s Unique Taxpayer Reference?"
-    val line_1 = "This is 10 numbers, for example 1234567890. It will be on tax returns and other letters about Self Assessment. It may be called ‘reference’, ‘UTR’ or ‘official use’."
-    val line_2 = "I do not have a Unique Taxpayer Reference"
-    val details_line_1 = "Your UTR helps us identify your partnership."
-    val details_line_2 = "I cannot find my UTR"
-    val details_line_3 = "My partnership does not have a UTR"
-    val link_1 = "I cannot find my UTR"
+    val title = "Your partnership’s Self Assessment Unique Taxpayer Reference (UTR) - Entity Validation Service - GOV.UK"
+    val pageConfigTestTitle = "Your partnership’s Self Assessment Unique Taxpayer Reference (UTR) - Test Service - GOV.UK"
+    val heading = "Your partnership’s Self Assessment Unique Taxpayer Reference (UTR)"
+    val line_1 = "You can find it in your Personal Tax Account, the HMRC app or on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’."
+    val link_1 = "Get more help to find your UTR (opens in new tab)"
 
     object Error {
       val saUtrNotEntered = "Enter the partnership’s Unique Taxpayer Reference"
@@ -125,7 +121,7 @@ object MessageLookup {
     val postCode = "Self Assessment postcode"
     val noSautr = "The business does not have a UTR"
     val companyNumber = "Company registration number"
-    val internalServerErrorTitle = "Sorry, there is a problem with the service - 500"
+    val internalServerErrorTitle = "Sorry, there is a problem with the service"
   }
 
 }

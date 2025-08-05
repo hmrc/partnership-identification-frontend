@@ -37,8 +37,8 @@
             content = Text(label),
             isPageHeading = isPageHeading,
             classes = if(isPageHeading) "govuk-label--xl"
-            else if(hasFieldTitle) "govuk-label govuk-!-font-weight-bold"
-                else "govuk-label govuk-visually-hidden"
+                      else if(hasFieldTitle) "govuk-label--m"
+                      else "govuk-visually-hidden"
         ),
         hint = hint.map(hintHtml => Hint(
             content = HtmlContent(hintHtml)
