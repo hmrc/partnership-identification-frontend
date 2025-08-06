@@ -23,6 +23,9 @@
 @import uk.gov.hmrc.partnershipidentificationfrontend.views.html.templates.govuk_template
 
 @this(layout: govuk_template,
+        h1: h1,
+        p: p,
+        a: link,
         govukFieldset: GovukFieldset,
         govukInput: GovukInput,
         govukButton: GovukButton,
@@ -37,43 +40,37 @@
 
     @errorSummary(form.errors)
 
+    @h1(messages("capture-sa-utr.heading"))
+
+    @p(Html(messages("capture-sa-utr.line_1")))
+
+    @p(a(
+        messageKey = "capture-sa-utr.line_2",
+        id = Some("cannot-find-utr"),
+        link = "https://www.gov.uk/find-lost-utr-number",
+        isExternal = true
+    ))
+
+    @if(displaySkipSautrLink) {
+        @p(a(link = routes.CaptureSautrController.noSautr(journeyId).url, messageKey = "capture-sa-utr.line_3", id = Some("no-sautr")),
+            classes = "govuk-inset-text")
+    }
+
     @formWithCSRF(action = formAction) {
         @inputText(
             form = form,
             id = "sa-utr",
             name = "sa-utr",
-            label = messages("capture-sa-utr.title"),
-            isPageHeading = true,
-            hint = Some(Html(s"""<p class="govuk-body">${messages("capture-sa-utr.line_1")}</p>""")),
-            classes = "govuk-input--width-20"
+            isPageHeading = false,
+            hasFieldTitle = true,
+            label = messages("capture-sa-utr.label"),
+            hint = Some(Html(messages("capture-sa-utr.hint"))),
+            classes = "govuk-input--width-10"
         )
 
-    @if(displaySkipSautrLink) {
-        <details class="govuk-details">
-            <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text" id="details-summary-text">@messages("capture-sa-utr.line_2")</span>
-            </summary>
-            <div class="govuk-details__text">
-                <p>@messages("capture-sa-utr.details.line_1")</p>
-                <p>
-                    <a class="govuk-link" id="cannot-find-utr" href="https://www.gov.uk/find-lost-utr-number">@messages("capture-sa-utr.details.line_2")</a>
-                </p>
-                <p>
-                    <a class="govuk-link" id="no-sautr" href="@routes.CaptureSautrController.noSautr(journeyId)">@messages("capture-sa-utr.details.line_3")</a>
-                </p>
-            </div>
-        </details>
-    } else {
-        <div class="govuk-body">
-            <a class="govuk-link" id="cannot-find-utr" href="https://www.gov.uk/find-lost-utr-number">@messages("capture-sa-utr.link_1")</a>
-        </div>
-    }
-
-
         @govukButton(Button(
-            attributes = Map("id" -> "save-and-continue"),
-            classes = "govuk-!-margin-right-1",
-            content = Text(Messages("base.save_and_continue"))
+            attributes = Map("id" -> "continue"),
+            content = Text(Messages("base.continue"))
         ))
 
     }

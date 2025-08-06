@@ -76,8 +76,8 @@ trait CaptureSautrViewTests {
       doc.getLink("cannot-find-utr").text mustBe messages.link_1
     }
 
-    "have a save and continue button" in {
-      doc.getSubmitButton.first.text mustBe Base.saveAndContinue
+    "have a continue button" in {
+      doc.getSubmitButton.first.text mustBe Base.continue
     }
 
     "have the corect technical help link and text" in {
@@ -130,15 +130,8 @@ trait CaptureSautrViewTests {
       doc.getParagraphs.get(1).text mustBe messages.line_1
     }
 
-    "have a correct details element" in {
-      doc.getSpan("details-summary-text").text mustBe messages.line_2
-      doc.getParagraphs.get(2).text mustBe messages.details_line_1
-      doc.getParagraphs.get(3).text mustBe messages.details_line_2
-      doc.getParagraphs.get(4).text mustBe messages.details_line_3
-    }
-
     "have a save and continue button" in {
-      doc.getSubmitButton.first.text mustBe Base.saveAndContinue
+      doc.getSubmitButton.first.text mustBe Base.continue
     }
 
     "have a back link" in {

@@ -17,13 +17,14 @@ base.save_and_continue                                      = Cadw ac yn eich bl
 base.confirm_and_continue                                   = Cadarnhau ac yn eich blaen
 base.change                                                 = Newid
 base.try-again                                              = Rhowch gynnig arall arni
-base.continue                                               = Yn eich blaen
+base.continue                                               = Parhau
 
 error.summary.title                                         = Mae problem wedi codi
 error.title-prefix                                          = ‘Gwall: ’
 
 app.common.yes                                              = Iawn
 app.common.no                                               = Na
+app.common.new-tab                                          = (yn agor tab newydd)
 
 ## Capture Company Number
 capture-company-number.title                                = Beth yw rhif cofrestru’r cwmni?
@@ -41,14 +42,13 @@ confirm-partnership.heading                                 = Cadarnhewch enw’
 confirm-partnership.change_company                          = Newid y cwmni
 
 ## Capture SA-UTR Page
-capture-sa-utr.title                                        = Beth yw Cyfeirnod Unigryw y Trethdalwr ar gyfer y bartneriaeth?
-capture-sa-utr.heading                                      = Beth yw Cyfeirnod Unigryw y Trethdalwr ar gyfer y bartneriaeth?
-capture-sa-utr.line_1                                       = Rhif 10 digid yw hwn, er enghraifft 1234567890. Bydd i’w weld ar Ffurflenni Treth a llythyrau eraill ynghylch Hunanasesiad. Efallai y cyfeirir ato gan ddefnyddio’r geiriau ‘cyfeirnod’, ‘UTR’ neu ‘defnydd swyddogol’.
-capture-sa-utr.line_2                                       = Nid oes gennyf Gyfeirnod Unigryw y Trethdalwr
-capture-sa-utr.details.line_1                               = Mae’ch UTR yn ein helpu i ddod o hyd i’ch partneriaeth.
-capture-sa-utr.details.line_2                               = Ni allaf ddod o hyd i’m Cyfeirnod Unigryw y Trethdalwr (UTR)
-capture-sa-utr.details.line_3                               = Nid oes gan fy mhartneriaeth UTR
-capture-sa-utr.link_1                                       = Ni allaf ddod o hyd i’m Cyfeirnod Unigryw y Trethdalwr (UTR)
+capture-sa-utr.title                                        = Cyfeirnod Unigryw y Trethdalwr (UTR) eich partneriaeth ar gyfer Hunanasesiad
+capture-sa-utr.heading                                      = Cyfeirnod Unigryw y Trethdalwr (UTR) eich partneriaeth ar gyfer Hunanasesiad
+capture-sa-utr.line_1                                       = Bydd i’w weld yn eich Cyfrif Treth Personol, yn ap CThEF, neu ar Ffurflenni Treth a dogfennau eraill oddi wrth CThEF. Efallai y cyfeirir ato gan ddefnyddio’r geiriau ‘cyfeirnod’, ‘UTR’ neu ‘defnydd swyddogol’.
+capture-sa-utr.line_2                                       = Rhagor o help i ddod o hyd i’ch UTR
+capture-sa-utr.line_3                                       = Nid oes gan y bartneriaeth Gyfeirnod Unigryw y Trethdalwr
+capture-sa-utr.label                                        = Beth yw’ch UTR ar gyfer Hunanasesiad?
+capture-sa-utr.hint                                         = Mae eich UTR yn rhif 10 digid o hyd.
 capture-sa-utr-empty.error                                  = Nodwch Gyfeirnod Unigryw y Trethdalwr ar gyfer y bartneriaeth
 capture-sa-utr-format.error                                 = Nodwch Gyfeirnod Unigryw y Trethdalwr ar gyfer y bartneriaeth yn y fformat cywir
 
