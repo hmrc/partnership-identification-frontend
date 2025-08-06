@@ -17,7 +17,7 @@ base.save_and_continue                                      = Cadw ac yn eich bl
 base.confirm_and_continue                                   = Cadarnhau ac yn eich blaen
 base.change                                                 = Newid
 base.try-again                                              = Rhowch gynnig arall arni
-base.continue                                               = Yn eich blaen
+base.continue                                               = Parhau
 
 error.summary.title                                         = Mae problem wedi codi
 error.title-prefix                                          = ‘Gwall: ’
