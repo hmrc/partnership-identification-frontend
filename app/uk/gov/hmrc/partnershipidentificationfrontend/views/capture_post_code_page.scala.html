@@ -25,7 +25,7 @@
         h1: h1,
         ul: ul,
         li: li,
-        govukInput: GovukInput,
+        inputText: inputText,
         govukButton: GovukButton,
         govukDetails: GovukDetails,
         formWithCSRF: FormWithCSRF,
@@ -56,22 +56,16 @@
             content = HtmlContent(detailsHtmlContent)
         ))
 
-        @govukInput(
-            Input(
-                "postcode",
-                "postcode",
-                classes = "govuk-input--width-10",
-                label = Label(
-                    content = Text(messages("capture-postcode.subtitle")),
-                    isPageHeading = false,
-                    classes = "govuk-label--m"
-                ),
-            hint = Some(Hint(content = HtmlContent(Html(Messages("capture-postcode.hint_text"))))),
-            value = form("postcode").value,
-            autocomplete = None,
-            inputType = "text",
-            errorMessage = form("postcode").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*))))
-        ))
+        @inputText(
+            form = form,
+            id = "postcode",
+            name = "postcode",
+            label = messages("capture-postcode.subtitle"),
+            isPageHeading = false,
+            hasFieldTitle = true,
+            hint = Some(Html(Messages("capture-postcode.hint_text"))),
+            classes = "govuk-input--width-10"
+        )
 
         @govukButton(Button(
             attributes = Map("id" -> "continue"),
