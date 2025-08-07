@@ -70,15 +70,35 @@ trait CapturePostCodeViewTests {
     }
 
     "have the correct hint text" in {
-      doc.getPostCodeHintText mustBe messages.hint
+      doc.getHintText mustBe messages.hint
     }
 
     "have the correct subtitle" in {
-      doc.getSubTitle mustBe messages.subTitle
+      doc.getLabelElement.text mustBe messages.subTitle
     }
 
-    "have a save and continue button" in {
-      doc.getSubmitButton.first.text mustBe Base.saveAndContinue
+    "have the correct summary" in {
+      doc.getDetailsSummary.text mustBe messages.details_summary
+    }
+
+    "have an alt line" in {
+      doc.getImageAltText mustBe messages.alt_line
+    }
+
+    "have the correct first bullet point" in {
+      doc.getBulletElement.get(0).text mustBe messages.line_1
+    }
+
+    "have the correct second bullet point" in {
+      doc.getBulletElement.get(1).text mustBe messages.line_2
+    }
+
+    "have the correct third bullet point" in {
+      doc.getBulletElement.get(2).text mustBe messages.line_3
+    }
+
+    "have a continue button" in {
+      doc.getSubmitButton.first.text mustBe Base.continue
     }
 
     "have a back link" in {

@@ -1,5 +1,5 @@
 @*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,24 +22,19 @@
 @import uk.gov.hmrc.partnershipidentificationfrontend.views.html.templates.govuk_template
 
 @this(layout: govuk_template,
-        govUkHeader: GovukHeader,
-        govukInput: GovukInput,
-        govukFieldset: GovukFieldset,
-        govukDateInput: GovukDateInput,
+        h1: h1,
+        ul: ul,
+        li: li,
+        inputText: inputText,
         govukButton: GovukButton,
         govukDetails: GovukDetails,
         formWithCSRF: FormWithCSRF,
-        inputText: inputText,
-        hintWithDesc: HintWithDescription,
         errorSummary: errorSummary)
 
 @(pageConfig: PageConfig, formAction: Call, form: Form[String])(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
-@hintDesc = @{hintWithDesc("capture-postcode.subtitle", "capture-postcode.hint_text")}
-
 @detailsHtmlContent = {
-    <p>@messages("capture-postcode.details.line_1")</p>
-    <img style="max-width: 100%; height: auto;" src="@controllers.routes.Assets.versioned("images/sa/SA400-partnership-postcode.png")" alt="@messages("capture-postcode.details.line_1")">
+    <img style="max-width: 100%; height: auto;" src="@controllers.routes.Assets.versioned("images/sa/SA400-partnership-postcode.png")" alt="@messages("capture-postcode.details.line_alt")">
 }
 
 @layout(pageConfig, title = title(messages("capture-postcode.title"), form)) {
@@ -47,32 +42,35 @@
     @errorSummary(form.errors)
 
     @formWithCSRF(action = formAction) {
-        @govukInput(
-            Input(
-                "postcode",
-                "postcode",
-                classes = "govuk-input--width-20",
-                label = Label(
-                    content = Text(messages("capture-postcode.heading")),
-                    isPageHeading = true,
-                    classes = "govuk-label--l"
-                ),
-            hint = Some(Hint(content = HtmlContent(Html(s"""${hintDesc}""")))),
-            value = form("postcode").value,
-            autocomplete = None,
-            inputType = "text",
-            errorMessage = form("postcode").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*))))
-        ))
+
+        @h1(messages("capture-postcode.heading"))
+
+        @ul{
+            @li{@messages("capture-postcode.details.line_1")}
+            @li{@messages("capture-postcode.details.line_2")}
+            @li{@messages("capture-postcode.details.line_3")}
+        }
 
         @govukDetails(Details(
             summary = Text(messages("capture-postcode.details.summary")),
             content = HtmlContent(detailsHtmlContent)
         ))
 
+        @inputText(
+            form = form,
+            id = "postcode",
+            name = "postcode",
+            label = messages("capture-postcode.subtitle"),
+            isPageHeading = false,
+            hasFieldTitle = true,
+            hint = Some(Html(Messages("capture-postcode.hint_text"))),
+            classes = "govuk-input--width-10"
+        )
+
         @govukButton(Button(
-            attributes = Map("id" -> "save-and-continue"),
+            attributes = Map("id" -> "continue"),
             classes = "govuk-!-margin-right-1",
-            content = Text(Messages("base.save_and_continue"))
+            content = Text(Messages("base.continue"))
         ))
     }
 
