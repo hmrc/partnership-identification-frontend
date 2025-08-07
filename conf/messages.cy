@@ -17,7 +17,7 @@ base.save_and_continue                                      = Cadw ac yn eich bl
 base.confirm_and_continue                                   = Cadarnhau ac yn eich blaen
 base.change                                                 = Newid
 base.try-again                                              = Rhowch gynnig arall arni
-base.continue                                               = Yn eich blaen
+base.continue                                               = Parhau
 
 error.summary.title                                         = Mae problem wedi codi
 error.title-prefix                                          = ‘Gwall: ’
@@ -27,10 +27,11 @@ app.common.no                                               = Na
 
 ## Capture Company Number
 capture-company-number.title                                = Beth yw rhif cofrestru’r cwmni?
-capture-company-number.heading                              = Beth yw rhif cofrestru’r cwmni?
+capture-company-number.heading                              = Rhif cofrestru’r cwmni
 capture-company-number.line_1.part1                         = Gallwch
-capture-company-number.line_1.part2                         = chwilio yn Nhŷ’r Cwmnïau am rif cofrestru’r cwmni
-capture-company-number.hint                                 = Mae hwn yn 8 o gymeriadau. Er enghraifft, 01234567 neu AC012345.
+capture-company-number.line_1.part2                         = chwilio Tŷ’r Cwmnïau ar gyfer rhif cofrestru’r cwmni
+capture-company-number.line_2                               = Beth yw rhif cofrestru’ch cwmni?
+capture-company-number.hint                                 = Mae hwn yn 8 o gymeriadau, fel AB123456. Gall hefyd gael ei alw yn ‘rhif y cwmni’ neu ‘rhif Tŷ’r Cwmnïau’
 capture-company-number-empty.error                          = Nodwch rif cofrestru’r cwmni
 capture-company-number-length.error                         = Mae’n rhaid i rif cofrestru’r cwmni fod yn 8 o gymeriadau neu lai
 capture-company-number-format.error                         = Nodwch rif cofrestru’r cwmni yn y fformat cywir

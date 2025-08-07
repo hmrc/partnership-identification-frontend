@@ -51,7 +51,7 @@ object MessageLookup {
     val heading = "What is the company registration number?"
     val line_1 = "You can search Companies House for the company registration number (opens in new tab)"
     val link = "https://beta.companieshouse.gov.uk/"
-    val hint = "It is 8 characters. For example, 01234567 or AC012345."
+    val hint = "This is 8 characters, like AB123456. It may also be called ‘company number’ or ‘Companies House number’"
 
     object Error {
       val noCompanyNumber = "Enter the company registration number"
