@@ -40,6 +40,12 @@ object ViewSpecHelper {
 
     lazy val getLabelElement: Elements = element.getElementsByTag("label")
 
+    lazy val getImageAltText: String = element.getElementsByTag("img").first().attr("alt")
+
+    lazy val getBulletElement: Elements = element.getElementsByClass("govuk-list--item")
+
+    lazy val getDetailsSummary: Elements = element.getElementsByClass("govuk-details__summary-text")
+
     lazy val getLegendElement: Elements = element.getElementsByTag("legend")
 
     lazy val getErrorSummaryTitle: Elements = element.getElementsByClass("govuk-error-summary__title")
@@ -51,8 +57,6 @@ object ViewSpecHelper {
     lazy val getSubmitButton: Elements = element.getElementsByClass("govuk-button")
 
     lazy val getHintText: String = element.getElementsByClass("govuk-hint").text()
-
-    lazy val getPostCodeHintText: String = element.select("p[class=govuk-hint]").text()
 
     lazy val getSubTitle: String = element.select("p[class=govuk-body]").text()
 

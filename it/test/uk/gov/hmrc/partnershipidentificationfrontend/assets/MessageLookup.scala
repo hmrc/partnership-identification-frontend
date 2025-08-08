@@ -91,10 +91,15 @@ object MessageLookup {
   }
 
   object CapturePostCode {
-    val title = "Enter the postcode the partnership used to register for Self Assessment - Entity Validation Service - GOV.UK"
-    val pageConfigTestTitle = "Enter the postcode the partnership used to register for Self Assessment - Test Service - GOV.UK"
-    val heading = "Enter the postcode the partnership used to register for Self Assessment"
-    val subTitle = "You can find this information in box 2 of your partnership for Self Assessment form (SA400), under the heading About the partnership."
+    val title = "The postcode used to register the partnership for Self Assessment - Entity Validation Service - GOV.UK"
+    val pageConfigTestTitle = "The postcode used to register the partnership for Self Assessment - Test Service - GOV.UK"
+    val heading = "The postcode used to register the partnership for Self Assessment"
+    val subTitle = "Enter the Self Assessment postcode"
+    val details_summary = "Where to find the postcode on an example partnership for Self Assessment form"
+    val alt_line = "An example partnership for Self Assessment form showing the postcode section on the left."
+    val line_1 = "This information is on your partnership for Self Assessment form (SA400)"
+    val line_2 = "Find the information in the ‘About the partnership’ section in box 2"
+    val line_3 = "The postcode will be in the ‘Address of partnership’"
     val hint = "For example, AB1 2YZ"
 
     object Error {
@@ -107,7 +112,7 @@ object MessageLookup {
   object CannotConfirmBusiness {
     val title = "The details you provided do not match records held by HMRC - Entity Validation Service - GOV.UK"
     val heading = "The details you provided do not match records held by HMRC"
-    val line_1 = "If these details are correct, you can still register. If you entered the wrong details, go back and make changes."
+    val line_1 = "If your details are correct, you can register and continue your journey. If not, go back and make changes."
     val radio = "Do you want to continue registering with the details you provided?"
 
     object Error {
