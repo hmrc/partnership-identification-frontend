@@ -85,6 +85,10 @@ trait CannotConfirmBusinessErrorViewTests {
     "correctly display the error summary" in {
       doc.getErrorSummaryTitle.text mustBe Base.Error.title
     }
+
+    "have the correct title" in {
+      doc.title mustBe messages.errorTitle
+    }
   }
 
 }
