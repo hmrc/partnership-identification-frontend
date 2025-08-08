@@ -68,10 +68,12 @@ object MessageLookup {
   }
 
   object CompanyNumberNotFound {
-    val title = "We could not confirm the partnership’s company registration number - Entity Validation Service - GOV.UK"
-    val pageConfigTestTitle = "We could not confirm the partnership’s company registration number - Test Service - GOV.UK"
-    val heading = "We could not confirm the partnership’s company registration number"
-    val paragraph = "The company number is not in our system."
+    val title = "The details you entered did not match our records - Entity Validation Service - GOV.UK"
+    val pageConfigTestTitle = "The details you entered did not match our records - Test Service - GOV.UK"
+    val heading = "The details you entered did not match our records"
+    val line1 = "We could not match the details you entered with records held by HMRC."
+    val line2 = "You can"
+    val line2link = " search Companies House for the company registration number (opens in new tab)"
   }
 
   object CaptureSautr {

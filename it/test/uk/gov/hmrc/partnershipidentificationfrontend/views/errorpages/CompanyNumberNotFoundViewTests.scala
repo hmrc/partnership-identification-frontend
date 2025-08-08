@@ -69,8 +69,12 @@ trait CompanyNumberNotFoundViewTests {
       doc.getH1Elements.text mustBe messages.heading
     }
 
-    "have the correct paragraph" in {
-      doc.getParagraphs.eq(1).text mustBe messages.paragraph
+    "have the correct paragraph 1" in {
+      doc.getParagraphs.eq(1).text mustBe messages.line1
+    }
+
+    "have the correct paragraph 2" in {
+      doc.getParagraphs.eq(2).text mustBe messages.line2 + messages.line2link
     }
 
     "have a try again button" in {
