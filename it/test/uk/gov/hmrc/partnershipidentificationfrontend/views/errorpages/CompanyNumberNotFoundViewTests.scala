@@ -77,6 +77,14 @@ trait CompanyNumberNotFoundViewTests {
       doc.getParagraphs.eq(2).text mustBe messages.line2 + messages.line2link
     }
 
+
+    "have the correct link in paragraph 2" in {
+      val link = doc.getParagraphs.eq(2).first().getGovUkLink
+      link.attr("rel") mustBe "noopener noreferrer"
+      link.attr("target") mustBe "_blank"
+      link.attr("href") mustBe messages.link
+    }
+
     "have a try again button" in {
       doc.getSubmitButton.first.text mustBe Base.tryAgain
     }

@@ -74,6 +74,7 @@ object MessageLookup {
     val line1 = "We could not match the details you entered with records held by HMRC."
     val line2 = "You can"
     val line2link = " search Companies House for the company registration number (opens in new tab)"
+    val link = "https://beta.companieshouse.gov.uk/"
   }
 
   object CaptureSautr {
