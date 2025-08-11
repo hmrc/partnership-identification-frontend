@@ -66,9 +66,11 @@ capture-postcode.error.not_entered                          = Enter the postcode
 capture-postcode.error.invalid_format                       = Enter the postcode in the correct format
 
 ## Partnership's company number not found
-company-number-not-found.title                              = We could not confirm the partnership’s company registration number
-company-number-not-found.heading                            = We could not confirm the partnership’s company registration number
-company-number-not-found.paragraph                          = The company number is not in our system.
+company-number-not-found.title                              = The details you entered did not match our records
+company-number-not-found.heading                            = The details you entered did not match our records
+company-number-not-found.line_1                             = We could not match the details you entered with records held by HMRC.
+company-number-not-found.line_2                             = You can
+company-number-not-found.line_2.link                        = search Companies House for the company registration number
 
 ## Cannot Confirm Business Error Page
 cannot-confirm-business.title                               = The details you provided do not match records held by HMRC

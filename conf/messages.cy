@@ -66,9 +66,11 @@ capture-postcode.error.not_entered                          = Nodwch y cod post 
 capture-postcode.error.invalid_format                       = Nodwch y cod post yn y fformat cywir
 
 ## Partnership's company number not found
-company-number-not-found.title                              = Doedd dim modd cadarnhau rhif cofrestru’r cwmni ar gyfer y bartneriaeth
-company-number-not-found.heading                            = Doedd dim modd cadarnhau rhif cofrestru’r cwmni ar gyfer y bartneriaeth
-company-number-not-found.paragraph                          = Dydy rhif y cwmni ddim ar ein system.
+company-number-not-found.title                              = Nid yw’r manylion a nodwyd gennych yn cyd-fynd â’n cofnodion
+company-number-not-found.heading                            = Nid yw’r manylion a nodwyd gennych yn cyd-fynd â’n cofnodion
+company-number-not-found.line_1                             = Nid oeddem yn gallu paru’r manylion a nodwyd gennych â’r cofnodion sydd gan CThEF.
+company-number-not-found.line_2                             = Gallwch
+company-number-not-found.line_2.link                        = chwilio Tŷ’r Cwmnïau ar gyfer rhif cofrestru’r cwmni
 
 ## Cannot Confirm Business Error Page
 cannot-confirm-business.title                               = Nid yw’r manylion a roesoch yn cyd-fynd â’r cofnodion sydd gan CThEF

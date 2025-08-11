@@ -17,26 +17,39 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 @import uk.gov.hmrc.partnershipidentificationfrontend.models.PageConfig
-@import uk.gov.hmrc.partnershipidentificationfrontend.views.html.helpers.h1
+@import uk.gov.hmrc.partnershipidentificationfrontend.views.html.helpers.{h1, p}
 @import uk.gov.hmrc.partnershipidentificationfrontend.views.html.templates.govuk_template
 @import uk.gov.hmrc.partnershipidentificationfrontend.views.helpers.TitleHelper.title
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
 
 @this(govukLayout: govuk_template,
-      h1: h1,
-      govukButton: GovukButton,
-      formWithCSRF: FormWithCSRF)
+        h1: h1,
+        p: p,
+        govukButton: GovukButton,
+        formWithCSRF: FormWithCSRF,
+        hmrcNewTabLinkHelper: HmrcNewTabLinkHelper)
 
 @(pageConfig: PageConfig, formAction: Call)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
 
 @govukLayout(pageConfig, title(messages("company-number-not-found.title"))) {
-  @h1(messages("company-number-not-found.heading"))
-  <p class="govuk-body">@messages("company-number-not-found.paragraph")</p>
+    @h1(messages("company-number-not-found.heading"))
 
-  @formWithCSRF(action = formAction){
-    @govukButton(Button(
-      attributes = Map( "id" -> "try-again"),
-      classes = "govuk-!-margin-right-1",
-      content = Text(messages("base.try-again"))
-    ))
-  }
+    @p(Html(messages("company-number-not-found.line_1")))
+
+    @p {
+        @messages("company-number-not-found.line_2")
+        @hmrcNewTabLinkHelper(NewTabLinkHelper(
+            text = messages("company-number-not-found.line_2.link"),
+            href = Some(appConfig.companiesHouse)
+        ))
+    }
+
+    @formWithCSRF(action = formAction){
+        @govukButton(Button(
+            attributes = Map( "id" -> "try-again"),
+            classes = "govuk-!-margin-right-1",
+            content = Text(messages("base.try-again"))
+        ))
+    }
 }
