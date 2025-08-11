@@ -49,7 +49,7 @@ object MessageLookup {
     val title = "What is the company registration number? - Entity Validation Service - GOV.UK"
     val pageConfigTestTitle = "What is the company registration number? - Test Service - GOV.UK"
     val heading = "What is the company registration number?"
-    val line_1 = "You can search Companies House for the company registration number (opens in new tab)"
+    val line_1 = "You can search Companies House for the company registration number (opens in new tab)."
     val link = "https://beta.companieshouse.gov.uk/"
     val hint = "This is 8 characters, like AB123456. It may also be called ‘company number’ or ‘Companies House number’"
 
