@@ -26,8 +26,7 @@ import uk.gov.hmrc.partnershipidentificationfrontend.controllers.routes
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ViewSpecHelper.ElementExtensions
 
-import scala.collection.JavaConverters._
-
+import scala.jdk.CollectionConverters._
 
 trait CheckYourAnswersViewTests {
   this: ComponentSpecHelper =>
@@ -134,7 +133,7 @@ trait CheckYourAnswersViewTests {
       }
 
       "have a continue and confirm button" in {
-        doc.getSubmitButton.first.text mustBe Base.confirmAndContinue
+        doc.getSubmitButton.first.text mustBe Base.continue
       }
 
       "have a back link" in {
