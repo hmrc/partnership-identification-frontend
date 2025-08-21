@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
+import play.api.http.Status.BAD_REQUEST
 import play.api.libs.json.Json
 import play.api.test.Helpers.{INTERNAL_SERVER_ERROR, LOCATION, NOT_FOUND, OK, SEE_OTHER, await, defaultAwaitTimeout}
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
@@ -159,23 +160,83 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
 
   }
 
-  "POST /confirm-company-name" should {
-    "redirect to Capture UTR Page" in {
+  "POST /confirm-company-name" when {
+    "the user selects the 'yes' radio button" should {
+      "redirect to Capture UTR Page" in {
+        lazy val result = {
+          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+          await(insertJourneyConfig(
+            journeyId = testJourneyId,
+            authInternalId = testInternalId,
+            journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
+          ))
+          post(s"$baseUrl/$testJourneyId/confirm-company-name")("yes_no" -> "yes")
+        }
+
+        result must have(
+          httpStatus(SEE_OTHER),
+          redirectUri(routes.CaptureSautrController.show(testJourneyId).url)
+        )
+      }
+    }
+
+    "the user selects the 'no' radio button" should {
+      "redirect to Capture Company Number Page" in {
+        lazy val result = {
+          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+          await(insertJourneyConfig(
+            journeyId = testJourneyId,
+            authInternalId = testInternalId,
+            journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
+          ))
+          post(s"$baseUrl/$testJourneyId/confirm-company-name")("yes_no" -> "no")
+        }
+
+        result must have(
+          httpStatus(SEE_OTHER),
+          redirectUri(routes.CaptureCompanyNumberController.show(testJourneyId).url)
+        )
+      }
+    }
+
+    "the user selects none of the radio buttons" should {
       lazy val result = {
-        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
         await(insertJourneyConfig(
           journeyId = testJourneyId,
           authInternalId = testInternalId,
           journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
         ))
-        post(s"$baseUrl/$testJourneyId/confirm-company-name")()
+        stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
+        stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+
+        post(s"$baseUrl/$testJourneyId/confirm-company-name")("yes_no" -> "")
       }
 
-      result must have(
-        httpStatus(SEE_OTHER),
-        redirectUri(routes.CaptureSautrController.show(testJourneyId).url)
-      )
+      "return a bad request" in {
+        result.status mustBe BAD_REQUEST
+      }
+
+      testConfirmPartnershipNameErrorView(result)
     }
+
+    "the user selects none of the radio buttons and company isn't retrieved" should {
+      "throw an Internal Server Exception" in {
+        lazy val result = {
+          await(insertJourneyConfig(
+            journeyId = testJourneyId,
+            authInternalId = testInternalId,
+            journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
+          ))
+          stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
+          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+
+          post(s"$baseUrl/$testJourneyId/confirm-company-name")("yes_no" -> "")
+        }
+
+        result.status mustBe INTERNAL_SERVER_ERROR
+      }
+    }
+
     "throw an internal server exception" when {
       "the user does not have an internal ID" in {
         lazy val result = {

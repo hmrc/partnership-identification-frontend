@@ -39,8 +39,9 @@ capture-company-number-format.error                         = Enter the company 
 
 # Confirm Partnership Page
 confirm-partnership.title                                   = Confirm the company name
-confirm-partnership.heading                                 = Confirm the company name
+confirm-partnership.heading                                 = Is this your business?
 confirm-partnership.change_company                          = Change company
+confirm-partnership.error.no_selection                      = Select yes if this is your business
 
 ## Capture SA-UTR Page
 capture-sa-utr.title                                        = Your partnership’s Self Assessment Unique Taxpayer Reference (UTR)
