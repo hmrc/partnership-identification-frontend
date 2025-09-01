@@ -68,12 +68,8 @@ trait ConfirmPartnershipNameViewTests {
       doc.getParagraphs.eq(1).text mustBe testCompanyName
     }
 
-    "Have the correct link" in {
-      doc.getLink("change-company").text mustBe messages.change_company_link
-    }
-
-    "have a save and confirm button" in {
-      doc.getSubmitButton.first.text mustBe Base.saveAndContinue
+    "have a continue button" in {
+      doc.getSubmitButton.first.text mustBe Base.continue
     }
 
     "have a back link" in {
@@ -90,5 +86,21 @@ trait ConfirmPartnershipNameViewTests {
     }
   }
 
+  def testConfirmPartnershipNameErrorView(result: => WSResponse): Unit = {
+    lazy val doc: Document = Jsoup.parse(result.body)
+
+    "correctly display the error summary" in {
+      doc.getErrorSummaryTitle.text mustBe Base.Error.title
+    }
+
+    "have the correct title" in {
+      doc.title mustBe messages.errorTitle
+    }
+
+    "have the correct heading" in {
+      doc.getH1Elements.first.text mustBe messages.heading
+    }
+
+  }
 
 }

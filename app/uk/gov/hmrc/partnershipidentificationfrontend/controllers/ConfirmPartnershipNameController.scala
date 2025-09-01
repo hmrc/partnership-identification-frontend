@@ -18,14 +18,15 @@ package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
 import play.api.i18n.Messages
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.internalId
+import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
 import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
+import uk.gov.hmrc.partnershipidentificationfrontend.forms.ConfirmPartnershipNameForm.confirmPartnershipNameForm
 import uk.gov.hmrc.partnershipidentificationfrontend.service.{JourneyService, PartnershipIdentificationService}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.MessagesHelper
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.confirm_partnership_name_page
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -52,7 +53,9 @@ class ConfirmPartnershipNameController @Inject()(mcc: MessagesControllerComponen
                   Ok(view(journeyConfig.pageConfig,
                     routes.ConfirmPartnershipNameController.submit(journeyId),
                     companiesHouseInformation.companyName,
-                    journeyId))
+                    journeyId,
+                    confirmPartnershipNameForm
+                  ))
                 case None =>
                   throw new InternalServerException("No company profile stored")
               }
@@ -65,8 +68,28 @@ class ConfirmPartnershipNameController @Inject()(mcc: MessagesControllerComponen
   def submit(journeyId: String): Action[AnyContent] = Action.async {
     implicit request =>
       authorised().retrieve(internalId) {
-        case Some(_) =>
-          Future.successful(Redirect(routes.CaptureSautrController.show(journeyId)))
+        case Some(authInternalId) =>
+          confirmPartnershipNameForm.bindFromRequest.fold(
+            formWithErrors =>
+              journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
+                journeyConfig =>
+                  partnershipIdentificationService.retrieveCompanyProfile(journeyId).map {
+                    case Some(companiesHouseInformation) =>
+                      implicit val messages: Messages = messagesHelper.getRemoteMessagesApi(journeyConfig).preferred(request)
+                      BadRequest(view(journeyConfig.pageConfig,
+                        routes.ConfirmPartnershipNameController.submit(journeyId),
+                        companiesHouseInformation.companyName,
+                        journeyId,
+                        formWithErrors
+                      ))
+                    case None =>
+                      throw new InternalServerException("No company profile stored")
+                  }
+              },
+            formRadio =>
+              if (formRadio) Future.successful(Redirect(routes.CaptureSautrController.show(journeyId)))
+              else Future.successful(Redirect(routes.CaptureCompanyNumberController.show(journeyId)))
+          )
         case None =>
           throw new InternalServerException("Internal ID could not be retrieved from Auth")
       }

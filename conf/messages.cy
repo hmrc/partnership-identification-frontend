@@ -1,5 +1,5 @@
 service.name.default                                        = Gwasanaeth Dilysu Endid
-service.text                                                = Dyma'ch gwasanaeth newydd
+service.text                                                = Dyma’ch gwasanaeth newydd
 service.govuk                                               = GOV.UK
 
 ## Footer Links
@@ -39,8 +39,9 @@ capture-company-number-format.error                         = Nodwch rif cofrest
 
 # Confirm Partnership Page
 confirm-partnership.title                                   = Cadarnhewch enw’r cwmni
-confirm-partnership.heading                                 = Cadarnhewch enw’r cwmni
+confirm-partnership.heading                                 = Ai dyma’ch busnes?
 confirm-partnership.change_company                          = Newid y cwmni
+confirm-partnership.error.no_selection                      = Dewiswch ‘Iawn’ os mai’ch busnes chi yw hwn
 
 ## Capture SA-UTR Page
 capture-sa-utr.title                                        = Cyfeirnod Unigryw y Trethdalwr (UTR) eich partneriaeth ar gyfer Hunanasesiad

@@ -62,8 +62,9 @@ object MessageLookup {
 
   object ConfirmPartnershipName {
     val title = "Confirm the company name - Entity Validation Service - GOV.UK"
+    val errorTitle = s"Error: $title"
     val pageConfigTestTitle = "Confirm the company name - Test Service - GOV.UK"
-    val heading = "Confirm the company name"
+    val heading = "Is this your business?"
     val change_company_link = "Change company"
   }
 
