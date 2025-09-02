@@ -46,7 +46,7 @@ confirm-partnership.error.no_selection                      = Dewiswch ‘Iawn�
 ## Capture SA-UTR Page
 capture-sa-utr.title                                        = Cyfeirnod Unigryw y Trethdalwr (UTR) eich partneriaeth ar gyfer Hunanasesiad
 capture-sa-utr.heading                                      = Cyfeirnod Unigryw y Trethdalwr (UTR) eich partneriaeth ar gyfer Hunanasesiad
-capture-sa-utr.line_1                                       = Bydd i’w weld yn eich Cyfrif Treth Personol, yn ap CThEF, neu ar Ffurflenni Treth a dogfennau eraill oddi wrth CThEF. Efallai y cyfeirir ato gan ddefnyddio’r geiriau ‘cyfeirnod’, ‘UTR’ neu ‘defnydd swyddogol’.
+capture-sa-utr.line_1                                       = Bydd i’w weld yn eich Cyfrif Treth Busnes, yn ap CThEF, neu ar ffurflenni treth a dogfennau eraill oddi wrth CThEF. Efallai y cyfeirir ato gan ddefnyddio’r geiriau ‘cyfeirnod’, ‘UTR’ neu ‘defnydd swyddogol’.
 capture-sa-utr.line_2                                       = Rhagor o help i ddod o hyd i’ch UTR
 capture-sa-utr.line_3                                       = Nid oes gan y bartneriaeth Gyfeirnod Unigryw y Trethdalwr
 capture-sa-utr.label                                        = Beth yw’ch UTR ar gyfer Hunanasesiad?

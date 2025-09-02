@@ -82,7 +82,7 @@ object MessageLookup {
     val title = "Your partnership’s Self Assessment Unique Taxpayer Reference (UTR) - Entity Validation Service - GOV.UK"
     val pageConfigTestTitle = "Your partnership’s Self Assessment Unique Taxpayer Reference (UTR) - Test Service - GOV.UK"
     val heading = "Your partnership’s Self Assessment Unique Taxpayer Reference (UTR)"
-    val line_1 = "You can find it in your Personal Tax Account, the HMRC app or on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’."
+    val line_1 = "You can find it in your Business Tax Account, the HMRC app or on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’."
     val link_1 = "Get more help to find your UTR (opens in new tab)"
 
     object Error {
