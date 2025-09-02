@@ -46,7 +46,7 @@ confirm-partnership.error.no_selection                      = Select yes if this
 ## Capture SA-UTR Page
 capture-sa-utr.title                                        = Your partnership’s Self Assessment Unique Taxpayer Reference (UTR)
 capture-sa-utr.heading                                      = Your partnership’s Self Assessment Unique Taxpayer Reference (UTR)
-capture-sa-utr.line_1                                       = You can find it in your Personal Tax Account, the HMRC app or on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
+capture-sa-utr.line_1                                       = You can find it in your Business Tax Account, the HMRC app or on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
 capture-sa-utr.line_2                                       = Get more help to find your UTR
 capture-sa-utr.line_3                                       = The partnership does not have a UTR
 capture-sa-utr.label                                        = What is your Self Assessment UTR?
