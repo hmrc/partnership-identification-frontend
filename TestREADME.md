@@ -16,7 +16,7 @@
     2. [Retrieving Business Verification result](TestREADME.md#get--test-onlyverification-questionjourneyjourneyidstatus)
 9. [Companies House Stub](TestREADME.md#get-test-onlycompanynumberincorporated-company-profile)
 
-#### GET test-only/feature-switches
+#### GET /identify-your-partnership/test-only/feature-switches
 
 ---
 Shows all feature switches:
@@ -31,7 +31,7 @@ Shows all feature switches:
     - Use stub for Partnership Known Facts SAUTR call
     - Use stub for register API
 
-#### GET test-only/create-general-partnership-journey
+#### GET identify-your-partnership/test-only/create-general-partnership-journey
 
 ---
 This is a test entry point which simulates a service by triggering the initial POST call to set up a journey for General
@@ -79,7 +79,7 @@ Verification (rather than stub it) all non-relative urls will cause the handover
 
     - Welsh language translation for service name (item 2)
 
-#### GET test-only/create-scottish-partnership-journey
+#### GET identify-your-partnership/test-only/create-scottish-partnership-journey
 
 ---
 This is a test entry point which simulates a service by triggering the initial POST call to set up a journey for
@@ -127,7 +127,7 @@ Verification (rather than stub it) all non-relative urls will cause the handover
 
     - Welsh language translation for service name (item 2)
 
-#### GET test-only/create-limited-partnership-journey
+#### GET identify-your-partnership/test-only/create-limited-partnership-journey
 
 ---
 This is a test entry point which simulates a service by triggering the initial POST call to set up a journey for Limited
@@ -175,7 +175,7 @@ Verification (rather than stub it) all non-relative urls will cause the handover
 
     - Welsh language translation for service name (item 2)
 
-#### GET test-only/create-scottish-limited-partnership-journey
+#### GET identify-your-partnership/test-only/create-scottish-limited-partnership-journey
 
 ---
 This is a test entry point which simulates a service by triggering the initial POST call to set up a journey for
@@ -224,7 +224,7 @@ Verification (rather than stub it) all non-relative urls will cause the handover
     - Welsh language translation for service name (item 2)
     -
 
-#### GET test-only/create-limited-liability-partnership-journey
+#### GET identify-your-partnership/test-only/create-limited-liability-partnership-journey
 
 ---
 This is a test entry point which simulates a service by triggering the initial POST call to set up a journey for Limited
@@ -272,7 +272,7 @@ Verification (rather than stub it) all non-relative urls will cause the handover
 
     - Welsh language translation for service name (item 2)
 
-#### GET test-only/retrieve-journey/:journeyId or test-only/retrieve-journey
+#### GET identify-your-partnership/test-only/retrieve-journey/:journeyId or test-only/retrieve-journey
 
 ---
 Retrieves all the journey data that is stored against a specific journeyID.
