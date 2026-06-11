@@ -30,6 +30,11 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PartnershipIdentificationService @Inject()(connector: PartnershipIdentificationConnector)(implicit ec: ExecutionContext) {
 
+  def storeConfirmedPartnershipName(journeyId: String,
+                                    confirmed: Boolean
+                                   )(implicit hc: HeaderCarrier): Future[SuccessfullyStored.type] =
+    connector.storeData[Boolean](journeyId, PartnershipIdentificationService.ConfirmedPartnershipNameKey, confirmed)
+
   def storeSautr(journeyId: String,
                  sautr: String
                 )(implicit hc: HeaderCarrier): Future[SuccessfullyStored.type] =
@@ -61,6 +66,9 @@ class PartnershipIdentificationService @Inject()(connector: PartnershipIdentific
   def retrievePostCode(journeyId: String)(implicit hc: HeaderCarrier): Future[Option[String]] =
     connector.retrievePartnershipInformation[String](journeyId, PartnershipIdentificationService.PostCodeKey)
 
+  def retrieveConfirmedPartnershipName(journeyId: String)(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
+    connector.retrievePartnershipInformation[Boolean](journeyId, PartnershipIdentificationService.ConfirmedPartnershipNameKey)
+
   def removeSaInformation(journeyId: String)(implicit hc: HeaderCarrier): Future[SuccessfullyRemoved.type] = for {
     _ <- connector.removePartnershipInformation(journeyId, PartnershipIdentificationService.SautrKey)
     _ <- connector.removePartnershipInformation(journeyId, PartnershipIdentificationService.PostCodeKey)
@@ -84,6 +92,7 @@ class PartnershipIdentificationService @Inject()(connector: PartnershipIdentific
 object PartnershipIdentificationService {
   val SautrKey: String = "sautr"
   val PostCodeKey: String = "postcode"
+  val ConfirmedPartnershipNameKey: String = "confirmedPartnershipName"
   val VerificationStatusKey: String = "businessVerification"
   val IdentifiersMatchKey: String = "identifiersMatch"
   val RegistrationKey: String = "registration"

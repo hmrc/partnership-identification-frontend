@@ -47,14 +47,16 @@ class CaptureSautrController @Inject()(mcc: MessagesControllerComponents,
     implicit request =>
       authorised().retrieve(internalId) {
         case Some(authInternalId) =>
-          journeyService.getJourneyConfig(journeyId, authInternalId).map {
-            journeyConfig =>
+          for {
+            journeyConfig <- journeyService.getJourneyConfig(journeyId, authInternalId)
+            storedSautr <- partnershipIdentificationService.retrieveSautr(journeyId)
+          } yield {
               implicit val messages: Messages = messagesHelper.getRemoteMessagesApi(journeyConfig).preferred(request)
               Ok(sautr_view(
                 journeyId,
                 journeyConfig.pageConfig,
                 routes.CaptureSautrController.submit(journeyId),
-                CaptureSautrForm.form,
+                storedSautr.fold(CaptureSautrForm.form)(CaptureSautrForm.form.fill),
                 displayOrNotSkipSautrLink(partnershipType = journeyConfig.partnershipType)))
           }
         case _ =>

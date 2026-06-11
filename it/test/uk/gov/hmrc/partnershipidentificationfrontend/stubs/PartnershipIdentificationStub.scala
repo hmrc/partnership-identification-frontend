@@ -24,6 +24,13 @@ import uk.gov.hmrc.partnershipidentificationfrontend.utils.{WiremockHelper, Wire
 trait PartnershipIdentificationStub extends WiremockMethods {
   implicit private val RegistrationStatusFormat: OFormat[RegistrationStatus] = RegistrationStatus.format
 
+  def stubStoreConfirmedPartnershipName(journeyId: String, confirmedPartnershipName: Boolean)(status: Int): StubMapping =
+    when(method = PUT,
+      uri = s"/partnership-identification/journey/$journeyId/confirmedPartnershipName", body = Json.toJson(confirmedPartnershipName)
+    ).thenReturn(
+      status = status
+    )
+
   def stubStoreSautr(journeyId: String, sautr: String)(status: Int): StubMapping =
     when(method = PUT,
       uri = s"/partnership-identification/journey/$journeyId/sautr", body = JsString(sautr)
@@ -108,6 +115,14 @@ trait PartnershipIdentificationStub extends WiremockMethods {
       body = JsString(body)
     )
   }
+
+  def stubRetrieveConfirmedPartnershipName(journeyId: String)(status: Int, body: Boolean = false): StubMapping =
+    when(method = GET,
+      uri = s"/partnership-identification/journey/$journeyId/confirmedPartnershipName"
+    ).thenReturn(
+      status = status,
+      body = Json.toJson(body)
+    )
 
   def stubRetrievePartnershipDetails(journeyId: String)(status: Int, body: JsValue = Json.obj()): StubMapping =
     when(method = GET,

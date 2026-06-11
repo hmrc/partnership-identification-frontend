@@ -52,6 +52,20 @@ trait MockPartnershipIdentificationService extends MockitoSugar with BeforeAndAf
     )(ArgumentMatchers.any[HeaderCarrier])
     ).thenReturn(response)
 
+  def mockRetrievePostCode(journeyId: String)
+                          (response: Future[Option[String]]): OngoingStubbing[_] =
+    when(mockPartnershipIdentificationService.retrievePostCode(
+      ArgumentMatchers.eq(journeyId)
+    )(ArgumentMatchers.any[HeaderCarrier])
+    ).thenReturn(response)
+
+  def mockRetrieveConfirmedPartnershipName(journeyId: String)
+                                          (response: Future[Option[Boolean]]): OngoingStubbing[_] =
+    when(mockPartnershipIdentificationService.retrieveConfirmedPartnershipName(
+      ArgumentMatchers.eq(journeyId)
+    )(ArgumentMatchers.any[HeaderCarrier])
+    ).thenReturn(response)
+
   def mockRetrieveBusinessVerificationResponse(journeyId: String)
                                               (response: Future[Option[BusinessVerificationStatus]]): OngoingStubbing[_] =
     when(mockPartnershipIdentificationService.retrieveBusinessVerificationStatus(
