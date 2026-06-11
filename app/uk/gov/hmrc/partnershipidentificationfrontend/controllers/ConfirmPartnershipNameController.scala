@@ -29,7 +29,7 @@ import uk.gov.hmrc.partnershipidentificationfrontend.views.html.confirm_partners
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class ConfirmPartnershipNameController @Inject()(mcc: MessagesControllerComponents,
@@ -47,14 +47,17 @@ class ConfirmPartnershipNameController @Inject()(mcc: MessagesControllerComponen
         case Some(authInternalId) =>
           journeyService.getJourneyConfig(journeyId, authInternalId).flatMap {
             journeyConfig =>
-              partnershipIdentificationService.retrieveCompanyProfile(journeyId).map {
+              for {
+                optCompanyProfile <- partnershipIdentificationService.retrieveCompanyProfile(journeyId)
+                optConfirmedPartnershipName <- partnershipIdentificationService.retrieveConfirmedPartnershipName(journeyId)
+              } yield optCompanyProfile match {
                 case Some(companiesHouseInformation) =>
                   implicit val messages: Messages = messagesHelper.getRemoteMessagesApi(journeyConfig).preferred(request)
                   Ok(view(journeyConfig.pageConfig,
                     routes.ConfirmPartnershipNameController.submit(journeyId),
                     companiesHouseInformation.companyName,
                     journeyId,
-                    confirmPartnershipNameForm
+                    optConfirmedPartnershipName.fold(confirmPartnershipNameForm)(confirmPartnershipNameForm.fill)
                   ))
                 case None =>
                   throw new InternalServerException("No company profile stored")
@@ -87,8 +90,10 @@ class ConfirmPartnershipNameController @Inject()(mcc: MessagesControllerComponen
                   }
               },
             formRadio =>
-              if (formRadio) Future.successful(Redirect(routes.CaptureSautrController.show(journeyId)))
-              else Future.successful(Redirect(routes.CaptureCompanyNumberController.show(journeyId)))
+              partnershipIdentificationService.storeConfirmedPartnershipName(journeyId, formRadio).map { _ =>
+                if (formRadio) Redirect(routes.CaptureSautrController.show(journeyId))
+                else Redirect(routes.CaptureCompanyNumberController.show(journeyId))
+              }
           )
         case None =>
           throw new InternalServerException("Internal ID could not be retrieved from Auth")

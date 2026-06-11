@@ -44,11 +44,13 @@
             items = Seq(
                 RadioItem(
                     content = Text(messages("app.common.yes")),
-                    value = Some("yes")
+                    value = Some("yes"),
+                    checked = form("yes_no").value.contains("yes")
                 ),
                 RadioItem(
                     content = Text(messages("app.common.no")),
-                    value = Some("no")
+                    value = Some("no"),
+                    checked = form("yes_no").value.contains("no")
                 )
             ),
             classes = "govuk-radios--inline",

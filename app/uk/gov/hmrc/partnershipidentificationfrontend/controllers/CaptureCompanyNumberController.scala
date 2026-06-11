@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.InternalServerException
 import uk.gov.hmrc.partnershipidentificationfrontend.config.AppConfig
 import uk.gov.hmrc.partnershipidentificationfrontend.controllers.errorpages.{routes => errorRoutes}
 import uk.gov.hmrc.partnershipidentificationfrontend.forms.CaptureCompanyNumberForm
-import uk.gov.hmrc.partnershipidentificationfrontend.service.{CompanyProfileService, JourneyService}
+import uk.gov.hmrc.partnershipidentificationfrontend.service.{CompanyProfileService, JourneyService, PartnershipIdentificationService}
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.MessagesHelper
 import uk.gov.hmrc.partnershipidentificationfrontend.views.html.capture_company_number_page
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -37,6 +37,7 @@ class CaptureCompanyNumberController @Inject()(mcc: MessagesControllerComponents
                                                journeyService: JourneyService,
                                                view: capture_company_number_page,
                                                val authConnector: AuthConnector,
+                                               partnershipIdentificationService: PartnershipIdentificationService,
                                                companyProfileService: CompanyProfileService,
                                                messagesHelper: MessagesHelper
                                               )(implicit val config: AppConfig,
@@ -46,10 +47,16 @@ class CaptureCompanyNumberController @Inject()(mcc: MessagesControllerComponents
     implicit request =>
       authorised().retrieve(internalId) {
         case Some(authInternalId) =>
-          journeyService.getJourneyConfig(journeyId, authInternalId).map {
-            journeyConfig =>
+          for {
+            journeyConfig <- journeyService.getJourneyConfig(journeyId, authInternalId)
+            storedCompanyProfile <- partnershipIdentificationService.retrieveCompanyProfile(journeyId)
+          } yield {
               implicit val messages: Messages = messagesHelper.getRemoteMessagesApi(journeyConfig).preferred(request)
-              Ok(view(journeyConfig.pageConfig, routes.CaptureCompanyNumberController.submit(journeyId), CaptureCompanyNumberForm.form))
+              Ok(view(
+                journeyConfig.pageConfig,
+                routes.CaptureCompanyNumberController.submit(journeyId),
+                storedCompanyProfile.fold(CaptureCompanyNumberForm.form)(profile => CaptureCompanyNumberForm.form.fill(profile.companyNumber))
+              ))
           }
         case None =>
           throw new InternalServerException("Internal ID could not be retrieved from Auth")

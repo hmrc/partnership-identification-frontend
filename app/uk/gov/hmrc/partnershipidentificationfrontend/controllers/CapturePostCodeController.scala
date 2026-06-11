@@ -45,10 +45,16 @@ class CapturePostCodeController @Inject()(mcc: MessagesControllerComponents,
     implicit request =>
       authorised().retrieve(internalId) {
         case Some(authInternalId) =>
-          journeyService.getJourneyConfig(journeyId, authInternalId).map {
-            journeyConfig =>
+          for {
+            journeyConfig <- journeyService.getJourneyConfig(journeyId, authInternalId)
+            storedPostCode <- partnershipIdentificationService.retrievePostCode(journeyId)
+          } yield {
               implicit val messages: Messages = messagesHelper.getRemoteMessagesApi(journeyConfig).preferred(request)
-              Ok(view(journeyConfig.pageConfig, routes.CapturePostCodeController.submit(journeyId), postCodeForm))
+              Ok(view(
+                journeyConfig.pageConfig,
+                routes.CapturePostCodeController.submit(journeyId),
+                storedPostCode.fold(postCodeForm)(postCodeForm.fill)
+              ))
           }
         case _ =>
           throw new InternalServerException("Internal ID could not be retrieved from Auth")
