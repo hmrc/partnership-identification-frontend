@@ -42,6 +42,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
           journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
         ))
         stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
+        stubRetrieveConfirmedPartnershipName(testJourneyId)(status = NOT_FOUND)
         get(s"$baseUrl/$testJourneyId/confirm-company-name")
       }
       "return OK" in {
@@ -63,6 +64,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
                 pageConfig = PageConfig(Some(testCallingServiceName), testDeskProServiceId, testSignOutUrl, testAccessibilityUrl))
             ))
             stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
+            stubRetrieveConfirmedPartnershipName(testJourneyId)(status = NOT_FOUND)
             get(s"$baseUrl/$testJourneyId/confirm-company-name")
           }
 
@@ -81,6 +83,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
             journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
           ))
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
+          stubRetrieveConfirmedPartnershipName(testJourneyId)(status = NOT_FOUND)
           get(s"$baseUrl/$testJourneyId/confirm-company-name")
         }
 
@@ -110,6 +113,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
             journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
           ))
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
+          stubRetrieveConfirmedPartnershipName(testJourneyId)(status = NOT_FOUND)
           get(s"$baseUrl/$testJourneyId/confirm-company-name")
         }
 
@@ -125,6 +129,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
             journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
           ))
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
+          stubRetrieveConfirmedPartnershipName(testJourneyId)(status = NOT_FOUND)
           get(s"$baseUrl/$testJourneyId/confirm-company-name")
         }
 
@@ -140,6 +145,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
             journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
           ))
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
+          stubRetrieveConfirmedPartnershipName(testJourneyId)(status = NOT_FOUND)
           get(s"$baseUrl/$testJourneyId/confirm-company-name")
         }
 
@@ -170,6 +176,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
             authInternalId = testInternalId,
             journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
           ))
+          stubStoreConfirmedPartnershipName(testJourneyId, confirmedPartnershipName = true)(status = OK)
           post(s"$baseUrl/$testJourneyId/confirm-company-name")("yes_no" -> "yes")
         }
 
@@ -189,6 +196,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
             authInternalId = testInternalId,
             journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
           ))
+          stubStoreConfirmedPartnershipName(testJourneyId, confirmedPartnershipName = false)(status = OK)
           post(s"$baseUrl/$testJourneyId/confirm-company-name")("yes_no" -> "no")
         }
 
@@ -207,6 +215,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
           journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
         ))
         stubRetrieveCompanyProfile(testJourneyId)(status = OK, body = Json.toJsObject(testCompanyProfile))
+        stubRetrieveConfirmedPartnershipName(testJourneyId)(status = NOT_FOUND)
         stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
 
         post(s"$baseUrl/$testJourneyId/confirm-company-name")("yes_no" -> "")
@@ -228,6 +237,7 @@ class ConfirmPartnershipNameControllerISpec extends ComponentSpecHelper
             journeyConfig = testLimitedPartnershipJourneyConfig(businessVerificationCheck = true)
           ))
           stubRetrieveCompanyProfile(testJourneyId)(status = NOT_FOUND)
+          stubRetrieveConfirmedPartnershipName(testJourneyId)(status = NOT_FOUND)
           stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
 
           post(s"$baseUrl/$testJourneyId/confirm-company-name")("yes_no" -> "")
