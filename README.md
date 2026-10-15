@@ -56,7 +56,9 @@ Labels "cy" and "en" enable welsh and english translations for the service name 
 If the labels property is omitted or present, but the "cy" property is not fully defined, the service's default values will be
 used for the undefined properties.
 
-All other fields must be provided.
+All other fields must be provided. The calling service must set accessibilityUrl to its own accessibility statement so
+that this journey and any downstream verification journeys link to the correct statement.
+The `useServiceNavigation` query parameter is appended when it is not already present.
 
 All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out to Business
 Verification (rather than stub it) all non-relative urls will cause the handover to Business Verification to fail.
@@ -110,7 +112,9 @@ Labels "cy" and "en" enable welsh and english translations for the service name 
 If the labels property is omitted or present, but the "cy" property is not fully defined, the service's default values will be
 used for the undefined properties.
 
-All other fields must be provided.
+All other fields must be provided. The calling service must set accessibilityUrl to its own accessibility statement so
+that this journey and any downstream verification journeys link to the correct statement.
+The `useServiceNavigation` query parameter is appended when it is not already present.
 
 All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out to Business
 Verification (rather than stub it) all non-relative urls will cause the handover to Business Verification to fail.
@@ -159,7 +163,9 @@ Labels "cy" and "en" enable welsh and english translations for the service name 
 If the labels property is omitted or present, but the "cy" property is not fully defined, the service's default values will be
 used for the undefined properties..
 
-All other fields must be provided.
+All other fields must be provided. The calling service must set accessibilityUrl to its own accessibility statement so
+that this journey and any downstream verification journeys link to the correct statement.
+The `useServiceNavigation` query parameter is appended when it is not already present.
 
 All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out to Business
 Verification (rather than stub it) all non-relative urls will cause the handover to Business Verification to fail.
@@ -205,7 +211,9 @@ Labels "cy" and "en" enable welsh and english translations for the service name 
 If the labels property is omitted or present, but the "cy" property is not fully defined, the service's default values will be
 used for the undefined properties.
 
-All other fields must be provided.
+All other fields must be provided. The calling service must set accessibilityUrl to its own accessibility statement so
+that this journey and any downstream verification journeys link to the correct statement.
+The `useServiceNavigation` query parameter is appended when it is not already present.
 
 All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out to Business
 Verification (rather than stub it) all non-relative urls will cause the handover to Business Verification to fail.
@@ -253,7 +261,9 @@ Labels "cy" and "en" enable welsh and english translations for the service name 
 If the labels property is omitted or present, but the "cy" property is not fully defined, the service's default values will be
 used for the undefined properties.
 
-All other fields must be provided.
+All other fields must be provided. The calling service must set accessibilityUrl to its own accessibility statement so
+that this journey and any downstream verification journeys link to the correct statement.
+The `useServiceNavigation` query parameter is appended when it is not already present.
 
 All URLs provided must be relative, apart from locally where localhost is allowed. If you need to call out to Business
 Verification (rather than stub it) all non-relative urls will cause the handover to Business Verification to fail.

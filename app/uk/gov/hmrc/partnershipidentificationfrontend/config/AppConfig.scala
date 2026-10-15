@@ -62,6 +62,15 @@ class AppConfig @Inject()(config: Configuration,
   lazy val timeout: Int = servicesConfig.getInt("timeout.timeout")
   lazy val countdown: Int = servicesConfig.getInt("timeout.countdown")
 
+  private lazy val accessibilityStatementBaseUrl: String = servicesConfig.baseUrl("accessibility-statement")
+  private lazy val accessibilityStatementServicePath: String = servicesConfig.getString("accessibility-statement.service-path")
+  private lazy val relativeUrlsEnabled: Boolean = config.get[Boolean]("relative-urls.enabled")
+  lazy val vatRegAccessibilityStatementUrl: String = {
+    val relativeUrl = s"/accessibility-statement$accessibilityStatementServicePath?useServiceNavigation"
+
+    if (relativeUrlsEnabled) relativeUrl else s"$accessibilityStatementBaseUrl$relativeUrl"
+  }
+
   private lazy val businessVerificationUrl = servicesConfig.getString("microservice.services.business-verification.url")
 
   def createBusinessVerificationJourneyUrl: String = {
