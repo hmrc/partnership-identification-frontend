@@ -182,6 +182,41 @@ class JourneyControllerISpec extends ComponentSpecHelper with JourneyStub with A
     }
 
     "allow journey creation for all partnership types" when {
+      "the accessibility URL needs the service navigation parameter normalising" in {
+        val accessibilityUrlScenarios: TableFor2[String, String] =
+          Tables.Table(
+            ("incomingAccessibilityUrl", "expectedAccessibilityUrl"),
+            (
+              "/accessibility-statement/my-service",
+              "/accessibility-statement/my-service?useServiceNavigation"
+            ),
+            (
+              "/accessibility-statement/my-service?referrerUrl=%2Fstart",
+              "/accessibility-statement/my-service?referrerUrl=%2Fstart&useServiceNavigation"
+            ),
+            (
+              "/accessibility-statement/my-service?referrerUrl=%2Fstart&useServiceNavigation",
+              "/accessibility-statement/my-service?referrerUrl=%2Fstart&useServiceNavigation"
+            )
+          )
+
+        forAll(accessibilityUrlScenarios) { (incomingAccessibilityUrl: String, expectedAccessibilityUrl: String) =>
+          stubAuth(OK, successfulAuthResponse(Some(testInternalId)))
+          stubCreateJourney(CREATED, Json.obj("journeyId" -> testJourneyId))
+
+          val incomingJson = testJourneyConfigJson ++
+            Json.obj(JourneyController.accessibilityUrlKey -> incomingAccessibilityUrl)
+
+          val result = post("/partnership-identification/api/general-partnership-journey", incomingJson)
+
+          result.status mustBe CREATED
+          await(journeyConfigRepository.findJourneyConfig(testJourneyId, testInternalId))
+            .map(_.pageConfig.accessibilityUrl) mustBe Some(expectedAccessibilityUrl)
+
+          await(journeyConfigRepository.drop)
+        }
+      }
+
       "the incoming journey configuration contains a continue url with the host set to localhost" in {
 
         def assertJourneyConfigWithAllowedHostIsAccepted(postToApiUrlSuffix: String,
