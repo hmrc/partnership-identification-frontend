@@ -61,7 +61,7 @@ class JourneyController @Inject()(controllerComponents: ControllerComponents,
         optServiceName <- (json \ optServiceNameKey).validateOpt[String]
         deskProServiceId <- (json \ deskProServiceIdKey).validate[String]
         signOutUrl <- (json \ signOutUrlKey).validate[String]
-        accessibilityUrl <- (json \ accessibilityUrlKey).validate[String]
+        accessibilityUrl <- (json \ accessibilityUrlKey).validate[String].map(urlHelper.withUseServiceNavigation)
         regime <- (json \ regimeKey).validate[String]
         labels <- (json \ labelsKey ).validateOpt[JourneyLabels]
       } yield JourneyConfig(

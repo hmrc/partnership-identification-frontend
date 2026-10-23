@@ -5,7 +5,7 @@ val appName = "partnership-identification-frontend"
 
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "3.3.6"
+ThisBuild / scalaVersion := "3.3.7"
 ThisBuild / scalacOptions += "-Wconf:msg=Flag.*repeatedly:s"
 
 Test / Keys.fork := true
