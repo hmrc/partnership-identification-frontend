@@ -156,6 +156,16 @@ class UrlHelperSpec extends AnyWordSpec with Matchers with MockitoSugar with Bef
         "/accessibility-statement/my-service?useServiceNavigation#content"
     }
 
+    "append useServiceNavigation without an extra separator when the url ends with '?'" in {
+      target.withUseServiceNavigation("/accessibility-statement/my-service?") mustBe
+        "/accessibility-statement/my-service?useServiceNavigation"
+    }
+
+    "append useServiceNavigation without an extra separator when the url ends with '&'" in {
+      target.withUseServiceNavigation("/accessibility-statement/my-service?referrerUrl=%2Fstart&") mustBe
+        "/accessibility-statement/my-service?referrerUrl=%2Fstart&useServiceNavigation"
+    }
+
   }
 
 }

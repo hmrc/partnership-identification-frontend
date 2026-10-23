@@ -30,8 +30,6 @@ class AppConfig @Inject()(config: Configuration,
   lazy val selfBaseUrl: String = servicesConfig.baseUrl("self")
   lazy val selfUrl: String = servicesConfig.getString("microservice.services.self.url")
 
-  lazy val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
-
   lazy val timeToLiveSeconds: Long = servicesConfig.getString("mongodb.timeToLiveSeconds").toLong
 
   private lazy val backendUrl: String = servicesConfig.baseUrl("partnership-identification")
@@ -45,10 +43,6 @@ class AppConfig @Inject()(config: Configuration,
 
   def validatePartnershipInformationUrl: String = s"$backendUrl/partnership-identification/validate-partnership-information"
 
-  lazy val cookies: String = servicesConfig.getString("urls.footer.cookies")
-  lazy val privacy: String = servicesConfig.getString("urls.footer.privacy")
-  lazy val termsConditions: String = servicesConfig.getString("urls.footer.termsConditions")
-  lazy val govukHelp: String = servicesConfig.getString("urls.footer.govukHelp")
   lazy val companiesHouse: String = servicesConfig.getString("companies-house.url")
 
   lazy val defaultServiceName: String = servicesConfig.getString("defaultServiceName")
@@ -58,9 +52,6 @@ class AppConfig @Inject()(config: Configuration,
   private lazy val feedbackUrl: String = servicesConfig.getString("feedback.host")
   lazy val vatRegExitSurveyOrigin = "vat-registration"
   lazy val vatRegFeedbackUrl = s"$feedbackUrl/feedback/$vatRegExitSurveyOrigin"
-
-  lazy val timeout: Int = servicesConfig.getInt("timeout.timeout")
-  lazy val countdown: Int = servicesConfig.getInt("timeout.countdown")
 
   private lazy val accessibilityStatementBaseUrl: String = servicesConfig.baseUrl("accessibility-statement")
   private lazy val accessibilityStatementServicePath: String = servicesConfig.getString("accessibility-statement.service-path")
