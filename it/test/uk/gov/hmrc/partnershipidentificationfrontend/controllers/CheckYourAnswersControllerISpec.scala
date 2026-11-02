@@ -17,7 +17,6 @@
 package uk.gov.hmrc.partnershipidentificationfrontend.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock
-import org.scalatest.concurrent.Eventually.eventually
 import play.api.libs.json.Json
 import play.api.test.Helpers._
 import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
