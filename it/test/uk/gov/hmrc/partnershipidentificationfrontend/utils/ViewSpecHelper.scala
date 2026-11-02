@@ -64,7 +64,7 @@ object ViewSpecHelper {
 
     lazy val getSummaryListRows: Elements = element.getElementsByClass("govuk-summary-list__row")
 
-    lazy val getServiceName: Elements = element.getElementsByClass("govuk-header__service-name")
+    lazy val getServiceName: Elements = element.getElementsByClass("govuk-service-navigation__service-name")
 
     def getSpan(id: String): Elements = element.select(s"""span[id=$id]""")
 
