@@ -16,7 +16,6 @@
 
 package uk.gov.hmrc.partnershipidentificationfrontend.repositories
 
-import org.scalatest.concurrent.{AbstractPatienceConfiguration, Eventually}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers._
 import play.api.{Application, Environment, Mode}
@@ -24,7 +23,7 @@ import uk.gov.hmrc.partnershipidentificationfrontend.assets.TestConstants._
 import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyLabels
 import uk.gov.hmrc.partnershipidentificationfrontend.utils.ComponentSpecHelper
 
-class JourneyConfigRepositoryISpec extends ComponentSpecHelper with AbstractPatienceConfiguration with Eventually {
+class JourneyConfigRepositoryISpec extends ComponentSpecHelper {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))

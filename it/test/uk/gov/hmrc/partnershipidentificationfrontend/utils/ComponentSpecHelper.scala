@@ -18,6 +18,8 @@ package uk.gov.hmrc.partnershipidentificationfrontend.utils
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.mongodb.scala.result.InsertOneResult
+import org.scalatest.concurrent.{Eventually, IntegrationPatience}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
@@ -25,17 +27,16 @@ import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Writes}
-import play.api.libs.ws.{DefaultWSCookie, WSClient, WSCookie, WSRequest, WSResponse}
 import play.api.libs.ws.DefaultBodyWritables.{writeableOf_String, writeableOf_urlEncodedForm}
-import play.api.test.Helpers._
-import org.mongodb.scala.result.InsertOneResult
-import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
-import uk.gov.hmrc.partnershipidentificationfrontend.repositories.JourneyConfigRepository
-import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
+import play.api.libs.ws.{DefaultWSCookie, WSClient, WSCookie, WSRequest, WSResponse}
 import play.api.mvc.{Cookie, Session, SessionCookieBaker}
+import play.api.test.Helpers.*
 import play.api.test.Injecting
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.http.SessionKeys
+import uk.gov.hmrc.partnershipidentificationfrontend.models.JourneyConfig
+import uk.gov.hmrc.partnershipidentificationfrontend.repositories.JourneyConfigRepository
+import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 
 import scala.concurrent.Future
 
@@ -44,6 +45,8 @@ trait ComponentSpecHelper extends AnyWordSpec with Matchers
   with WiremockHelper
   with BeforeAndAfterAll
   with BeforeAndAfterEach
+  with Eventually
+  with IntegrationPatience
   with GuiceOneServerPerSuite with Injecting {
 
   val mockHost: String = WiremockHelper.wiremockHost
